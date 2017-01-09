@@ -24,3 +24,6 @@ If you don't have a noisy image, create on by `imnoise()`
 * Gaussian denoising (blur): 
 * Median denoising (blur):
 * 
+
+# Reference
+
