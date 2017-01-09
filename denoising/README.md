@@ -1,2 +1,0 @@
-# numerical
-Projects in MATLAB
