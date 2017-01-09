@@ -1,4 +1,4 @@
-# Scientific computations
+# Scientific computing
 
 Matlab projects 
 
