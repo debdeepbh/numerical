@@ -1,6 +1,6 @@
-# De-noising images 
+# Crack propagation through media using nonlocal PDE
 
-
+See Reference.
 
 # Requirements
 
@@ -39,3 +39,10 @@ OCTAVE with image package for octave like this:
 
 # Reference
 
+Studies of dynamic crack propagation and crack branching with peridynamics 
+Youn Doh Ha, Florin Bobaru
+Link: http://digitalcommons.unl.edu/cgi/viewcontent.cgi?article=1070&context=engineeringmechanicsfacpub
+
+# Todo
+
+Faster mesh generation and other shapes of pre-notch
