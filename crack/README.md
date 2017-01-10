@@ -18,7 +18,7 @@ OCTAVE with image package for octave like this:
 
 # Usage
 
-* To create the reference neighbourhood array: ref. Should take 48s on a decent CPU.
+* To create the reference neighbourhood array: ref. Took 48s on my CPU.
 `ref = nbd();`
 
 * Draw the initial mesh
@@ -29,8 +29,6 @@ OCTAVE with image package for octave like this:
 
 * Draw the final array
 `drawmesh(final);  `
-
-
 * You can plot the neighbourhood weight matrix using
 `nbdmap(final);`
 * You can plot the relative neighbourhood weight matrix by
