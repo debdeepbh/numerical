@@ -12,14 +12,14 @@ OCTAVE
 
 # Usage
 
-* To create the reference neighbourhood array: ref. Took 48s on my CPU.
-`ref = nbd();`
+* To create the reference neighbourhood array.
+`ref = nbd();` Took 48s on my CPU.
 
-* Draw the initial mesh
+* Draw the initial mesh for the slab with a pre-notch
 `drawmesh(ref);  `
 
-* Create the final neighbourhood array, final, from the initial array, ref
-`final = proj(ref);   `
+* Create the final neighbourhood array for the cracked slab, from the initial array
+`final = proj(ref);   `  This is where all the computations happen.
 
 * Draw the final array
 `drawmesh(final);  `
@@ -34,6 +34,8 @@ OCTAVE
 Studies of dynamic crack propagation and crack branching with peridynamics 
 Youn Doh Ha, Florin Bobaru
 Link: http://digitalcommons.unl.edu/cgi/viewcontent.cgi?article=1070&context=engineeringmechanicsfacpub
+
+Special thanks to Dr. Jeremy Trageser for teaching the course.
 
 # Todo
 
