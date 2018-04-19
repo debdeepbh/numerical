@@ -18,7 +18,7 @@ Parameters:
 * `type` can be 'shan' for Shannon's wavelets, 'd`n`' for Daubechies wavelets where `n` can be 2, 4, ... , 20.
 * `p` should be a power of 2 (preferably). If `type`= 'shan', `p` must divide the length of `z` or `w`.
 
-Other tools:
+Other tools (codes are self-explanatory):
 * `wrec`, `iwrec` are recursive implementation of wavelet transform and inverse wavelet transforms, also called Fast Wavelet Transform. Works best (fastest) on vectors of length of type 2^n for some natural number n.
 * `realconv(a,b)` is a convolution that returns real number
 * `fold(z)`
@@ -28,5 +28,5 @@ Other tools:
 
 # Reference
 
-* Frazier, _An Introduction to Wavelets through Linear Algebra_
-
+* M. Frazier, _An Introduction to Wavelets through Linear Algebra_
+* Thanks to Dr. Svetlana Roudenko for teaching the course.
