@@ -29,4 +29,4 @@ Other tools (codes are self-explanatory):
 # Reference
 
 * M. Frazier, _An Introduction to Wavelets through Linear Algebra_
-* Thanks to Dr. Svetlana Roudenko for teaching the course.
+* Thanks to Dr. Svetlana Roudenko for teaching the material
