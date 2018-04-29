@@ -13,7 +13,12 @@ if(k!=0)
 	q = [q1, q3];
 
 	z = w;
-	z(q) = 0;
+	% use (linear) continuous cutoff instead
+	for j=q
+		%z(q) = 0;
+		weight = 1 - (h(N+1-k) - abs(z(j)))/h(N+1-k);
+		z(j) = z(j)* weight/9;
+	end
 else
 	z = zeros(1,N);
 end
