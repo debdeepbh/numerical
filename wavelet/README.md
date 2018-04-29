@@ -13,6 +13,7 @@ Main functions:
 * `w = wtrans(z, type, p)` returns the `p`th stage wavelet transform of the vector `z` using the parent wavelets of type `type`.
 * `z = iwtrans(w, type, p)` returns the `p`th stage _inverse_ wavelet transform of the vector `w` using the parent wavelets of type `type`. If the `type` and `p` are the same, `iwtrans` and `wtrans` should be inverses of each other upto some _small_ error.
 * `w = compress(z, type, p, K)` returns 
+* `bases(type, p, N)` to plot the bases with respect to (the translations of) which the wavelet transform is computed. The implementation is not recursive.
 
 Parameters:
 * `type` can be 'shan' for Shannon's wavelets, 'd`n`' for Daubechies wavelets where `n` can be 2, 4, ... , 20.
