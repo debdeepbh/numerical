@@ -1,17 +1,30 @@
 % plots the relative error in pth stage wavelet compression, with respect to K, in q norm
-function compareErr(z, maxK, p, q, type1, type2) 
-for K=0:maxK-1
-	w1(K+1) = norm(z - compress(z,type1, p, K), q)/norm(z, q);
-	w2(K+1) = norm(z - compress(z,type2, p, K), q)/norm(z, q);
+function compareErr(z, typelist, maxK, p, normlist)
+% e.g. typelist = {'shan'; 'db5'}
+% e.g. normlist = {1,2,inf}
 
-	fou(K+1)= norm(z - ifft(keeplarge(fft(z),K)))/norm(z, q);
-end
+% number of norms to compare
+n = length(normlist);
+
 x = 1:maxK;
-plot(x, w1, x, w2, x, fou);
-legend(type1, type2, 'fou');
-axis([0 maxK-1 0 1]);
-% plot the main graph as well
-figure;
+% plot the data itself, spanning the first row
+subplot(2,n,[1:n]);
 plot(0:length(z)-1, z);
-axis([0 511]);
+axis([0 length(z)]);
+title('signal')
 
+% 1 plot each for each norm
+for nor=1:n
+	q = normlist{nor};
+	x = 1:maxK;
+	subplot(2,n,n+nor);
+	plot(x,relerr(z,typelist,maxK,p,q))
+	axis([0 maxK-1 0 1]);
+	legend(typelist);
+	title([ num2str(q), '-norm']);
+	ylabel(['relative error']);
+	xlabel(['size of compressed signal']);
+end
+
+
+%print(tf,'-dpng');
