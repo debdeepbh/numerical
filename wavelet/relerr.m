@@ -1,21 +1,15 @@
-% plots the relative error in pth stage wavelet compression, with respect to K, in q norm
-function relerr(z, maxK, p, q, ef, tf) 
+% returns the relative error matrix in pth stage wavelet compression, with respect to K, in q norm
+function Rel = relerr(z, typelist, maxK, p, q)
+% e.g. typelist = {'shan'; 'db5'}
+% number of methods to compare
+r = length(typelist);
+% zero vector 
+Rel = zeros(r,maxK);
 for K=0:maxK-1
-	w1(K+1) = norm(z - compress(z, 'd2', p, K), q)/norm(z, q);
-	w2(K+1) = norm(z - compress(z, 'd4', p, K), q)/norm(z, q);
-	w3(K+1) = norm(z - compress(z, 'd6', p, K), q)/norm(z, q);
-	w4(K+1) = norm(z - compress(z, 'd10', p, K), q)/norm(z, q);
-
-	fou(K+1)= norm(z - ifft(keeplarge(fft(z),K)))/norm(z, q);
+	% here typelist is a cell array. Use stringlist{1} etc
+	for j = 1:r
+		Rel(j,K+1) = norm(z - compress(z, typelist{j}, p, K), q)/norm(z, q);
+	end
 end
-x = 1:maxK;
-plot(x, w1, x, w2, x, w3, x, w4, x, fou);
-legend('d2','d4','d6','d10', 'fou');
-axis([0 maxK-1 0 1]);
-print(ef,'-dpng');
-% plot the main graph as well
-figure;
-plot(0:length(z)-1, z);
-axis([0 511]);
-print(tf,'-dpng');
 
+%%print(tf,'-dpng');
