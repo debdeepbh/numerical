@@ -1,4 +1,5 @@
 %wavelet transform, general
+% size of N should be divisible by 2^(p-1)
 function w = wtrans(z, type, p)
 N = length(z);
 [u, v] = filt(type, N);
@@ -6,5 +7,6 @@ N = length(z);
 util = ifft(conj(fft(u)));
 vtil = ifft(conj(fft(v)));
  
-w = wrec(z, N/2^(p-1), util, vtil);
+% computing the smallest dimension based on p
+w = wrec(z, N/2^(p), util, vtil);
 

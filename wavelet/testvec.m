@@ -1,19 +1,19 @@
 % get all the testvecs
 
-run testvec-1.m;
-testvec_1 = testvec;
+testvec_1
+testvec1 = testvec;
 
-run testvec-2.m;
-testvec_2 = testvec;
+testvec_2
+testvec2 = testvec;
 
-run testvec-3.m;
-testvec_3 = testvec;
+testvec_3
+testvec3 = testvec;
 
-run testvec-4.m;
-testvec_4 = testvec;
+testvec_4
+testvec4 = testvec;
 
-run testvec-5.m;
-testvec_5 = testvec;
+testvec_5
+testvec5 = testvec;
 
 
 

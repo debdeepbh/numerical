@@ -1,4 +1,4 @@
-% given the father wavelet get the other
+% given the mother(or father) wavelet get the other
 function v = getother(u) 
 N = length(u);
 % v(k) = (-1)^{k-1} u_bar(1-k)

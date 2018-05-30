@@ -1,6 +1,6 @@
 % returns the relative error matrix in pth stage wavelet compression, with respect to K, in q norm
 function Rel = relerr(z, typelist, maxK, p, q)
-% e.g. typelist = {'shan'; 'd5'}
+% e.g. typelist = {'shan'; 'db5'}
 % number of methods to compare
 r = length(typelist);
 % zero vector 
