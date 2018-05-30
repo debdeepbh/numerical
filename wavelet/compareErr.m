@@ -1,6 +1,6 @@
 % plots the relative error in pth stage wavelet compression, with respect to K, in q norm
 function compareErr(z, typelist, maxK, p, normlist)
-% e.g. typelist = {'shan'; 'db5'}
+% e.g. typelist = {'shan'; 'd5'}
 % e.g. normlist = {1,2,inf}
 
 % number of norms to compare
