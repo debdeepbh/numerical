@@ -7,7 +7,7 @@ first = down(realconv(z,vtil));
 if length(z) <= 2*sdim
 	% some stopping condition
        	second = down(realconv(z, util));
-	length(second)
+	length(second);
 else
 	% recursion
        	second = wrec(down(realconv(z,util)), sdim, fold(util),fold(vtil));
