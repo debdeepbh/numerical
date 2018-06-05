@@ -1,6 +1,11 @@
 % plot all the bases of p-stage wavelet transform
-function bases(type, p, N)
-figure;
+% outputs an p+1 by N matrix B
+% columns of B are f_1, ..., f_p, g_p
+% translates of which gives you the basis elements
+% Psi_{-j,k} = R_{2^j * k} f_j, for j = 1,...,p 
+% Phi_{-j,k} = R_{2^j * k} g_j, for j = p
+% k = 0, ... , (N/(2^j)-1)
+function B = getbasismat(type, p, N)
 [u, v] = filt(type, N);
 
 % empty vectors to store the intermediate values of u and v
@@ -55,16 +60,21 @@ for j=2:p
 	f_old = f_new;
 	g_old = g_new;
 end
-Phi = shift(g_old, N/2);
 
-%plotting the bases
-for j=1:p
-	subplot(p+1,1,j); 
-	plot(0:N-1, shift(Psi(j,:),N/2));
-	axis([0 N-1]);
-end
-subplot(p+1,1,p+1);
-plot(0:N-1, Phi);
-axis([0 N-1]);
+% the last Phi
+Phi = g_old;
 
+%%plotting the bases
+%figure;
+%for j=1:p
+%	subplot(p+1,1,j); 
+%	plot(0:N-1, shift(Psi(j,:),N/2));
+%	axis([0 N-1]);
+%end
+%
+%Phi = shift(g_old, N/2);
+%subplot(p+1,1,p+1);
+%plot(0:N-1, Phi);
+%axis([0 N-1]);
 
+B = [Psi; Phi];
