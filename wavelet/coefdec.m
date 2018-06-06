@@ -10,8 +10,10 @@ B = getbasismat(type, p, N);
 
 % deconvolution method here, on the fourier side
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %dec = fft(y)./fft(K); 	% naive
 dec = fft(y)./fft(K).*abs(fft(K)); % allpass
+%%%%%%% other methods should go here %%%%%%%
 
 % using equation (22) from Donoho et al 2004 
 
