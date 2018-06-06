@@ -1,8 +1,10 @@
+% incomplete
+%%%%%%%%%%%%%%%%%%%
 % thresholding the coefficients of a wavelet transform
 % thr is optional
-% Correction: hard/soft are the methods
+% Correction: hard/soft are the rules
 % but value of the threshold are data dependent
-function wt = coefthr(w,p,method,thr)
+function wt = coefthr(w, p, rule, method, thr)
 % to get the qth coefficients, do coeff(w, p, q)
 N = length(w);
 
@@ -12,12 +14,10 @@ case 'univ'
 	sigmacap = 0.5; 	% find this
 	lambda = sigmacap * sqrt(2*log2(N)/N);
 	thr = zeros(1,p+1) + lambda;
-	wt = applythres(w,p,thr);
-	
-case 'hard'
 
-case 'soft'
-case 'maxiset'
+case 'forw'	% let's investigate
+
+case 'maxiset'	% incomplete
 	% from Johnstone et al 2004
 	% decay parameter of the impulse response
 	nu = 1;	% find
@@ -26,10 +26,8 @@ case 'maxiset'
 	eta = sqrt(2);	% or eta dependent
 	c_n = log2(N)/N;
 case 'manual'
-	% for p=4
-	%thr = [0.8 1 10 10 5];
-	wt = applythres(w,p,thr);
-
-
+	% do nothing, ie use the given threshold value
 end
 
+% apply the threshold using given rule
+wt = applythres(w,p,rule,thr);

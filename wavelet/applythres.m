@@ -1,6 +1,6 @@
 % apply threshold on the p-th stage transform
 % thr should be a vector of length p+1
-function w = applythres(wo, p, thr)
+function w = applythres(wo, rule, p, thr)
 
 % don't want to replace the original
 w = wo;
@@ -18,9 +18,18 @@ len = N/2;
 for k=1:p
 	ending = starting+len-1;
 	for l=starting:ending
-		if( w(l) < thr(k))
-			w(l) = 0;
+
+		switch rule
+		case 'hard'
+			if( w(l) < thr(k))
+				w(l) = 0;
+			end
+		case 'soft'
+			if( w(l) > thr(k))
+				w(l) = sign(w(l)) * (abs(w(l)) - thr(k));
+			end
 		end
+
 	end
 	% for the next loop
 	len = len/2;
