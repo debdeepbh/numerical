@@ -18,7 +18,11 @@ for i=1:8
 	[w, ratiothr] = wienforwd(z(1:1024),K(1:1024),type,p,sigma,alpha, rho,method);
 	figure(1);
 	subplot(4,2,i);
-	ww = iwtrans(w,type,p);
+	if (type == 'bior13d')
+		ww = iwtrans(w,'bior13r',p);
+	else
+		ww = iwtrans(w,type,p);
+	end
 	plot(ww);
 	xlim([1 1024]);
 	title(num2str(getsnr(ww)));

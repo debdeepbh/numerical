@@ -1,7 +1,7 @@
 % estimates the wavelet coefficients after doing deconvolution in Fourier then wavelet domain, based on supplied scaling values
 % scaling should be of length p+1
 % type is the wavelet filter type, p-th stage
-function [w, ratiothres] = wienforwd(y, K, type, p, sigma, scaling, rho,method)
+function [w, ratiounthres, thrvec]  = wienforwd(y, K, type, p, sigma, scaling, rho,method)
 % sigma is the standard deviation used in wiener deconvolution
 
 N = length(y);
@@ -86,7 +86,8 @@ w = [w beta];
 %print('before','-dpng')
 
 % doing the level-dependent thresholding in the same function for now
-[w, ratiothres] = applythres(w, method, p, sigmal.*rho);
+thrvec = sigmal.*rho;
+[w, ratiounthres, wnoise] = applythres(w, method, p, thrvec);
 %w = keeplarge(w, 2);
 
 % plot after 

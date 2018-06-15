@@ -1,5 +1,5 @@
 % test the values of forward
-function ratiothr = testspike(z, type, p, sigma,  alpha, rho, method)
+function testspike(z, type, p, sigma,  alpha, rho, method)
 % example
 % plot(iwtrans(decfw(wex(3,:)(1:1024),K(1:1024),'d6',4,'wien',[10 400 50 50 50], 4),'d6',4))
 % testfwd(3,'d6',4,[10 400 50 50 50],10)
@@ -12,20 +12,28 @@ function ratiothr = testspike(z, type, p, sigma,  alpha, rho, method)
 
 getdata;
 close all;
-[w, ratiothr] = wienforwd(z(1:1024),K(1:1024),type,p,sigma,alpha, rho,method);
+[w, ratiounthr, thrvec] = wienforwd(z(1:1024),K(1:1024),type,p,sigma,alpha, rho,method);
 
-plotcoeffs(w,p);
+plotthr(w,p,thrvec);
+%plotcoeffs(w,p);
 
 figure;
 subplot(211)
 plot(z)
 xlim([1 length(w)])
-
+switch type
+case 'bior13d'
+	type = 'bior13d'
+end
 subplot(212)
 plot(iwtrans(w,type,p));
 xlim([1 length(w)])
 
 
 figure;
-plot(abs(fft(iwtrans(w,type,p))));
+plot(log10(abs(fft(iwtrans(w,type,p))).^2));
+title('Power Spectrum of output in log10 scale');
 xlim([1 length(w)])
+
+% print the threshold proportion
+ratiounthr
