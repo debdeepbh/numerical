@@ -38,20 +38,3 @@ noiseund = noiseund(:,2)';
 testvec_5;
 testconv = conv(testvec, K);
 testy = testconv + randn([1 length(testconv)])*5;
-
-
-% get the wais data manuel gave me in the end
-
-wp1 = load('/home/debdeep/gdrive/anita/wais_pulse/debd_stuff/HpolC21203755.txt');
-wp2 = load('/home/debdeep/gdrive/anita/wais_pulse/debd_stuff/HpolC21203785.txt');
-wp3 = load('/home/debdeep/gdrive/anita/wais_pulse/debd_stuff/HpolC21203930.txt');
-wp4 = load('/home/debdeep/gdrive/anita/wais_pulse/debd_stuff/HpolC21203958.txt');
-wp5 = load('/home/debdeep/gdrive/anita/wais_pulse/debd_stuff/HpolC29991096.txt');
-wp6 = load('/home/debdeep/gdrive/anita/wais_pulse/debd_stuff/HpolC29991181.txt');
-wp7 = load('/home/debdeep/gdrive/anita/wais_pulse/debd_stuff/HpolC29991735.txt');
-wp8 = load('/home/debdeep/gdrive/anita/wais_pulse/debd_stuff/HpolC29992146.txt');
-
-wpx = [wp1(1:1560,2) wp2(1:1560,2) wp3(1:1560,2) wp4(1:1560,2) wp5(1:1560,2) wp6(1:1560,2) wp7(1:1560,2) wp8(1:1560,2)];
-
-wpx = wpx';
-  

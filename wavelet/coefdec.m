@@ -21,7 +21,7 @@ dec = fft(y)./fft(K).*abs(fft(K)); % allpass
 w = [];
 
 for j=1:p
-	% prepare beta(k) the estimate for the k-th wavelet coefficient
+	% prepare beta(k), the estimate for the k-th wavelet coefficient
 	beta = zeros(1,N/(2^j));
 	for k=0:(N/(2^j) - 1)	% range of k
 		% this the the Psi_{-j,k} th basis element
