@@ -1,6 +1,10 @@
 % apply threshold on the p-th stage transform
 % thr should be a vector of length p+1
-function w = applythres(wo, rule, p, thr)
+function [w, ratiothr, wnoise] = applythres(wo, rule, p, thr)
+% wnoise is the dropped part of the original signal
+
+% stores the proportion of wavelet coeffs that have been thresholded
+ratiothr = zeros(1,p+1);
 
 % don't want to replace the original
 w = wo;
@@ -16,35 +20,63 @@ end
 starting = 1;
 len = N/2;
 for k=1:p
+	% reset the counter of unthresholded coefficients
+	unthresholded = 0;
+
 	ending = starting+len-1;
+
 	for l=starting:ending
 
 		switch rule
 		case 'hard'
 			if( w(l) < thr(k))
 				w(l) = 0;
+				% update ratio counter
+				unthresholded = unthresholded + 1;
 			end
 		case 'soft'
-			if( w(l) > thr(k))
+			if( w(l) >= thr(k))
 				w(l) = sign(w(l)) * (abs(w(l)) - thr(k));
+			else
+				w(l) = 0;
+				% update ratio counter
+				unthresholded = unthresholded + 1;
 			end
+		case 'wien'	% wavelet domain wiener shrinkage 
+			% applies to all the wavelet coefficients
+			% irrespective of the threshold
+			% Here, the threshold should be the 
+			% leaked noise variance at that level
+			w(l) = (w(l)^2)/(w(l)^2 + thr(k)^2);
 		end
 
 	end
+
+	% get the ratio
+	Nj = length(starting:ending);
+	ratiothr(k) = (Nj - unthresholded)/Nj;
+
+
 	% for the next loop
 	len = len/2;
 	starting = ending + 1;
 end
 
 % for the coarsest level Phi_{-p,k}
+% reset the counter of unthresholded coefficients
+unthresholded = 0;
 for l=starting:N
 	if( w(l) < thr(p+1))
 		w(l) = 0;
+		% update ratio counter
+		unthresholded = unthresholded + 1;
+
 	end
 end
 
+% get the ratio
+Nj = length(starting:N);
+ratiothr(p+1) = (Nj - unthresholded)/Nj;
 
-
-
-
-
+% print the threshold values used
+%thr
