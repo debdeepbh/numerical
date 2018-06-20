@@ -54,7 +54,8 @@ for k=1:p
 
 	end
 
-	% get the ratio
+	% get the ratio of coefficients that were bigger than the 
+	% noise variance
 	Nj = length(starting:ending);
 	ratiounthr(k) = (Nj - thresholded)/Nj;
 

@@ -18,7 +18,7 @@ fori = fsig;
 %fori = fimp;
 
 % construct the multiplier
-mult = hsq ./( hsq + scaling*N*(sigma^2)./(abs(fori).^2));
+mult = hsq ./( hsq + scaling*N*(sigma.^2)./(abs(fori).^2));
 % multiply by the scaling and take inverse fourier transform
 fw = wfft.*mult;
 

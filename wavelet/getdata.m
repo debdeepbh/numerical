@@ -55,3 +55,5 @@ wpx = [wp1(1:1560,2) wp2(1:1560,2) wp3(1:1560,2) wp4(1:1560,2) wp5(1:1560,2) wp6
 
 wpx = wpx';
   
+% for beamer presentation
+z = wpx(4,:)(300:300+1023);
