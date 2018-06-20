@@ -6,6 +6,10 @@ function [w, ratiounthres, thrvec]  = wienforwd(y, K, type, p, sigma, scaling, r
 
 N = length(y);
 
+% using scalar value: standard deviation of the noise vector sigma
+% to threshold on the wavelet levels
+sigma_scalar = sqrt(var(sigma));
+
 if length(scaling) == 1
 	scaling = zeros(1,p+1) + scaling;
 end
@@ -70,7 +74,7 @@ for k=0:(N/(2^p) - 1)
 
 	%%%%%%%%%% computing the variance of the noise
 	%%%%%%%%%% at the j-th level
-	sigmal(p+1) = sqrt(sigma^2 * dot( (abs(fft(Phi))./abs(fimp)).^2, abs(mult).^2)/N);
+	sigmal(p+1) = sqrt((sigma^2) .* dot( (abs(fft(Phi))./abs(fimp)).^2, abs(mult).^2)/N);
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end
 w = [w beta];
@@ -87,6 +91,13 @@ w = [w beta];
 
 % doing the level-dependent thresholding in the same function for now
 thrvec = sigmal.*rho;
+
+%% print before applying threshold
+%figure;
+%plot(iwtrans(w,type,p))
+%title('before applying threshold')
+
+
 [w, ratiounthres, wnoise] = applythres(w, method, p, thrvec);
 %w = keeplarge(w, 2);
 

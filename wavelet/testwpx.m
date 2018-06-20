@@ -13,16 +13,38 @@ function testwpx = testwpx(type, p, sigma,  alpha, rho, method)
 close all;
 getdata;
 
+% modifying K here
+%K = real(ifft(fft(K)./abs(fft(K))));
+%K = compress(K, 'd10', 4, 50);
+
 for i=1:8
 	z = wpx(i,:);
-	[w, ratiothr] = wienforwd(z(1:1024),K(1:1024),type,p,sigma,alpha, rho,method);
+	z = z(1:1024);
+	[w, ratiothr, thrvec] = wienforwd(z,K(1:1024),type,p,sigma,alpha, rho,method);
 	figure(1);
 	subplot(4,2,i);
-	if (type == 'bior13d')
-		ww = iwtrans(w,'bior13r',p);
-	else
-		ww = iwtrans(w,type,p);
+	
+	switch type
+	case 'bior13d'
+		type = 'bior13r'
+	case 'bior33d'
+		type = 'bior33r'
 	end
+	ww = iwtrans(w, type,p);
+
+
+
+% take projection 
+% same as reconstruction upto level 2, which gives 1250MHz
+%%%%%%%%%%%%%%%%%%%%%%%
+ww = proj(ww, type,2);
+%%% fourier cutoff mutiplier (windowing)
+%mult = zeros(1,length(ww))+1;
+%%mult(250:length(ww)-250) = 0;
+%mult(length(ww)/8:length(ww)-length(ww)/8) = 0;
+%ww = real(ifft(fft(ww).*mult));
+
+
 	plot(ww);
 	xlim([1 1024]);
 	title(num2str(getsnr(ww)));
@@ -33,6 +55,11 @@ for i=1:8
 	%print -dpng '-S800,1024' wienout.png
 	title(num2str(getsnr(wf)));
 	xlim([1 1024]);
+
+	figure(3);
+	subplot(4,2,i);
+	plotpanita(ww);
+	
 
 	%figure(3);
 	%subplot(4,2,i);
