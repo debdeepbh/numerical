@@ -31,13 +31,21 @@ noised = noised(:,2)';
 
 noiseund = load('data/noise/observed_HpolC36661151.txt');
 noiseund = noiseund(:,2)';
+noise = noiseund(320:320+1023);
 
+% get the old theoretical data
+testvec_5;	% the spectrum of this one overlaps with that of K
+testvecz = testvec;
+testconvz = conv(testvecz, K)(1:1024);
+testnoisez = randn([1 length(testconvz)])*5;
+testz = testconvz + testnoisez;
 
 
 % get the theoretical data
-testvec_5;
-testconv = conv(testvec, K);
-testy = testconv + randn([1 length(testconv)])*5;
+testvec_6;	% the spectrum of this one overlaps with that of K
+testconv = conv(testvec, K)(1:1024);
+testnoise = randn([1 length(testconv)])*5;
+testy = testconv + testnoise;
 
 
 % get the wais data manuel gave me in the end

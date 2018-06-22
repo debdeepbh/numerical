@@ -9,6 +9,11 @@ sigma = csvread('noise_intp.csv');
 sigma = abs(fft(sigma));
 %sigma = sigma/length(sigma);
 
+%% For testing testy
+sigma = abs(fft(randn([1 1024])*5));
+% Default option
+%sigma = 5;
+
 N = length(fsig);
 if ~exist('scaling')
 	scaling = 1;

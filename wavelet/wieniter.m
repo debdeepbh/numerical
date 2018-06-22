@@ -13,13 +13,17 @@ fimp = fft(imp);
 
 naive = fsig./fimp;
 
-sigma = 5;
+%sigma = 5;
+consnoise = randn([1 1024])*5;	% construct a noise of same variance
+sigma = abs(fft(consnoise));
+
+
 hsq = abs(fimp).^2;
 
 % first choose the observed signal as a crude choice of desired signal
 fori = abs(fsig);	% hiller-chin justifies this choice
 %fori = hsq;
-fnoisesq = sigma^2;
+fnoisesq = sigma.^2;
 
 figure(1);
 for j=1:maxiter
@@ -37,7 +41,7 @@ for j=1:maxiter
 	% update
 	fori = fout;
 	% correction term from Hiller-Chin for convergence
-	fcorrec = (sigma^2).*(fori.^2)./(hsq.*(fori.^2) + sigma^2);
+	fcorrec = (sigma.^2).*(fori.^2)./(hsq.*(fori.^2) + sigma.^2);
 	fori = fori + fcorrec;
 	%fnoisesq = fsig.^2 - (fori.^2).*hsq;
 	%fnoisesq = fnoisesq*0.8;

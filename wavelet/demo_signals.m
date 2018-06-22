@@ -4,8 +4,8 @@ set(h,'PaperPositionMode','auto');
 
 i=1;
 subplot(2,2,i); i = i+1;
-plot(testvec);
-xlim([1 512]);
+plot([testvec zeros(1,512)]);
+xlim([1 1024]);
 title('Orignal signal: x');
 
 subplot(2,2,i); i = i+1;
