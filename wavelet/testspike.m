@@ -39,7 +39,7 @@ end
 %subplot(212)
 ww = iwtrans(w,type,p);
 
-switch post	% pose processing
+switch post	% post processing
 case 'yes'
 %% take projection 
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,7 +64,7 @@ figure;
 plotfanita(ww);
 
 % plot after post processing
-plotcoeffs(wtrans(ww, type,p),p);
+%plotcoeffs(wtrans(ww, type,p),p);
 
 
 % print the threshold proportion

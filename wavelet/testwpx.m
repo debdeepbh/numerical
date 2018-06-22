@@ -20,9 +20,7 @@ getdata;
 for i=1:8
 	z = wpx(i,:);
 	z = z(1:1024);
-	[w, ratiothr, thrvec] = wienforwd(z,K(1:1024),type,p,sigma,alpha, rho,method);
-	figure(1);
-	subplot(4,2,i);
+	[w, ratiothr, thrvec] = wienforwd(z,K,type,p,sigma,alpha, rho,method);
 	
 	switch type
 	case 'bior13d'
@@ -45,15 +43,15 @@ ww = proj(ww, type,2);
 %ww = real(ifft(fft(ww).*mult));
 
 
-	plot(ww);
+	figure(1);
+	subplot(4,2,i);
+	plotsnr(ww);
 	xlim([1 1024]);
-	title(num2str(getsnr(ww)));
+
 	figure(2);
 	subplot(4,2,i);
-	wf = decall(z,K,'wien',1)(1:1024);
-	plot(wf);
-	%print -dpng '-S800,1024' wienout.png
-	title(num2str(getsnr(wf)));
+	wf = decwien(z,K,sigma,1);
+	plotsnr(wf);
 	xlim([1 1024]);
 
 	figure(3);
