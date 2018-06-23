@@ -27,7 +27,8 @@ fnoisesq = sigma.^2;
 
 figure(1);
 for j=1:maxiter
-	mult = (hsq./(hsq + alpha*1024*fnoisesq./(fori.^2)));
+	% correction multiplier  ||fimphat||, see fdecwien.m
+	mult = (hsq./(hsq + alpha*1024*norm(abs(fimp))*fnoisesq./(fori.^2)));
 	fout = mult.*naive;
 	
 	% plotting

@@ -9,11 +9,6 @@ N = length(y);
 % using scalar value: standard deviation of the noise vector sigma
 % to threshold on the wavelet levels
 
-if (length(sigma) == 1)	% that means it is the noise variance
-	sigma_scalar = sigma;
-else
-	sigma_scalar = sqrt(var(sigma));
-end
 
 if length(scaling) == 1
 	scaling = zeros(1,p+1) + scaling;
@@ -48,8 +43,10 @@ varl = zeros(1,p+1);
 
 for j=1:p
 	% do deconvolution using specific scaling for the level
-	%[fdec, mult] = fdecwien(fsig, fimp, sigma, scaling(j));
-	[fdec, mult] = fdecwien(fsig, fimp, sigma_scalar, scaling(j));
+	% for vector valued noise
+	
+	[fdec, mult] = fdecwien(fsig, fimp, sigma, scaling(j));
+	%[fdec, mult] = fdecwien(fsig, fimp, sigma_scalar, scaling(j));
 
 	% prepare beta(k), the estimate for the k-th wavelet coefficient
 	beta = zeros(1,N/(2^j));
@@ -64,9 +61,12 @@ for j=1:p
 		%%%%%%%%%% at the j-th level
 		%%%%%%%%%% Dividing by N since dot(a,b) = dot(fft(a),fft(b))/N	% check on matlab
 		%sigmal(j) = sqrt(sigma^2 * dot( (abs(fft(Psi))./abs(fimp)).^2, abs(mult).^2)/N);
-		sigmal(j) = sqrt(sigma_scalar^2 * dot( (abs(fft(Psi))./abs(fimp)).^2, abs(mult).^2)/N);
+	if (length(sigma) == 1)	% that means it is the noise variance
+		sigmal(j) = sqrt(sigma^2 * dot( (abs(fft(Psi))./abs(fimp)).^2, abs(mult).^2)/N);
+	else
 		%%% For vector valued sigma
-		%sigmal(j) = sqrt(dot( (abs(fft(sigma_scalar)).^2).*(abs(fft(Psi))./abs(fimp)).^2, abs(mult).^2 )/N);
+		sigmal(j) = sqrt(dot( (abs(fft(sigma)).^2).*(abs(fft(Psi))./abs(fimp)).^2, abs(mult).^2 )/(N.^2));
+	end
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	end
 	w = [w beta];
@@ -74,8 +74,9 @@ end
 % finally, for Phi{-p,k}
 beta = zeros(1,N/(2^p));
 % deconvolution using specific scaling value
-%[fdec, mult] = fdecwien(fsig, fimp, sigma, scaling(p+1));
-[fdec, mult] = fdecwien(fsig, fimp, sigma_scalar, scaling(p+1));
+% for vector valued noise
+[fdec, mult] = fdecwien(fsig, fimp, sigma, scaling(p+1));
+%[fdec, mult] = fdecwien(fsig, fimp, sigma_scalar, scaling(p+1));
 for k=0:(N/(2^p) - 1)
 	% this the the Psi_{-j,k} th basis element
 	Phi = shift(B(p+1,:),(2^p)*k);
@@ -89,9 +90,12 @@ for k=0:(N/(2^p) - 1)
 	%sigmal(p+1) = sqrt((sigma^2) .* dot( (abs(fft(Phi))./abs(fimp)).^2, abs(mult).^2)/N);
 
 	
-	sigmal(p+1) = sqrt((sigma_scalar^2) .* dot( (abs(fft(Phi))./abs(fimp)).^2, abs(mult).^2)/N);
-	%%% For vector valued sigma
-	%sigmal(p+1) = sqrt(dot( (abs(fft(sigma)).^2).*(abs(fft(Phi))./abs(fimp)).^2, abs(mult).^2 )/N);
+	if (length(sigma) == 1)	% that means it is the noise variance
+		sigmal(p+1) = sqrt((sigma^2) .* dot( (abs(fft(Phi))./abs(fimp)).^2, abs(mult).^2)/N);
+	else
+		%%% For vector valued sigma
+		sigmal(p+1) = sqrt(dot( (abs(fft(sigma)).^2).*(abs(fft(Phi))./abs(fimp)).^2, abs(mult).^2 )/(N^2));
+	end
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end
 w = [w beta];
@@ -112,11 +116,13 @@ thrvec = sigmal.*rho;
 %% print before applying threshold
 %figure;
 %plot(iwtrans(w,type,p))
+%plotthr(w,p,thrvec);
 %title('before applying threshold')
 
 
 [w, ratiounthres, wnoise] = applythres(w, method, p, thrvec);
 %w = keeplarge(w, 2);
+
 
 % plot after 
 %plotcoeffs(w,p)

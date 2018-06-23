@@ -11,14 +11,16 @@ K = K(:,2)';
 % get the summed data
 
 i = 1;
-wex(i,:,:) = load('data/summed/HpolD21203158.txt')(1:1560,:); i = i+1;
-wex(i,:,:) = load('data/summed/HpolD21203755.txt')(1:1560,:); i = i+1;
-wex(i,:,:) = load('data/summed/HpolD21203785.txt')(1:1560,:); i = i+1;
-wex(i,:,:) = load('data/summed/HpolD21203830.txt')(1:1560,:); i = i+1;
-wex(i,:,:) = load('data/summed/HpolD21203866.txt')(1:1560,:); i = i+1;
-wex(i,:,:) = load('data/summed/HpolD21203883.txt')(1:1560,:); i = i+1;
-wex(i,:,:) = load('data/summed/HpolD21203930.txt')(1:1560,:); i = i+1;
-wex(i,:,:) = load('data/summed/HpolD21203958.txt')(1:1560,:); i = i+1;
+starting = 1;
+ending = 1560;
+wex(i,:,:) = load('data/summed/HpolD21203158.txt')(starting:ending,:); i = i+1;
+wex(i,:,:) = load('data/summed/HpolD21203755.txt')(starting:ending,:); i = i+1;
+wex(i,:,:) = load('data/summed/HpolD21203785.txt')(starting:ending,:); i = i+1;
+wex(i,:,:) = load('data/summed/HpolD21203830.txt')(starting:ending,:); i = i+1;
+wex(i,:,:) = load('data/summed/HpolD21203866.txt')(starting:ending,:); i = i+1;
+wex(i,:,:) = load('data/summed/HpolD21203883.txt')(starting:ending,:); i = i+1;
+wex(i,:,:) = load('data/summed/HpolD21203930.txt')(starting:ending,:); i = i+1;
+wex(i,:,:) = load('data/summed/HpolD21203958.txt')(starting:ending,:); i = i+1;
 
 % drop the timestamps, work unitless
 wex = wex(:,:,2);
@@ -39,6 +41,7 @@ testvecz = testvec;
 testconvz = conv(testvecz, K)(1:1024);
 testnoisez = randn([1 length(testconvz)])*5;
 testz = testconvz + testnoisez;
+testzori = [testvecz zeros(1,512)];
 
 
 % get the theoretical data
@@ -46,10 +49,12 @@ testvec_6;	% the spectrum of this one overlaps with that of K
 testconv = conv(testvec, K)(1:1024);
 testnoise = randn([1 length(testconv)])*5;
 testy = testconv + testnoise;
+testyori = [testvec zeros(1,512)];
 
 
 % get the wais data manuel gave me in the end
-
+starting = 320;
+ending = 320+1023;
 wp1 = load('/home/debdeep/gdrive/anita/wais_pulse/debd_stuff/HpolC21203755.txt');
 wp2 = load('/home/debdeep/gdrive/anita/wais_pulse/debd_stuff/HpolC21203785.txt');
 wp3 = load('/home/debdeep/gdrive/anita/wais_pulse/debd_stuff/HpolC21203930.txt');
@@ -59,9 +64,9 @@ wp6 = load('/home/debdeep/gdrive/anita/wais_pulse/debd_stuff/HpolC29991181.txt')
 wp7 = load('/home/debdeep/gdrive/anita/wais_pulse/debd_stuff/HpolC29991735.txt');
 wp8 = load('/home/debdeep/gdrive/anita/wais_pulse/debd_stuff/HpolC29992146.txt');
 
-wpx = [wp1(1:1560,2) wp2(1:1560,2) wp3(1:1560,2) wp4(1:1560,2) wp5(1:1560,2) wp6(1:1560,2) wp7(1:1560,2) wp8(1:1560,2)];
+wpx = [wp1(starting:ending,2) wp2(starting:ending,2) wp3(starting:ending,2) wp4(starting:ending,2) wp5(starting:ending,2) wp6(starting:ending,2) wp7(starting:ending,2) wp8(starting:ending,2)];
 
 wpx = wpx';
   
 % for beamer presentation
-z = wpx(4,:)(300:300+1023);
+z = wpx(4,:);

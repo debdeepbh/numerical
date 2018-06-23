@@ -1,4 +1,4 @@
-% plot the threshold applied on the coefficients of wavelet transform w, the p-th stage wavelet transform
+% given wavelet wavelet transform, plot coefficients along with threshold lines
 function plotthr(w,p,thrvec)
 N = length(w);
 type = '.';
