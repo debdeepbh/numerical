@@ -1,5 +1,6 @@
-% test the values of forward
-function testspike(z, K, type, p, sigma,  alpha, rho, method, post)
+% test the values of forward, ww is the final result, w is wtrans derived from wienforwd
+function [ww, w] =  testspike(z, K, type, p, sigma,  alpha, rho, method, post)
+
 % example
 % plot(iwtrans(decfw(wex(3,:)(1:1024),K(1:1024),'d6',4,'wien',[10 400 50 50 50], 4),'d6',4))
 % testfwd(3,'d6',4,[10 400 50 50 50],10)
@@ -24,7 +25,6 @@ close all;
 plotthr(w,p,thrvec);
 %plotcoeffs(w,p);
 
-figure;
 %subplot(211)
 %plot(z)
 %title('observed signal')
@@ -52,16 +52,19 @@ ww = proj(ww, type, 2);	 % for Meyer's, reconstruction at level 2
 %ww = real(ifft(fft(ww).*mult));
 end
 
+%% Plot the deconvolved signal
+figure;
 plot(ww);
 titlestr = strcat('deconvolved signal; method:', method, ', wavelet:', type);
 title(titlestr)
 xlim([1 length(w)])
 
 
-figure;
-%plot(log10(abs(fft(ww)).^2));
-%plot((1:length(ww))*5000/512, abs(fft(ww)));
-plotfanita(ww);
+%% Plot the power of the deconvolved signal 
+%figure;
+%%plot(log10(abs(fft(ww)).^2));
+%%plot((1:length(ww))*5000/512, abs(fft(ww)));
+%plotfanita(ww);
 
 % plot after post processing
 %plotcoeffs(wtrans(ww, type,p),p);
