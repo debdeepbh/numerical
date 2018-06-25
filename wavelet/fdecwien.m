@@ -34,8 +34,8 @@ end
 	% to correct the error of considering y as x, we multiply by the norm of h  so that ||xtil|| = ||x|| 
 	% where xtilhat = yhat/hhat*||hhat||, hat is Fourier transform
 	% This gives a much better result while doing wiener
-	fw = fsig .* conj(fimp) ./( hsq + scaling*(sigmasq)./(abs(fori).^2).*var(fimp) );
+	fw = fsig .* conj(fimp) ./( hsq + scaling*(sigmasq)./((abs(fori).^2)./var(fimp)) );
 	% we need to output multi as well, for wienforwd.m
-	mult = hsq ./( hsq + scaling*(sigmasq)./(abs(fori).^2  ).*(var(fimp)) );
+	mult = hsq ./( hsq + scaling*(sigmasq)./(abs(fori).^2).*(var(fimp)) );
 % multiply by the scaling and take inverse fourier transform
 %fw = wfft.*mult;

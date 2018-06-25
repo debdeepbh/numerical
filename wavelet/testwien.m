@@ -1,27 +1,41 @@
-% test wiener deconvolution
-clear all;
-getdata;
-
-alpha = 1;	%the scaling parameter
-
-
-sig = testy(1:1024);
-imp = K(1:1024);
-fsig = fft(sig);
-fimp = fft(imp);
-
-naive = fsig./fimp;
-
+% 
+imp =K;
 sigma = 5;
-hsq = abs(fimp).^2;
+%j=1;
+%sigmalist = 1:1:50;
+%for sigma=sigmalist
+	thenoise = randn([1 1024])*sigma;
+	sig = testconv + thenoise;
+%A = 0.01:0.5:40;
+%Ns = length(A);
+%i=1;
+%errwi = zeros(1,Ns);
+%for alpha=A
+	
+	fsig = fft(sig);
+	fimp = fft(imp);
+	%subplot(Ns,1,i);
+	%%% wiener
+	naive = fsig./fimp;
+	hsq = abs(fimp).^2;
 
-fori = abs(fft([testvec zeros(1,512)])).^2;	% hiller-chin justifies this choice
-%fori = hsq;
+	fori = testyori;
+	mult = hsq./(hsq + alpha*(abs(fft(thenoise)).^2)./(abs(fori).^2));
 
-mult = (hsq./(hsq + alpha*1024*sigma^2./fori));
-%mult2 = (hsq./(hsq + alpha*1024*(abs())./fori));
+	dw = real(ifft(naive.*mult));
 
-subplot(211)
-plot(testvec);
-subplot(212)
-plot(real(ifft(mult.*naive)))
+
+	%errwi(i) = rele(dw,testyori);
+	%plot(dw);
+	%i=i+1;
+%end
+%plot(A, errwi)
+%hold on
+%minA(j) = A(find(errwi == min(errwi)))(1);
+%mine(j) = min(errwi);
+%j=j+1;
+%end
+%
+%figure
+%plot(sigmalist,minA)
+plot(dw)

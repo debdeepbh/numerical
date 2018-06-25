@@ -113,10 +113,10 @@ w = [w beta];
 % doing the level-dependent thresholding in the same function for now
 thrvec = sigmal.*rho;
 
-%% print before applying threshold
+%%% print before applying threshold
 %figure;
 %plot(iwtrans(w,type,p))
-%plotthr(w,p,thrvec);
+%%plotthr(w,p,thrvec);
 %title('before applying threshold')
 
 
