@@ -16,7 +16,8 @@ for i=1:p
 
 	% plot the line
 	hold on
-	plot([1 N],[thrvec(i) thrvec(i)],[1 N],-[thrvec(i) thrvec(i)],'r');
+	plot([1 N],[thrvec(i) thrvec(i)],'r');
+	plot([1 N],-[thrvec(i) thrvec(i)],'r');
 	hold off
 
 
@@ -33,7 +34,8 @@ axes(ha(p+1));
 vals = coeff(w,p,p+1);
 stem(1:gap:N, vals, type)
 hold on
-	plot([1 N],[thrvec(p+1) thrvec(p+1)],[1 N],-[thrvec(p+1) thrvec(p+1)],'r');
+	plot([1 N],[thrvec(p+1) thrvec(p+1)],'r');
+	plot([1 N],-[thrvec(p+1) thrvec(p+1)],'r');
 	hold off
 xlim([1 N]);
 ylabel(strcat('Coarsest level:',num2str(p)));

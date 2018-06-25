@@ -17,10 +17,14 @@ getdata;
 %K = real(ifft(fft(K)./abs(fft(K))));
 %K = compress(K, 'd10', 4, 50);
 
+sc_wpx = zeros(8,p+1);
+%load(sc_wpx);
+
 for i=1:8
 	z = wpx(i,:);
 	z = z(1:1024);
-	[w, ratiothr, thrvec] = wienforwd(z,K,type,p,sigma,alpha, rho,method);
+	sc_wpx(i,:) = getoptsc(z, K, type, p, sigma, 'bisec');
+	[w, ratiothr, thrvec] = wienforwd(z,K,type,p,sigma,sc_wpx, rho,method);
 	
 	switch type
 	case 'bior13d'
@@ -54,16 +58,16 @@ ww = proj(ww, type,2);
 	plotsnr(wf);
 	xlim([1 1024]);
 
-	figure(3);
-	subplot(4,2,i);
-	plotpanita(ww);
-	
-
 	%figure(3);
 	%subplot(4,2,i);
-	%plot(decall(z,K,'allp',1)(1:1024) - iwtrans(w,type,p));
+	%plotpanita(ww);
+	
+
+	figure(3);
+	subplot(4,2,i);
+	plotsnr(decall(z,K,'allp',1));
 	%title(num2str(getsnr(ww)));
-	%xlim([1 1024]);
+	xlim([1 1024]);
 
 	%figure(4);
 	%subplot(4,2,i);
@@ -72,3 +76,4 @@ ww = proj(ww, type,2);
 	%xlim([1 1024]);
 end
 
+save('sc_wpx.mat','sc_wpx');

@@ -1,0 +1,27 @@
+% 
+j=1;
+sigmalist = 2:2:60;
+for sigma=sigmalist
+	thenoise = randn([1 1024])*sigma;
+	sig = testconvz + thenoise;
+A = 10:1000:80000;
+Ns = length(A);
+i=1;
+errwi = zeros(1,Ns);
+for alpha=A
+	
+	%subplot(Ns,1,i);
+	dw = decwien(sig,K,thenoise,alpha);
+	errwi(i) = rele(dw,testyori);
+	%plot(dw);
+	i=i+1;
+end
+plot(A, errwi)
+hold on
+minA(j) = A(find(errwi == min(errwi)));
+mine(j) = min(errwi);
+j=j+1;
+end
+
+figure
+plot(sigmalist,minA)
