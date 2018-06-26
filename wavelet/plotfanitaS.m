@@ -1,6 +1,6 @@
 % plot in real units using sample rate and 
-function plotfanita(z)
-fs = 10e9;	% sample rate in GHz
+function plotfanitaS(z)
+fs = 2.6e9;	% sample rate in GHz
 fs = fs/(10^6);	% x axis in MHz
 N = length(z);
 axsc = fs/N;	% axis scaling factor that will take [0,N/2] to [0,fs/2]
