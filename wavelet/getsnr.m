@@ -7,8 +7,8 @@ function [snrval, M, m, a, b] = getsnr(z)
 n = 10;	% how much around the peaks to exclude
 M = max(z);
 m = min(z);
-maxind = find(z == M);
-minind = find(z == m);
+maxind = find(z == M)(1);
+minind = find(z == m)(1);
 first = min(minind,maxind);
 last = max(minind,maxind);
 peakarea = last - first;
