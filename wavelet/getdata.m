@@ -3,6 +3,9 @@
 % each column is one data
 % after dropping the time data
 
+% clear all
+clear all
+
 
 % the impulse response to be used
 K = load('data/notches_260_0_0.txt');
@@ -70,3 +73,27 @@ wpx = wpx';
   
 % for beamer presentation
 z = wpx(4,:);
+
+%%%% load the signals from each antenna
+ax = load('/home/debdeep/numerical/wavelet/data/testantenna');
+ax = ax';	% one row is a signal now
+
+% antenna list for ax
+antlist =[33 17 1 0 16 32 18 34 2 15 31 47 3 19 35];
+aximp = zeros(length(antlist),1024);
+for i = 1:length(antlist)
+	pathname = '/home/debdeep/numerical/wavelet/data/notches_Debdeep/';
+	aximp(i,:) = load(strcat(pathname,getantenna(antlist(i))))(:,2)';
+end
+
+%%%% load the noise from each antenna
+nx = load('/home/debdeep/numerical/wavelet/data/testnoise');
+nx = nx';	% one row is a signal now
+
+% antenna list for ax
+antlist =[47 31 15 32 16 0 14 30 46 33 17 1 13 45 29];
+nximp = zeros(length(antlist),1024);
+for i = 1:length(antlist)
+	pathname = '/home/debdeep/numerical/wavelet/data/notches_Debdeep/';
+	nximp(i,:) = load(strcat(pathname,getantenna(antlist(i))))(:,2)';
+end
