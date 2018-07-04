@@ -1,4 +1,5 @@
 % pad frequencies to upsample to get a vector of length N
+% can also be used to window without padding, when N = length(w)
 % window then pad to avoid ringing,
 % eps is the proportion of *actual* frequency of the original signal to get modified
 % eps=1 implies window all, ie planktaper eps = 0.5
