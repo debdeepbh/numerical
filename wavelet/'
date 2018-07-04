@@ -1,0 +1,34 @@
+% window the frequency of the signal with cutoff and taper
+% using plank taper window
+% all values should be given in terms of *actual* frequency ratio
+% the unmentioned ratio will be considered to be untapered
+function z = windowfreq(w, leftcut, lefttaper, righttaper, rightcut)
+
+if (leftcut+ lefttaper + righttaper + rightcut > 1)
+	disp('total exceeds 1');
+else
+	n = length(w);
+	N = floor(n/2);	% max frequency possible
+
+
+
+	% get the actual number of time points based on ratio
+	leftcutn = floor(N*leftcut);
+	lefttapern = floor(N*lefttaper);
+	rightcutn = floor(N*rightcut);
+	righttapern = floor(N*righttaper);
+	extran = n - (leftcutn + lefttapern + rightcutn + righttapern);	% error due to floor
+
+	% prepare the left side
+	halfcutoff = [zeros(1,leftcutn) planktaper(2*lefttapern,0.5)(1:lefttapern) (zeros(1,extran)+1) planktaper(2*righttapern,0.5)(righttapern+1:2*righttapern) zeros(1,rightcut)];
+
+	cutoff = [halfcutoff flip(halfcutoff)];
+	newf = fft(w).*cutoff;
+
+	z =real(ifft(newf));
+end
+
+
+
+
+
