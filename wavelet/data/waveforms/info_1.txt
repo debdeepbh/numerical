@@ -1,23 +1,23 @@
 25238763
 AntennaPositions(4)
-antennas 38
-antennas 22
-antennas 6
-antennas 7
-antennas 39
-antennas 23
-antennas 37
-antennas 21
-antennas 8
-antennas 5
-antennas 40
-antennas 24
-antennas 20
-antennas 36
-antennas 4
+38
+22
+6
+7
+39
+23
+37
+21
+8
+5
+40
+24
+20
+36
+4
 0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
 0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+0	0	0	0	0	0	0	
 0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
 0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
 0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	

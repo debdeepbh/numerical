@@ -5,14 +5,17 @@
 %function [w, ratiounthres, thrvec]  = wienforwd(y, K, type, p, sigma, scaling, rho,method)
 % sigma is the standard deviation used in wiener deconvolution
 
-close all;
-getdata;
+%[ax, aximp] = prepsig(2);
+
+%close all;
+%getdata;
 
 type = 'meyer';
 p = 5;
 method = 'soft';
 % noise is loaded from another file
 %noiseax = nx(:,320:(320+1023));
+%noiseax = decall(nx(:,320:(320+1023)),K,'allp',1);
 noiseax = std(nx(:,320:(320+1023))')';
 %noiseax = zeros(15,1)+11.2; %nx(:,1:(1+1023));
 %noiseax = 18.2;
@@ -30,7 +33,7 @@ zaxf = zaxa = zaxw = zeros(size(wax));
 snrval = zeros(1,15);
 
 % compute each time or once
-%sc_ax = zeros(15,p+1);
+%sc_ax = zeros(15,p+1)+1;
 sc_ax = load('sc_ax');
 
 
@@ -162,22 +165,28 @@ thrvec = sigmalavg.*rho;
 [w, ratiounthres, wnoise] = applythres(avgWienw, method, p, thrvec);
 %w = keeplarge(w, 2);
 
-plotthr(w,p,thrvec);
+% print the threshold values
+%thrvec
+
+% plot the threshold values after thresholding
+%plotthr(w,p,thrvec);
 
 z = iwtrans(w,type,p);
 
-figure;
-plotsnr(z);
+% plot before windowing
+%figure;
+%plotsnr(z);
 
 %%%%%%%% windowing to cut off higher frequencies
 z = windowfreq(z, 0, 180/5000, 600/5000, 0.75);
-figure;
+
+%figure;
 plotsnr(z);
 
 
 
-figure;
-plotpanita(z);
+%figure;
+%plotpanita(z);
 
 %isolate(z,type,p);
 

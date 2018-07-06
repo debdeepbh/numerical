@@ -29,7 +29,12 @@ else
      halfcutoff = [lc lt xt rt rc];
 
 
+     if (2*N == n)	% i.e even length
 	cutoff = [halfcutoff flip(halfcutoff)];
+else
+
+	cutoff = [halfcutoff 1 flip(halfcutoff)];
+end
 
      %% plot the cutoff function
      %%%% this helps plot then cutoff in anita freq
