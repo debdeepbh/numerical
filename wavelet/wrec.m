@@ -12,5 +12,9 @@ else
 	% recursion
        	second = wrec(down(realconv(z,util)), sdim, fold(util),fold(vtil));
 end
+
+
+
+
 w = [first second];
 

@@ -29,13 +29,13 @@ for k=1:p
 
 		switch rule
 		case 'hard'
-			if( w(l) < thr(k))
+			if( abs(w(l)) < thr(k))
 				w(l) = 0;
 				% update ratio counter
 				thresholded = thresholded + 1;
 			end
 		case 'soft'
-			if( w(l) >= thr(k))
+			if( abs(w(l)) >= thr(k))
 				w(l) = sign(w(l)) * (abs(w(l)) - thr(k));
 			else
 				w(l) = 0;
@@ -69,10 +69,34 @@ end
 % reset the counter of unthresholded coefficients
 thresholded = 0;
 for l=starting:N
-	if( w(l) < thr(p+1))
-		w(l) = 0;
-		% update ratio counter
-		thresholded = thresholded + 1;
+	%%if( w(l) < thr(p+1))
+	%%	w(l) = 0;
+	%%	% update ratio counter
+	%%	thresholded = thresholded + 1;
+	%%end
+	switch rule
+	case 'hard'
+		if( abs(w(l)) < thr(p+1))
+			w(l) = 0;
+			% update ratio counter
+			thresholded = thresholded + 1;
+		end
+	case 'soft'
+		if( abs(w(l)) >= thr(p+1))
+			w(l) = sign(w(l)) * (abs(w(l)) - thr(p+1));
+		else
+			w(l) = 0;
+			% update ratio counter
+			thresholded = thresholded + 1;
+		end
+	case 'wien'	% wavelet domain wiener shrinkage 
+		% applies to all the wavelet coefficients
+		% irrespective of the threshold
+		% Here, the threshold should be the 
+		% leaked noise variance at that level
+		w(l) = (w(l)^2)/(w(l)^2 + thr(p+1)^2);
+	otherwise
+		disp('Wrong thresholding method.');
 	end
 end
 

@@ -38,7 +38,7 @@ end
 
      %% plot the cutoff function
      %%%% this helps plot then cutoff in anita freq
-     %plotfanita(ifft(cutoff));
+     plotfanita(ifft(cutoff));
 
 
 	newf = fft(w).*cutoff;

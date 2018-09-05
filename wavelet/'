@@ -1,34 +1,27 @@
-% window the frequency of the signal with cutoff and taper
-% using plank taper window
-% all values should be given in terms of *actual* frequency ratio
-% the unmentioned ratio will be considered to be untapered
-function z = windowfreq(w, leftcut, lefttaper, righttaper, rightcut)
+% recursive implementation of wavelet transform
+% wavelet transform of z wrt parent wavelets u and v with smallest possible dimension sdim
+% e.g. for p-th stage wavelets, sdim = N/2^(p-1)
+function w = wrec(z, sdim, util, vtil)
+first = down(realconv(z,vtil));
+%% debig
+if(length(z) == 512)
+	figure;
+	plot(z);
+	figure;
+	plot(vtil);
+end
 
-if (leftcut+ lefttaper + righttaper + rightcut > 1)
-	disp('total exceeds 1');
+if length(z) <= 2*sdim
+	% some stopping condition
+       	second = down(realconv(z, util));
+	length(second);
 else
-	n = length(w);
-	N = floor(n/2);	% max frequency possible
-
-
-
-	% get the actual number of time points based on ratio
-	leftcutn = floor(N*leftcut);
-	lefttapern = floor(N*lefttaper);
-	rightcutn = floor(N*rightcut);
-	righttapern = floor(N*righttaper);
-	extran = n - (leftcutn + lefttapern + rightcutn + righttapern);	% error due to floor
-
-	% prepare the left side
-	halfcutoff = [zeros(1,leftcutn) planktaper(2*lefttapern,0.5)(1:lefttapern) (zeros(1,extran)+1) planktaper(2*righttapern,0.5)(righttapern+1:2*righttapern) zeros(1,rightcut)];
-
-	cutoff = [halfcutoff flip(halfcutoff)];
-	newf = fft(w).*cutoff;
-
-	z =real(ifft(newf));
+	% recursion
+       	second = wrec(down(realconv(z,util)), sdim, fold(util),fold(vtil));
 end
 
 
 
 
+w = [first second];
 
