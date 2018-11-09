@@ -65,4 +65,5 @@ To apply the Plank-taper window without padding, use `N = length(w)` and any val
 # Reference
 
 * M. Frazier, _An Introduction to Wavelets through Linear Algebra_
-* Thanks to Dr. Svetlana Roudenko for teaching the material
+* Thanks to Dr. Svetlana Roudenko for teaching the material on wavelets
+* Thanks to Dr. Peter Gorham for providing ANITA data
