@@ -54,7 +54,7 @@ ANITA related tools
 * `wpxsc = getwpxsc(type, p, sigma)` returns the optimal scaling values `alpha` required for the deconvolving the ANITA signal `wpx` (see `getdata` for the test signal), using the bisection method 
 
 Other tools
-* `z = padfreq(w, N, eps)` increases the resolution of the signal (i.e. upsamples) `w` using a Plank-taper window. If `N > length(w)` it adds zeros in the frequency domain. However, the process can add Gibbs phenomenon in the time domain if the frequency does not decay to zero. To avoid this, we apply a smooth Fourier cut-off function (a Plank-taper window in the frequency domain) with `eps` (between 0 and 1) being the proportion of the _actual_ frequency of the signal `w` to get scaled down. For example, `eps = 1` scales the entire frequency range of the original signal. 
+* `z = padfreq(w, N, eps)` increases the resolution of the signal (i.e. upsamples) `w` by zero-padding followed by smoothing. If `N > length(w)` it adds zeros in the frequency domain. However, the process can add Gibbs phenomenon in the time domain if the frequency does not decay to zero. To avoid this, we apply a smooth Fourier cut-off function (a Plank-taper window in the frequency domain) with `eps` (between 0 and 1) being the proportion of the _actual_ frequency of the signal `w` to get scaled down. For example, `eps = 1` scales the entire frequency range of the original signal. 
 To apply the Plank-taper window without padding, use `N = length(w)` and any value of `eps`.
 * `planktaper(N,eps)` generates a Plank-taper window of length `N` and tapering window of length `eps*N`. E.g. `eps = 0.5` the function obtains value 1 on a set of measure zero
 * `croscor(f,q)` computes the circular cross-correlation between two vectors of same length
@@ -66,4 +66,4 @@ To apply the Plank-taper window without padding, use `N = length(w)` and any val
 
 * M. Frazier, _An Introduction to Wavelets through Linear Algebra_
 * Thanks to Dr. Svetlana Roudenko for teaching the material on wavelets
-* Thanks to Dr. Peter Gorham for providing ANITA data
+* Thanks to Dr. Peter Gorham for providing support and ANITA data and Manuel Olmedo for making the data matlab-friendly
