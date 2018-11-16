@@ -1,31 +1,9 @@
-% streamlining the deconvolution while deconvoling each antenna. Wavelet thresholding done in the end
-% estimates the wavelet coefficients after doing deconvolution in Fourier then wavelet domain, based on supplied scaling values
-% scaling should be of length p+1
-% type is the wavelet filter type, p-th stage
-%function [w, ratiounthres, thrvec]  = wienforwd(y, K, type, p, sigma, scaling, rho,method)
-% sigma is the standard deviation used in wiener deconvolution
+function [z, ratiounthres] = multi_fpar(wax, aximp, testyori, type, p, noiseax, sc_ax, rho, method)
+
+noisearr = std(noiseax')';
 
 
-type = 'meyer';
-p = 5;
-method = 'soft';
-rho = 1;
-
-noisearr = std(noiseax(:,1:1024)')';
-
-
-zaxf = zaxa = zaxw = zeros(size(wax));
-
-snrval = zeros(1,15);
-
-% compute each time or once
-%sc_ax = zeros(15,p+1)+1;
-sc_ax = load('sc_ax');
-
-
-N = 1024;
-M = 15;
-
+ [M, N] = size(wax);
 % get the wavelet basis
 B = getbasismat(type, p, N);
 
@@ -38,15 +16,15 @@ sigmalavg = zeros(1,p+1);
 
 % using equation (22) from Donoho et al 2004 
 
+fori = fft(testyori);
 % all the antennas
 for i =1:M
 	fsig = fft(wax(i,:));
 	fimp = fft(aximp(i,:));
-	fori = fft(testyori);
 	sigma = noisearr(i);	% using scalar noise, i.e standard deviation
 
 	% to be chosen later
-	scaling = sum(sc_ax)/M;
+	scaling = sc_ax;
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%% estimate the wavelet coefficients 
@@ -78,7 +56,6 @@ for i =1:M
 			% i.e. dot(Psi,Psi) = N
 			beta(k+1) = dot(fft(Psi), fdec)/N;
 
-						%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		end
 		w = [w beta];
 	%%%%%%%%%% computing the variance of the noise
@@ -93,6 +70,9 @@ for i =1:M
 				end
 
 		end
+
+
+
 	% finally, for Phi{-p,k}
 	beta = zeros(1,N/(2^p));
 	% deconvolution using specific scaling value
@@ -121,8 +101,7 @@ for i =1:M
 		%%% For vector valued sigma
 		sigmal(i,p+1) = sqrt(dot( (abs(fft(sigma)).^2).*(abs(fft(Phi))./abs(fimp)).^2, abs(mult).^2 )/(N^2));
 	end
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	% store the scaled-wiener deconvolved signal's wavelet transform for i-th antenna
 	antWienw(i,:) = w;
 
@@ -173,22 +152,5 @@ rele(z, testyori)
 %figure;
 %plotsnr(z);
 
-%%%%%%%%% windowing to cut off higher frequencies
-%z = windowfreq(z, 0, 180/5000, 600/5000, 0.75);
-%
-%%figure;
-%plotsnr(z);
-
-
-
-%figure;
-%plotpanita(z);
-
-%isolate(z,type,p);
-
-% plot after 
-%plotcoeffs(w,p)
-
 scaling
 ratiounthres
-
