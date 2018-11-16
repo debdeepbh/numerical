@@ -11,12 +11,12 @@ N = length(fsig);
 
 	% construct the multiplier
 	if (length(noise)==1)	% noise is actually the  sd
-		sigmasq = N*noise^2;
+		Nsigmasq = N*noise^2;
 	else			% it is the raw noise
-		sigmasq = abs(fft(noise)).^2;
+		Nsigmasq = abs(fft(noise)).^2;
 	end
-	fw = fsig .* conj(fimp) ./( hsq + scaling*(sigmasq)./(abs(fori).^2) );
+	fw = fsig .* conj(fimp) ./( hsq + scaling*(Nsigmasq)./(abs(fori).^2) );
 	% we need to output multi as well, for wienforwd.m
-	mult = hsq ./( hsq + scaling*(sigmasq)./(abs(fori).^2) );
+	mult = hsq ./( hsq + scaling*(Nsigmasq)./(abs(fori).^2) );
 % multiply by the scaling and take inverse fourier transform
 %fw = wfft.*mult;
