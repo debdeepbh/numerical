@@ -22,7 +22,7 @@ testyori = [testvec zeros(1,512)];
 for i=1:15
 	testconv(i,:) = conv(testvec, aximp(i,:))(1:1024);
 	% noise of standard deviation 5i
-	noiseax(i,:) = randn([1 length(testconv(i,:))])*10*i;
+	noiseax(i,:) = randn([1 length(testconv(i,:))])*2*i;
 	wax(i,:) =  testconv(i,:) + noiseax(i,:);
 end
 

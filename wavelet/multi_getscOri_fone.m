@@ -86,9 +86,9 @@ for i=1:p+1
 			a = c;
 		end
 	else
+		c = 0.01;
+		disp('No solution in between for');
 		i
-		c = 0.1;
-		disp('No solution in between');
 		break;
 	end
 	end

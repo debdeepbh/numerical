@@ -180,9 +180,9 @@ for j=1:p+1
 			a = c;
 		end
 	else
-		i
-		c = 0.1;
-		disp('No solution in between');
+		c = 0.01;
+		disp('No solution in between for');
+		j
 		break;
 	end
 
