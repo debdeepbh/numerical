@@ -72,3 +72,4 @@ xlim([1 length(w)])
 
 % print the threshold proportion
 ratiount
+thrvec

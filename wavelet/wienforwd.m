@@ -4,6 +4,8 @@
 function [w, ratiounthres, thrvec]  = wienforwd(y, K, type, p, sigma, scaling, rho,method)
 % sigma is the standard deviation used in wiener deconvolution
 
+tic 
+
 N = length(y);
 
 % using scalar value: standard deviation of the noise vector sigma
@@ -42,6 +44,7 @@ w = [];
 varl = zeros(1,p+1);
 
 for j=1:p
+	Bsis = B(j,:);
 	% do deconvolution using specific scaling for the level
 	% for vector valued noise
 	
@@ -52,7 +55,7 @@ for j=1:p
 	beta = zeros(1,N/(2^j));
 	for k=0:(N/(2^j) - 1)	% range of k
 		% this the the Psi_{-j,k} th basis element
-		Psi = shift(B(j,:),(2^j)*k);
+		Psi = shift(Bsis,(2^j)*k);
 		% dot product with the deconvolution, the estimated coefficient
 		% matlab dot product, non-commutative, u.v = sum{conj(u),v}
 		beta(k+1) = dot(fft(Psi), fdec);
@@ -61,15 +64,16 @@ for j=1:p
 		%%%%%%%%%% at the j-th level
 		%%%%%%%%%% Dividing by N since dot(a,b) = dot(fft(a),fft(b))/N	% check on matlab
 		%sigmal(j) = sqrt(sigma^2 * dot( (abs(fft(Psi))./abs(fimp)).^2, abs(mult).^2)/N);
-	if (length(sigma) == 1)	% that means it is the noise variance
-		sigmal(j) = sqrt(sigma^2 * dot( (abs(fft(Psi))./abs(fimp)).^2, abs(mult).^2)/N);
-	else
-		%%% For vector valued sigma
-		sigmal(j) = sqrt(dot( (abs(fft(sigma)).^2).*(abs(fft(Psi))./abs(fimp)).^2, abs(mult).^2 )/(N.^2));
-	end
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	end
 	w = [w beta];
+
+	if (length(sigma) == 1)	% that means it is the noise variance
+		sigmal(j) = sqrt(sigma^2 * dot( (abs(fft(Bsis))./abs(fimp)).^2, abs(mult).^2)/N);
+	else
+		%%% For vector valued sigma
+		sigmal(j) = sqrt(dot( (abs(fft(sigma)).^2).*(abs(fft(Bsis))./abs(fimp)).^2, abs(mult).^2 )/(N.^2));
+	end
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end
 % finally, for Phi{-p,k}
 beta = zeros(1,N/(2^p));
@@ -77,9 +81,10 @@ beta = zeros(1,N/(2^p));
 % for vector valued noise
 [fdec, mult] = fdecwien(fsig, fimp, sigma, scaling(p+1));
 %[fdec, mult] = fdecwien(fsig, fimp, sigma_scalar, scaling(p+1));
+Bsis = B(p+1,:);
 for k=0:(N/(2^p) - 1)
 	% this the the Psi_{-j,k} th basis element
-	Phi = shift(B(p+1,:),(2^p)*k);
+	Phi = shift(Bsis,(2^p)*k);
 	% dot product with the deconvolution, the estimated coefficient
 	% matlab dot product, non-commutative, u.v = sum{conj(u),v}
 	beta(k+1) = dot(fft(Phi), fdec);
@@ -88,17 +93,16 @@ for k=0:(N/(2^p) - 1)
 	%%%%%%%%%% at the j-th level
 	%%%%%%%%%% Dividing by N since dot(a,b) = dot(fft(a),fft(b))/N	% check on matlab
 	%sigmal(p+1) = sqrt((sigma^2) .* dot( (abs(fft(Phi))./abs(fimp)).^2, abs(mult).^2)/N);
-
-	
-	if (length(sigma) == 1)	% that means it is the noise variance
-		sigmal(p+1) = sqrt((sigma^2) .* dot( (abs(fft(Phi))./abs(fimp)).^2, abs(mult).^2)/N);
-	else
-		%%% For vector valued sigma
-		sigmal(p+1) = sqrt(dot( (abs(fft(sigma)).^2).*(abs(fft(Phi))./abs(fimp)).^2, abs(mult).^2 )/(N^2));
-	end
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end
 w = [w beta];
+	
+if (length(sigma) == 1)	% that means it is the noise variance
+	sigmal(p+1) = sqrt((sigma^2) .* dot( (abs(fft(Phi))./abs(fimp)).^2, abs(mult).^2)/N);
+else
+	%%% For vector valued sigma
+	sigmal(p+1) = sqrt(dot( (abs(fft(sigma)).^2).*(abs(fft(Phi))./abs(fimp)).^2, abs(mult).^2 )/(N^2));
+end
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % because the norm-square of each Phi or Psi is N, not 1
 % i.e. dot(Psi,Psi) = N
@@ -123,6 +127,7 @@ thrvec = sigmal.*rho;
 [w, ratiounthres, wnoise] = applythres(w, method, p, thrvec);
 %w = keeplarge(w, 2);
 
+toc
 
 % plot after 
 %plotcoeffs(w,p)
