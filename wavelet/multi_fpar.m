@@ -131,7 +131,7 @@ thrvec = sigmalavg.*rho;
 %%plotthr(w,p,thrvec);
 %title('before applying threshold')
 
-plotthr(avgWienw, p, thrvec)
+%plotthr(avgWienw, p, thrvec)
 
 
 [w, ratiounthres, wnoise] = applythres(avgWienw, method, p, thrvec);
@@ -145,12 +145,12 @@ plotthr(avgWienw, p, thrvec)
 
 z = iwtrans(w,type,p);
 
-figure 2
-plot(z)
-rele(z, testyori)
+%figure 2
+%plot(z)
+%rele(z, testyori)
 % plot before windowing
 %figure;
 %plotsnr(z);
 
-scaling
-ratiounthres
+%scaling
+%ratiounthres
