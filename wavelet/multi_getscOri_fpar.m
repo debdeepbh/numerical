@@ -1,7 +1,7 @@
 % get alpha from the original signal
-function alpha = multi_getscOri_fpar(wax, aximp, testyori, type, p, noiseax)
+function [alpha, ratioUnth, sigl] = multi_getscOri_fpar(wax, aximp, testyori, type, p, noiseax)
 
-errorl = 0.01;
+errorl = 0.001;
 
 [M, N] = size(wax);
 % fft of a martrix is calculated column wise
@@ -14,6 +14,8 @@ wori = wtrans(testyori, type, p);
 B = getbasismat(type, p, N);
 
 alpha = zeros(1,p+1)+1; % start with scaling value 1
+ratioUnth = zeros(1,p+1)+1; % start with scaling value 1
+sigl = zeros(1,p+1)+1; % start with scaling value 1
 
 
 
@@ -22,8 +24,8 @@ for j=1:p+1
 	coeffvals = coeff(wori, p, j);
 	PsiSq = abs(fft(B(j,:)));
 	% initial guess
-	a = 0.001;
-	b = 1;
+	a = 0.005;
+	b = 0.5;
 	while (abs(a-b)>errorl)
 	alpha(j) = a;
 	%%%%%%%%%%%%%55 this is level dependent sigmal%%%%%%%%%%%55%%55
@@ -110,6 +112,7 @@ for j=1:p+1
 	sigmal = sqrt(sum((sigmalall).^2))/M;	% avg over i
 	%%%%%%%%%%%%%%%  calculate Q(j)
 	% define Rij
+	
 	for i =1:M
 		R(i,:) = abs(fori).*hsq(i,:) + N*noise(i)^2*alpha(j);
 	end
@@ -188,6 +191,8 @@ for j=1:p+1
 
 	end
 	alpha(j) = c;
+	ratioUnth(j) = c;
+	sigl(j) = sigmal ;
 end
 
 

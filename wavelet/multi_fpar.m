@@ -1,11 +1,17 @@
-function [z, ratiounthres] = multi_fpar(wax, aximp, testyori, type, p, noiseax, sc_ax, rho, method)
+function [z, ratiounthres, sigmalavg] = multi_fpar(wax, aximp, testyori, noiseax, sc_ax)
+%function [z, ratiounthres, sigmalavg] = multi_fpar(wax, aximp, testyori, type, p, noiseax, sc_ax, rho, method)
 
 noisearr = std(noiseax')';
 
 
  [M, N] = size(wax);
 % get the wavelet basis
-B = getbasismat(type, p, N);
+%B = getbasismat(type, p, N);
+global B
+global type
+global p
+global rho
+global method
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,6 +79,7 @@ for i =1:M
 
 
 
+
 	% finally, for Phi{-p,k}
 	beta = zeros(1,N/(2^p));
 	% deconvolution using specific scaling value
@@ -117,6 +124,7 @@ for j=1:p+1
 end
 
 
+
 %%%%%%%%%%%%%%%
 % plot before thresholding
 %plotcoeffs(w,p)
@@ -137,6 +145,35 @@ thrvec = sigmalavg.*rho;
 [w, ratiounthres, wnoise] = applythres(avgWienw, method, p, thrvec);
 %w = keeplarge(w, 2);
 
+%%%%%%%%%%%%%%%  calculate Q(j)
+for j=1:p+1
+	PsiSq = abs(fft(B(j,:)));
+	% define Rij
+	for i =1:M
+		R(i,:) = abs(fori).*(abs(aximp(i,:)).^2) + N*std(noiseax(i))^2*sc_ax(j);
+	end
+	% inner sum
+	denom = zeros(1,N);
+	numera = zeros(1,N);
+	for k=1:M
+		for i=1:M
+			sumterm = (noiseax(i)^2)*(noiseax(k)^2)*abs(aximp(i,:).^2)./(R(i,:).^2) ./ R(k,:);
+			if i==k
+				numera = numera + sumterm;
+			else
+				denom = denom + sumterm;
+			end
+		end
+	end
+
+	% sum over f
+	Q(j) = sum(abs(fori).^4 .* PsiSq.^2 .* numera) / sum(abs(fori).^4 .* PsiSq.^2 .* denom);
+end
+
+%%%%%%%%%%% done calculating Q(j)
+%% updated the ratiotunthres for fpar
+% hope this is not a matrix
+ratiounthres = ratiounthres./(1+Q);
 % print the threshold values
 %thrvec
 

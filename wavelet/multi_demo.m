@@ -1,3 +1,6 @@
+%%  comparison of Weiner, partial and single(averaged) on theoretical data
+
+
 %% check Wiener deconvolution for the 5th single signal
 %plot(real(ifft(multi_fdecwien(fft(wax(5,:)), fft(aximp(5,:)), noiseax(5,:), fft(testyori), 1))))
 
@@ -14,7 +17,7 @@ avgW = mean(decW);
 % compute the error
 err_wien = rele(avgW, testyori);
 
-type = 'd10';
+type = 'd2';
 p = 5;
 rule = 'soft';
 rho  = 1;

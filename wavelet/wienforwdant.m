@@ -10,17 +10,22 @@
 %close all;
 %getdata;
 
-type = 'meyer';
+type = 'd10';
 p = 5;
 method = 'soft';
 % noise is loaded from another file
 %noiseax = nx(:,320:(320+1023));
 %noiseax = decall(nx(:,320:(320+1023)),K,'allp',1);
-noiseax = std(nx(:,320:(320+1023))')';
+%% get the noise data
+%noiseax = std(nx(:,320:(320+1023))')';
+% choosing the tail as noise
+noiseax = std(ax(:,900:1200)')';
+
+
 %noiseax = zeros(15,1)+11.2; %nx(:,1:(1+1023));
 %noiseax = 18.2;
-rho = 1;
-%rho = 2; 
+%rho = 1;
+rho = 1.5; 
 %rho = [10e10 10e10 1 1 1 10e10];
 %rho = [10e10 10e10 4 3 2 10e10];
 %rho = [1 1 1 1 1 10e10];
@@ -180,8 +185,9 @@ z = iwtrans(w,type,p);
 %%%%%%%% windowing to cut off higher frequencies
 z = windowfreq(z, 0, 180/5000, 600/5000, 0.75);
 
-%figure;
-plotsnr(z);
+%%figure;
+%plotsnr(z);
+
 
 
 
@@ -192,4 +198,23 @@ plotsnr(z);
 
 % plot after 
 %plotcoeffs(w,p)
+
+% try fone 
+w_one  = wienforwd(sum(wax)/15, sum(aximp)/15, type, p, sum(noiseax)/15, sc_ax, rho,method);
+zzone = iwtrans(w_one,type,p);
+zzone = windowfreq(zzone, 0, 180/5000, 600/5000, 0.75);
+%figure 5
+%plotsnr(zzone); 
+
+% try favg
+
+sumall = zeros(1,length(wax));
+for i = 1:15
+w_avg  = wienforwd(wax(i,:), aximp(i,:), type, p, noiseax(i), sc_ax, rho,method);
+zsingle = iwtrans(w_avg,type,p);
+sumall = sumall + zsingle;
+end
+z_avg = sumall/15;
+z_avg = windowfreq(z_avg, 0, 180/5000, 600/5000, 0.75);
+%plot(z_avg)
 

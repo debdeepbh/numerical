@@ -18,11 +18,23 @@ testyori = [testvec zeros(1,512)];
 % pad by zero to make longer
 testyori = [testvec zeros(1,512)];
 
+%%% %%%% taking all the impulse responses to be the same
+%for i=1:15
+%	aximp(i,:) = aximp(1,:);
+%end
+
 
 for i=1:15
 	testconv(i,:) = conv(testvec, aximp(i,:))(1:1024);
 	% noise of standard deviation 5i
 	noiseax(i,:) = randn([1 length(testconv(i,:))])*2*i;
+%% %%using same noise level
+	%noiseax(i,:) = randn([1 length(testconv(i,:))])*11;
+	%if i<=3
+	%	noiseax(i,:) = randn([1 length(testconv(i,:))])*3;
+	%else
+	%	noiseax(i,:) = randn([1 length(testconv(i,:))])*3*i;
+	%end
 	wax(i,:) =  testconv(i,:) + noiseax(i,:);
 end
 

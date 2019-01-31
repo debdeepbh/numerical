@@ -1,5 +1,11 @@
-function [z, ratiounthres] = multi_fone(wax, aximp, testyori, type, p, sigma, sc_ax, rho, method)
+function [z, ratiounthres, sigmal] = multi_fone(wax, aximp, testyori, sigma, sc_ax)
+%function [z, ratiounthres, sigmal] = multi_fone(wax, aximp, testyori, type, p, sigma, sc_ax, rho, method)
 
+global B
+global type
+global p
+global rho
+global method
 
 
 [M, N] = size(wax);
@@ -31,6 +37,7 @@ B = getbasismat(type, p, N);
 		
 		[fdec, mult] = multi_fdecwien(fsig, fimp, sigma, fori, scaling(j));
 
+	%plot(real(ifft(fdec)))
 		%[fdec, mult] = fdecwien(fsig, fimp, sigma_scalar, scaling(j));
 
 		% prepare beta(k), the estimate for the k-th wavelet coefficient
