@@ -1,4 +1,5 @@
-% get the optimal scaling values for multi_fone()
+%% incorrect
+%get the optimal scaling values for multi_fone()
 
 function alpha = multi_getsc_fpar(wax, aximp, testyori, type, p, noiseax)
 

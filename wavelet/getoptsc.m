@@ -31,6 +31,7 @@ for i=1:p+1
 	b = 0.9;
 	while (abs(a-b)>errorl)
 	alpha(i) = a;
+	disp('yes')
 	[w, ratiounthr, thrvec] = wienforwd(z,K,type,p,sigma,alpha, rho,method);
 	fa = ratiounthr(i);
 
