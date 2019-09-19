@@ -1,12 +1,11 @@
-function A = ser2ind(y,nx, ny)
-%global length;
-%global width;
-%global dx;
-%global dy;
-%
+function A = ser2ind(y)
+global length;
+global width;
+global dx;
+global dy;
 
-%nx = length/dx +1;
-%ny = width/dy+1;
+nx = length/dx +1;
+ny = width/dy+1;
 
 
 if ((y <= (nx*ny)) && (1<=y))

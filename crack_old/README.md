@@ -10,21 +10,24 @@ OR,
 
 OCTAVE 
 
+# Example
+
+Crack propagation and branching in soda-lime glass with a pre-notch under vertical outward force
+![crack-branching](meshout.gif)
+
 # Usage
 
 * To create the reference neighbourhood array.
-`[ref, dx, dy, nx, ny, delta] = nbd_test();` Took 48s on my CPU.
+`ref = nbd();` Took 48s on my CPU.
 
 * Draw the initial mesh for the slab with a pre-notch
-`drawmesh(ref, dx, dy, nx, ny);  `
+`drawmesh(ref);  `
 
 * Create the final neighbourhood array for the cracked slab, from the initial array
-`[final, uvec] = proj_test(ref, dx, dy, nx, ny, delta);   `  This is where all the computations happen.
+`final = proj(ref);   `  This is where all the computations happen.
 
 * Draw the final array
-`drawmesh(final, dx, dy, nx, ny);  `
-
-* Plot the deformed location of the nodes using `plotdispl(...)`
+`drawmesh(final);  `
 * You can plot the neighbourhood weight matrix using
 `nbdmap(final);`
 * You can plot the relative neighbourhood weight matrix by
