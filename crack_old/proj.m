@@ -1,10 +1,22 @@
-function out = proj(initial,dx,dy,nx,ny,delta, Xdiff1, Xdiff2, Xdiffnorm)
+function out = proj(initial)
 
+global length;
+global width;
+global dx;
+global dy;
+global delta;
+
+%global Nbd;
 
 Nbd = initial;
 
+global Xdiff1;
+global Xdiff2;
+global Xdiffnorm;
 
 
+nx = length/dx+1;
+ny = width/dy+1;
 totalnodes = nx*ny;
 
 %ind =1;
@@ -29,8 +41,8 @@ Udiff2 = zeros(m,n);
 
 extforce = zeros(totalnodes,2); % extforce(i,:) = external force on i-th serial
 for j=1:nx
-    extforce(ind2ser(1,j,nx,ny),2) = -(sigma);
-    extforce(ind2ser(ny,j,nx,ny),2) = sigma;
+    extforce(ind2ser(1,j),2) = -(sigma);
+    extforce(ind2ser(ny,j),2) = sigma;
 end
 
 uold = zeros(totalnodes,2);
@@ -81,8 +93,7 @@ for t = 1:1800
     uolddotdot = u0dotdot;
     
     %loop ends
-	fprintf(repmat('\b',1,10));
-	fprintf('t=%d',t);
+    t
 %     if mod(t,50) == 0
 %         drawmesh(Nbd);
 %         M(ind) = getframe(f);
@@ -91,8 +102,7 @@ for t = 1:1800
 end
 toc
 out = Nbd;
-
-drawmesh(out, dx, dy, nx, ny);
+drawmesh(out);
 %movarr = M;
 
 
