@@ -1,0 +1,204 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BTBS	pde/BTBS.m	/^function BTBS()$/;"	f
+BTFS	pde/BTFS.m	/^function BTFS()$/;"	f
+Backward	pde/Backward.m	/^function Backward()$/;"	f
+CN	pde/CN.m	/^function CN()$/;"	f
+CN2	pde/CN2.m	/^function CN2()$/;"	f
+Central	pde/Central.m	/^function Central()$/;"	f
+Elliptic	pde/Elliptic.m	/^function Elliptic()$/;"	f
+Elliptic	pde/Laplacian.m	/^function Elliptic()$/;"	f
+Forward	pde/Forward.m	/^function Forward()$/;"	f
+Godunov	pde/Godunov.m	/^function Godunov()$/;"	f
+LF	pde/LF.m	/^function LF()$/;"	f
+LW	pde/LW.m	/^function LW()$/;"	f
+NL3	denoising/NL3.m	/^function out = NL3(nbdsize, variance, a, I) % Nonlocal Mean$/;"	f
+applythres	wavelet/.ipynb_checkpoints/applythres-checkpoint.m	/^function [w, ratiounthr, wnoise] = applythres(wo, rule, p, thr)$/;"	f
+applythres	wavelet/applythres.m	/^function [w, ratiounthr, wnoise] = applythres(wo, rule, p, thr)$/;"	f
+beam	wavelet/beam.m	/^function sumall = beam(input, inputPos)$/;"	f
+coefdec	wavelet/coefdec.m	/^function w = coefdec(y, K, type, p)$/;"	f
+coeff	wavelet/coeff.m	/^function values = coeff(w, p, q)$/;"	f
+coefthr	wavelet/coefthr.m	/^function wt = coefthr(w, p, rule, method, thr)$/;"	f
+compareErr	wavelet/compareErr.m	/^function compareErr(z, typelist, maxK, p, normlist)$/;"	f
+compress	wavelet/compress.m	/^function w = compress(z, type, p, K)$/;"	f
+coord	crack/coord.m	/^function [pos, A] = coord(Nbd, dx, dy, nx, ny)$/;"	f
+coord	crack2/coord.m	/^function [pos, A] = coord(Nbd)$/;"	f
+coord	crack_old/coord.m	/^function [pos, A] = coord(Nbd)$/;"	f
+crossc	wavelet/crossc.m	/^function out = crossc(A, B, antAPos, antBPos, r)$/;"	f
+crosscorr	wavelet/crosscorr.m	/^function z = crosscorr(f,g)$/;"	f
+cupow	wavelet/cupow.m	/^function s = cupow(z) $/;"	f
+damage	crack2/damage.m	/^function ratio = damage(initial, final)$/;"	f
+damage	crack_old/damage.m	/^function ratio = damage(initial, final)$/;"	f
+damage_test	crack/damage_test.m	/^function ratio = damage_test(initial, final, nx, ny)$/;"	f
+decall	wavelet/decall-bak.m	/^function w = decall(signal, impulse, method, scaling)$/;"	f
+decall	wavelet/decall.m	/^function w = decall(signal, impulse, method, scaling)$/;"	f
+decfw	wavelet/decfw.m	/^function [w, ratiothres] = decfw(y, K, type, p, method, scaling, rho)$/;"	f
+decwien	wavelet/decwien.m	/^function w = decwien(signal, impulse, sigma, scaling)$/;"	f
+demo_save	wavelet/demo_save.m	/^function demo_save(fignum, filename, sizeval)$/;"	f
+denoi	denoising/denoi.m	/^function [cname cext] =  denoi(filen, band)    % works for color and grayscale$/;"	f
+deriv	wavelet/deriv.m	/^function w = deriv(z)$/;"	f
+dftM	wavelet/dftM.m	/^function M = dftM(N)$/;"	f
+down	wavelet/down.m	/^function Dz = down(z)$/;"	f
+drawmesh	crack/drawmesh.m	/^function drawmesh(N, dx, dy, nx, ny)$/;"	f
+drawmesh	crack2/drawmesh.m	/^function drawmesh(N)$/;"	f
+drawmesh	crack_old/drawmesh.m	/^function drawmesh(N)$/;"	f
+fdecall	wavelet/fdecall.m	/^function [fw, mult] = fdecall(fsig, fimp, method, scaling)$/;"	f
+fdecwien	wavelet/fdecwien.m	/^function [fw, mult] = fdecwien(fsig, fimp, noise, scaling)$/;"	f
+filt	wavelet/filt-bak.m	/^function [u, v] = filt(TYPE, N)$/;"	f
+filt	wavelet/filt.m	/^function [u, v] = filt(TYPE, N)$/;"	f
+fold	wavelet/fold.m	/^function y = fold(z)$/;"	f
+forward	pde/forward.m	/^function forward()$/;"	f
+fullProj	denoising/fullProj.m	/^function fullProj()$/;"	f
+g	wavelet/l1min.m	/^function r = g (x)$/;"	f
+gaussF2	denoising/gaussF2.m	/^function out = gaussF2(nbdsize, variance, I)    % Gaussian filter$/;"	f
+genlam	crack2/genlam.m	/^function  genlam(Nbd) $/;"	f
+genparams	crack2/genparams.m	/^function  genparams(Nbd) $/;"	f
+genpos	crack2/genpos.m	/^function genpos(Nbd)$/;"	f
+genthr	wavelet/genthr.m	/^function thr = genthr(p, var, method, manual)$/;"	f
+getantenna	wavelet/getantenna.m	/^function filename = getantenna(num)$/;"	f
+getbasismat	wavelet/getbasismat.m	/^function B = getbasismat(type, p, N)$/;"	f
+getindex	wavelet/getindex.m	/^function [startInd, lastInd] = getindex(N, p, q)$/;"	f
+getoptsc	wavelet/getoptsc.m	/^function alpha = getoptsc(z, K, type, p, sigma, rootmethod)$/;"	f
+getother	wavelet/getother.m	/^function v = getother(u) $/;"	f
+getother_py	wavelet/getother_py.m	/^function v = getother_py(u) $/;"	f
+getsnr	wavelet/getsnr.m	/^function [snrval, M, m, a, b] = getsnr(z)$/;"	f
+getthr	wavelet/getthr.m	/^function getthr(anindex, type, p, alpha, rho)$/;"	f
+getthrfromnoise	wavelet/getthrfromnoise.m	/^function getthrfromnoise(noise, K, type, p)$/;"	f
+getwpxsc	wavelet/getwpxsc.m	/^function wpxsc = getwpxsc(type, p, sigma)$/;"	f
+handleCol	denoising/handleCol.m	/^function handleCol(filen)   % feed image file$/;"	f
+ind2pos	crack/ind2pos.m	/^function C = ind2pos(i,j, dx, dy)$/;"	f
+ind2pos	crack2/ind2pos.m	/^function C = ind2pos(i,j)$/;"	f
+ind2pos	crack_old/ind2pos.m	/^function C = ind2pos(i,j)$/;"	f
+ind2ser	crack/ind2ser.m	/^function s=ind2ser(i,j,nx,ny)$/;"	f
+ind2ser	crack2/ind2ser.m	/^function s=ind2ser(i,j)$/;"	f
+ind2ser	crack_old/ind2ser.m	/^function s=ind2ser(i,j)$/;"	f
+indi2pos2	crack/indi2pos2.m	/^function y = indi2pos2(i, dy)$/;"	f
+indj2pos1	crack/indj2pos1.m	/^function x = indj2pos1(j,dx)$/;"	f
+intersects	crack/intersects.m	/^function intrsct=intersects(A1,A2,A3,A4) %Ai = [x y], the coordinate$/;"	f
+intersects	crack2/intersects.m	/^function intrsct=intersects(A1,A2,A3,A4) %Ai = [x y], the coordinate$/;"	f
+intersects	crack_old/intersects.m	/^function intrsct=intersects(A1,A2,A3,A4) %Ai = [x y], the coordinate$/;"	f
+isolate	wavelet/isolate.m	/^function prj = isolate(z, type, p)$/;"	f
+iwrec	wavelet/iwrec.m	/^function w = iwrec(z, sdim, u, v)$/;"	f
+iwtrans	wavelet/iwtrans.m	/^function w = iwtrans(z, type, p)$/;"	f
+jupyplot	wavelet/.ipynb_checkpoints/jupyplot-checkpoint.m	/^function jupyplot(texthere)$/;"	f
+jupyplot	wavelet/jupyplot.m	/^function jupyplot(texthere)$/;"	f
+keeplarge	wavelet/keeplarge-bak.m	/^function z = keeplarge(w,k)$/;"	f
+keeplarge	wavelet/keeplarge-cont.m	/^function z = keeplarge(w,k)$/;"	f
+keeplarge	wavelet/keeplarge.m	/^function z = keeplarge(w,k)$/;"	f
+lamgen	crack/lamgen.m	/^function lamgen(Nbd,dx, dy, nx, ny, delta)$/;"	f
+lamgen2	crack/lamgen2.m	/^function lamgen2(Nbd,dx, dy, nx, ny, delta)$/;"	f
+medF	denoising/medF.m	/^function out = medF(nbdsize, f)$/;"	f
+modf	wavelet/modf.m	/^function y = modf(z)$/;"	f
+multi_error_level	wavelet/.ipynb_checkpoints/multi_error_level-checkpoint.m	/^function errvals = multi_error_level(deconv, f_wax, f_aximp, f_ori, w_ori, noise_sd, alphavals, level_now)$/;"	f
+multi_error_level	wavelet/multi_error_level.m	/^function errvals = multi_error_level(deconv, f_wax, f_aximp, f_ori, w_ori, noise_sd, alphavals, level_now)$/;"	f
+multi_fdecwien	wavelet/multi_fdecwien.m	/^function [fw, mult] = multi_fdecwien(fsig, fimp, noise, fori, scaling)$/;"	f
+multi_fone	wavelet/.ipynb_checkpoints/multi_fone-checkpoint.m	/^function [z, ratiounthres, sigmal] = multi_fone(wax, aximp, testyori, sigma, sc_ax)$/;"	f
+multi_fone	wavelet/multi_fone.m	/^function [z, ratiounthres, sigmal] = multi_fone(wax, aximp, testyori, sigma, sc_ax)$/;"	f
+multi_fpar	wavelet/.ipynb_checkpoints/multi_fpar-checkpoint.m	/^function [z, ratiounthres, sigmalavg] = multi_fpar(wax, aximp, testyori, noiseax, sc_ax)$/;"	f
+multi_fpar	wavelet/multi_fpar.m	/^function [z, ratiounthres, sigmalavg] = multi_fpar(wax, aximp, testyori, noiseax, sc_ax)$/;"	f
+multi_fpar	wavelet/multi_fpar_bak.m	/^function [z, ratiounthres, sigmalavg] = multi_fpar(wax, aximp, testyori, noiseax, sc_ax)$/;"	f
+multi_fw_one_full	wavelet/.ipynb_checkpoints/multi_fw_one_full-checkpoint.m	/^function w  = multi_fw_one_full(fwax, faximp, fori, noiseax, scaling, j)$/;"	f
+multi_fw_one_full	wavelet/multi_fw_one_full.m	/^function w  = multi_fw_one_full(fwax, faximp, fori, noiseax, scaling, j)$/;"	f
+multi_fw_one_level	wavelet/.ipynb_checkpoints/multi_fw_one_level-checkpoint.m	/^function [mean_coeffs_thresholded, ratiounthres, threshold_val]  = multi_fw_one_level(fwax, faximp, fori, noiseax, scaling_j, j)$/;"	f
+multi_fw_one_level	wavelet/multi_fw_one_level.m	/^function [mean_coeffs_thresholded, ratiounthres, threshold_val]  = multi_fw_one_level(fwax, faximp, fori, noiseax, scaling_j, j)$/;"	f
+multi_fw_par_full	wavelet/.ipynb_checkpoints/multi_fw_par_full-checkpoint.m	/^function w  = multi_fw_par_full(fwax, faximp, fori, noiseax, scaling, j)$/;"	f
+multi_fw_par_full	wavelet/multi_fw_par_full.m	/^function w  = multi_fw_par_full(fwax, faximp, fori, noiseax, scaling, j)$/;"	f
+multi_fw_par_level	wavelet/.ipynb_checkpoints/multi_fw_par_level-checkpoint.m	/^function [mean_coeffs_thres, ratiounthres, threshold_val]  = multi_fw_par_level(fwax, faximp, fori, noiseax, scaling_j, j)$/;"	f
+multi_fw_par_level	wavelet/multi_fw_par_level.m	/^function [mean_coeffs_thres, ratiounthres, threshold_val]  = multi_fw_par_level(fwax, faximp, fori, noiseax, scaling_j, j)$/;"	f
+multi_fw_par_new	wavelet/.ipynb_checkpoints/multi_fw_par-checkpoint.m	/^function [w, ratiounthres, sigmalavg] = multi_fw_par_new(fwax, faximp, fori, noiseax, sc_ax)$/;"	f
+multi_fw_par_new	wavelet/.ipynb_checkpoints/multi_fw_par_new-checkpoint.m	/^function w = multi_fw_par_new(fwax, faximp, fori, noiseax, scaling)$/;"	f
+multi_fw_par_new	wavelet/multi_fw_par.m	/^function [w, ratiounthres, sigmalavg] = multi_fw_par_new(fwax, faximp, fori, noiseax, sc_ax)$/;"	f
+multi_fw_par_new	wavelet/multi_fw_par_new.m	/^function w = multi_fw_par_new(fwax, faximp, fori, noiseax, scaling)$/;"	f
+multi_getoptsc_anita_par	wavelet/multi_getoptsc_anita_par.m	/^function alpha = multi_getoptsc_anita_par(z, K,testyori, type, p, sigma, rootmethod)$/;"	f
+multi_getscOri_fone	wavelet/multi_getscOri_fone.m	/^function [alpha, ratioUnth, sigl] = multi_getscOri_fone(wax, aximp, testyori, type, p, sigma)$/;"	f
+multi_getscOri_fone_plot	wavelet/multi_getscOri_fone_plot.m	/^function alphaout = multi_getscOri_fone_plot(wax, aximp, testyori, type, p, sigma)$/;"	f
+multi_getscOri_fpar	wavelet/multi_getscOri_fpar.m	/^function [alpha, ratioUnth, sigl] = multi_getscOri_fpar(wax, aximp, testyori, type, p, noiseax)$/;"	f
+multi_getscOri_fpar_plot	wavelet/multi_getscOri_fpar_plot.m	/^function alphaout = multi_getscOri_fpar_plot(wax, aximp, testyori, type, p, noiseax)$/;"	f
+multi_getsc_fone	wavelet/multi_getsc_fone.m	/^function alpha = multi_getsc_fone(wax, aximp, testyori, type, p, noiseax)$/;"	f
+multi_getsc_fpar	wavelet/multi_getsc_fpar.m	/^function alpha = multi_getsc_fpar(wax, aximp, testyori, type, p, noiseax)$/;"	f
+multi_plotalpha	wavelet/multi_plotalpha.m	/^function alpha = multi_plotalpha(wax, aximp, testyori, type, p, sigma)$/;"	f
+nbd	crack/nbd.m	/^function [initial, dx, dy, nx, ny, delta, Xdiff1, Xdiff2, Xdiffnorm] = nbd()$/;"	f
+nbd	crack2/nbd.m	/^function initial = nbd()$/;"	f
+nbd	crack_old/nbd.m	/^function initial = nbd()$/;"	f
+nbd_axisymm	crack2/nbd_axisymm.m	/^function Nbd = nbd_axisymm()$/;"	f
+nbd_correct	crack2/nbd_correct.m	/^function Nbd = nbd_correct()$/;"	f
+nbd_test	crack/nbd_test.m	/^function [initial, dx, dy, nx, ny, delta] = nbd_test()$/;"	f
+nbdmap	crack/nbdmap.m	/^function nbdmap(Nbd)$/;"	f
+nbdmap	crack2/nbdmap.m	/^function nbdmap(Nbd)$/;"	f
+nbdmap	crack_old/nbdmap.m	/^function nbdmap(Nbd)$/;"	f
+padfreq	wavelet/padfreq.m	/^function z = padfreq(w, N, eps)$/;"	f
+padz	wavelet/padz.m	/^function w = padz(z)$/;"	f
+params	crack2/params.m	/^function [lam_00, lam_10, lam_20] = params(i,j)$/;"	f
+phi	wavelet/l1min.m	/^function obj = phi (x)$/;"	f
+planktaper	wavelet/planktaper.m	/^function w = planktaper(N,eps)$/;"	f
+plotbasis	wavelet/plotbasis.m	/^function plotbasis(type, p, N)$/;"	f
+plotcoeffs	wavelet/plotcoeffs.m	/^function plotcoeffs(w,p)$/;"	f
+plotdispl	crack/plotdispl.m	/^function plotdispl(uvec, i, dx, dy, nx, ny)$/;"	f
+plotdispl	crack2/plotdispl.m	/^function plotdispl(uvec, i)$/;"	f
+plotfanita	wavelet/plotfanita.m	/^function plotfanita(z)$/;"	f
+plotfanitaS	wavelet/plotfanitaS.m	/^function plotfanitaS(z)$/;"	f
+plotlevels	wavelet/plotlevels.m	/^function  plotlevels(z, type,p)$/;"	f
+plotnewpos	crack/plotnewpos.m	/^function plotnewpos(Nbd, uvec, i, dx, dy, nx, ny)$/;"	f
+plotoptsc	wavelet/plotoptsc.m	/^function alpha = plotoptsc(z, K, type, p, sigma)$/;"	f
+plotpanita	wavelet/plotpanita.m	/^function plotpanita(z)$/;"	f
+plotpanitaS	wavelet/plotpanitaS.m	/^function plotpanitaS(z)$/;"	f
+plotpow	wavelet/plotpow.m	/^function plotpow(sig)$/;"	f
+plotsnr	wavelet/plotsnr.m	/^function plotsnr(z)$/;"	f
+plotthr	wavelet/plotthr.m	/^function plotthr(w,p,thrvec)$/;"	f
+prepsig	wavelet/prepsig.m	/^function [ax, aximp] = prepsig(num)$/;"	f
+proj	crack/proj.m	/^function out = proj(initial,dx,dy,nx,ny,delta, Xdiff1, Xdiff2, Xdiffnorm)$/;"	f
+proj	crack2/proj.m	/^function out = proj(initial)$/;"	f
+proj	crack_old/proj.m	/^function out = proj(initial)$/;"	f
+proj	wavelet/proj.m	/^function prj = proj(z, type, p)$/;"	f
+proj_axisymm	crack/proj_axisymm.m	/^function [out, u0] = proj_axisymm(initial, dx, dy, nx, ny, delta)$/;"	f
+proj_axisymm	crack/proj_axisymm_bak.m	/^function [out, u0] = proj_axisymm(initial)$/;"	f
+proj_axisymm	crack2/proj_axisymm.m	/^function [out, u0_r, u0_z] = proj_axisymm(initial)$/;"	f
+proj_test	crack/proj_impact.m	/^function out = proj_test(initial)$/;"	f
+proj_test	crack/proj_test.m	/^function [out, u0] = proj_test(initial, dx, dy, nx, ny, delta)$/;"	f
+realconv	wavelet/realconv.m	/^function y = realconv(a,b)$/;"	f
+rele	wavelet/rele.m	/^function out = rele(z,x)$/;"	f
+relerr	wavelet/relerr.m	/^function Rel = relerr(z, typelist, maxK, p, q)$/;"	f
+relerr	wavelet/rerr.m	/^function Rel = relerr(z, typelist, maxK, p, q)$/;"	f
+restF	wavelet/restF.m	/^function this = restF(f,subset)$/;"	f
+rndtest	crack2/rndtest.m	/^function rndtest(Nbd)$/;"	f
+savenewpos	crack/savenewpos.m	/^function savenewpos(Nbd, uvec, i, dx, dy, nx, ny, counter, f, filestr)$/;"	f
+ser2ind	crack/ser2ind.m	/^function A = ser2ind(y,nx, ny)$/;"	f
+ser2ind	crack2/ser2ind.m	/^function A = ser2ind(y)$/;"	f
+ser2ind	crack_old/ser2ind.m	/^function A = ser2ind(y)$/;"	f
+ser2ind1	crack2/ser2ind1.m	/^function i = ser2ind1(y)$/;"	f
+ser2ind2	crack2/ser2ind2.m	/^function j = ser2ind2(y)$/;"	f
+ser2indi	crack/ser2indi.m	/^function i = ser2indi(ser,nx)$/;"	f
+ser2indj	crack/ser2indj.m	/^function j = ser2indj(ser,nx)$/;"	f
+ser2pos	crack/ser2pos.m	/^function A = ser2pos(y,dx,dy,nx, ny)$/;"	f
+ser2pos	crack2/ser2pos.m	/^function A = ser2pos(y)$/;"	f
+ser2pos	crack_old/ser2pos.m	/^function A = ser2pos(y)$/;"	f
+ser2pos1	crack/ser2pos1.m	/^function x = ser2pos1(ser, dx, nx)$/;"	f
+ser2pos1	crack2/ser2pos1.m	/^function x = ser2pos1(serial)$/;"	f
+ser2pos2	crack/ser2pos2.m	/^function y = ser2pos2(ser, dy, nx)$/;"	f
+ser2pos2	crack2/ser2pos2.m	/^function y = ser2pos2(serial)$/;"	f
+shiftMat	crack/shiftMat.m	/^function out = shiftMat(M, i, j, nx, ny)$/;"	f
+susanF2	denoising/susanF2.m	/^function out = susanF2(nbdsize, variance, I)$/;"	f
+test	wavelet/test.m	/^function test(vec,X)$/;"	f
+test_a	wavelet/test_a.m	/^function out = test_a(this)$/;"	f
+testabs	crack2/testabs.m	/^function testabs(Nbd)$/;"	f
+testdist	crack2/testdist.m	/^function out = testdist(Nbd)$/;"	f
+testfwd	wavelet/testfwd.m	/^function ratiothr = testfwd(anindex, type, p, alpha, rho)$/;"	f
+testspike	wavelet/optforwd.m	/^function ratiothr = testspike(z, type, p, sigma,  alpha, rho, method)$/;"	f
+testspike	wavelet/testspike.m	/^function [ww, w] =  testspike(z, K, type, p, sigma,  alpha, rho, method, post)$/;"	f
+testwex	wavelet/testwex.m	/^function testwex = testwex(type, p, sigma,  alpha, rho, method)$/;"	f
+testwpx	wavelet/testwpx.m	/^function testwpx = testwpx(type, p, sigma,  alpha, rho, method)$/;"	f
+theta	pde/Theta.m	/^function theta()$/;"	f
+tight_subplot	wavelet/tight_subplot.m	/^function [ha, pos] = tight_subplot(Nh, Nw, gap, marg_h, marg_w)$/;"	f
+tight_subplot	wavelet/tight_subplot/tight_subplot.m	/^function [ha, pos] = tight_subplot(Nh, Nw, gap, marg_h, marg_w)$/;"	f
+tr	pde/tr.m	/^function tr()$/;"	f
+tridiag	pde/tridiag.m	/^function T = tridiag(a, b, c, n)$/;"	f
+up	wavelet/up.m	/^function Uz = up(z)$/;"	f
+wienforwd	wavelet/wienforwd.m	/^function [w, ratiounthres, thrvec]  = wienforwd(y, K, type, p, sigma, scaling, rho,method)$/;"	f
+windowfreq	wavelet/windowfreq.m	/^function z = windowfreq(w, leftcut, lefttaper, righttaper, rightcut)$/;"	f
+wrec	wavelet/wrec.m	/^function w = wrec(z, sdim, util, vtil)$/;"	f
+wtrans	wavelet/wtrans.m	/^function w = wtrans(z, type, p)$/;"	f
+ynf	denoising/ynf.m	/^function out = ynf(nbdsize, variance, I)$/;"	f
