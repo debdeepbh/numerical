@@ -155,3 +155,13 @@ T_J = msh2m_jiggle_mesh (T, 100)
 ```
 returns a new mesh by considering the edges are springs and solves a PDE to get the quasi static equilibrium, where the second argument is the number of steps for which the PDE is simulated.
 See also: `msh2m_equalize_mesh()`, `msh2m_displacement_smoothing()` and `mshm_refine()` (which requires `dolfin` package, which is part of `fem-fenics` package (verify))
+
+# Peridynamic simulations
+
+The goal is to simulate multi-particle interaction.
+
+Steps
+
+* Generate a mesh, choose the nodes, compute the nodal volume with `script.m`
+* Compute a neighborhood array that contains the indices of the neighbors of each of the nodes using `gen_nbdlist.m`
+* Simulate the dynamics with the peridynamic force function
