@@ -165,3 +165,19 @@ Steps
 * Generate a mesh, choose the nodes, compute the nodal volume with `script.m`
 * Compute a neighborhood array that contains the indices of the neighbors of each of the nodes using `gen_nbdlist.m`
 * Simulate the dynamics with the peridynamic force function
+
+### Code
+* `genmesh()` (Octave) produces a mesh where the centroid of the triangular element is a node and the nodal volume is the area of the triangle.
+* `genmesh2()` (Octave) produces a mesh where each vertex of the triangle is a node and the nodal volume is the sum of 1/3 of each of the neighboring triangular elements.
+
+##### Running the code
+1. In Octave, run `full_proj`, close the program after various matrices are saved to the disk (e.g. `Pos.m`  etc). The mesh is generated in this step and the nodal volumes are computed (`Vol.mat`).
+1. In Matlab, run `full_proj_matlab` to load the information and simulate the dynamics.
+
+
+# Multithreading
+* See the number of threads allowed using `maxNumCompThreads`. Set the number using `maxNumCompThreads(4)`. Check the effect using a long computation like this:
+```
+X=ones(10000);
+sqrt(X).^sqrt(X).^sqrt(X).^sqrt(X).^sqrt(X).^sqrt(X)
+```
