@@ -37,14 +37,7 @@ for t = 1:1200
     % plotting
     if mod(t, 50) == 0
 	t
-	%savenewpos2(u0, Pos, 3, imgcounter, f, 'test')
-
-	disp = u0 + Pos;
-	u_norm = sqrt(u0(:,1).^2 + u0(:,2).^2);
-	scatter(disp(:,1), disp(:,2), 5, u_norm, 'filled')
-	axis equal
-	pause
-
+	savenewpos2(u0, Pos, 3, imgcounter, f, 'test')
     	imgcounter = imgcounter + 1;
     end
 

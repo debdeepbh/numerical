@@ -1,4 +1,4 @@
-function [Pos, Vol, T] = genmesh2(meshsize) 
+function [Pos, Vol, T] = genmesh2(geometry, meshsize) 
 % Generates a mesh with boundary
 % Input:
 %	meshsize: 
@@ -11,23 +11,31 @@ function [Pos, Vol, T] = genmesh2(meshsize)
 % plot the indices of the nodes, very slow when there are many nodes
 draw_text = 0;
 
-% Define a polygon using
-%P = [10 10; 40 15; 40 35; 20 25; 15 30];
-P = [0.1 0; 0.2 0; 0.2 0.04;0.1 0.04];
 
-% circle, Caution: the last node should _NOT_ overlap with the first!
-steps = 20;
-angles = linspace(0, 2*pi- 2*pi/steps, steps)';
-%P = [ cos(angles), sin(angles)]; 
+switch geometry
+case 'sodalime'
+	% Define a polygon using
+	%P = [10 10; 40 15; 40 35; 20 25; 15 30];
+	P = [0.1 0; 0.2 0; 0.2 0.04; 0.1 0.04];
+	%%  Plot the polygon
+	%
+	%drawPolygon(P, '-o')
+	%pause (1)
+case 'circle'
+	% circle, Caution: the last node should _NOT_ overlap with the first!
+	steps = 20;
+	angles = linspace(0, 2*pi- 2*pi/steps, steps)';
+	P = [ cos(angles), sin(angles)]; 
+otherwise
+
+end
+
+
 
 % Load the geom package
 
 pkg load geometry
 
-%%  Plot the polygon
-%
-%drawPolygon(P, '-o')
-%pause (1)
 
 % Generate the `.geo` file from the polygon using `data2geo()` function from `geometry` package:
 

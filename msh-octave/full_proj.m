@@ -6,14 +6,24 @@ clear all
 close all
 
 
-delta = 0.002;	% for glass slab
-%delta = 0.012;	% peridynamic horizon
-%delta = 0.25;	% for the unit circle 
+geometry='circle'
+%geometry='sodalime'
 
-meshsize = delta/3;
+switch geometry
+case 'sodalime'
+	delta = 0.002;	% for glass slab
+	%delta = 0.012;	% peridynamic horizon
+	%delta = 0.25;	% for the unit circle 
+	meshsize = delta/3;
+case 'circle'
+	delta = 0.5;
+	meshsize = delta/2;
+otherwise
+
+end
 
 %[Pos, BdryNodes, Vol] = genmesh(delta);
-[Pos, Vol, T] = genmesh2(meshsize);
+[Pos, Vol, T] = genmesh2(geometry, meshsize);
 
 printf('total nodes: %d \n', length(Pos));
 
@@ -25,6 +35,7 @@ save -mat7-binary 'Vol.mat' 'Vol'
 save -mat7-binary 'T.mat' 'T'
 save -mat7-binary 'delta.mat' 'delta'
 save -mat7-binary 'meshsize.mat' 'meshsize'
+save -mat7-binary 'geometry.mat' 'geometry'
 
 disp 'Press key to continue'
 pause
