@@ -1,4 +1,4 @@
-function [NbdArr_out, u0] = simulate2(Pos, NbdArr, Vol, extforce, delta, xi_1, xi_2, xi_norm)
+function [NbdArr_out, u0] = simulateMultiple(Pos, NbdArr, Vol, extforce, delta, xi_1, xi_2, xi_norm)
 
 
 % break bonds or not
@@ -11,11 +11,12 @@ close all
 
 
 total_nodes = length(NbdArr);
-% time integration updaters
+
+
+% Initial data
 uold = zeros(total_nodes,2);
 uolddot = zeros(total_nodes,2);
 uolddotdot = zeros(total_nodes,2);
-
 
 longvec = (1:total_nodes)';
 
@@ -30,13 +31,10 @@ tic
 for t = 1:1800
 %for t = 1:2800
 
-
     % loop starts
     u0 = uold + dt * uolddot + dt * dt * 0.5 * uolddotdot;
-
     
     restrict = (NbdArr > 0);
-    
 
     disp_1 = u0(:,1);
     disp_2 = u0(:,2);
@@ -55,10 +53,7 @@ for t = 1:1800
     eta_p_xi_1 = eta_1 + xi_1;
     eta_p_xi_2 = eta_2 + xi_2;
 
-
     eta_p_xi_norm = sqrt(eta_p_xi_1.^2 + eta_p_xi_2.^2);
-
-
 
     % to avoid dividing by zero 
 	stretch = (eta_p_xi_norm - xi_norm)./(xi_norm + (~xi_norm));
@@ -71,7 +66,6 @@ for t = 1:1800
 
     Force1 = cnot.* stretch .* unitvec_1;
     Force2 = cnot.* stretch .* unitvec_2;
-
 
     %% mask it
     Force1 = Force1 .* (~~NbdArr);

@@ -13,8 +13,8 @@ function savenewpos2(uvec, Pos, i, counter, f, filestr)
 dotsize = 10;
 
 
-%scaling = 5;
-scaling = 10;
+scaling = 5;
+%scaling = 10;
 
 CurrPos = Pos + scaling * uvec;
 

@@ -61,7 +61,7 @@ case 'velocity_verlet'
 
 	% total internal force is obtained by adding the forces associated with the neighbors
 	% Summing over forces along with the nodal volumes, automatically masked
-	totalintforce = [sum(Force1 .* NbdVol, 2) sum(Force2 .* NbdVol, 2)];   
+	totalintforce = [sum(Force1 .* Vol, 2) sum(Force2 .* Vol, 2)];   
 
 	u0dotdot = (1 ./rho) .* ( totalintforce + extforce) ;
 
