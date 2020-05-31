@@ -50,21 +50,20 @@ disp 'Press key to continue'
 pause
 
 if single_particle == 1
-% need initial condition
-[NbdArr_out, u0] = simulate2(Pos, NbdArr, Vol, extforce, delta, Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm);
+    % need initial condition
+    [NbdArr_out, u0] = simulate(Pos, NbdArr, Vol, extforce, delta, Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm);
 elseif	multiple_particle == 1
 
-% simulate multiple particles
+    % simulate multiple particles
 
-% scaling, shifting, rotation
-total_particles = 3;
+    % scaling, shifting, rotation
+    total_particles = 3;
 
-particle_scaling = ones(total_particles, 1);
-particle_rotation = zeros(total_particles, 1);
-particle_shift = [0, 0; 0, 3; 2, 1];
+    particle_scaling = ones(total_particles, 1);
+    particle_rotation = zeros(total_particles, 1);
+    particle_shift = [0, 0; 0, 3; 2, 1];
 
-
-%[NbdArr_out, u0] = simulateMultiple(Pos, NbdArr, Vol, extforce, delta, Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm);
+    %[NbdArr_out, u0] = simulateMultiple(Pos, NbdArr, Vol, extforce, delta, Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm);
 end
 
 
