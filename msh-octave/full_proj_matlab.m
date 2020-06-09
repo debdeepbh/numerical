@@ -5,12 +5,12 @@
 clear all
 close all
 
-%experiment = 'single_particle'
-experiment = 'multi_particle'
+experiment = 'single_particle' 
+%experiment = 'multi_particle'
 
 % plot reference config
 plot_reference = 1;
-
+plot_circles = 1;
 timesteps = 1800;
 
 %geometry = 'sodalime'
@@ -38,10 +38,33 @@ disp 'Press key to continue'
 pause
 
 % generate the neighbor-list
-[NbdArr] = gen_nbdlist(Pos, delta);
+%[NbdArr] = gen_nbdlist(Pos, delta);
+%tic
+%[NbdArr] = gen_nbdlist2(Pos, delta);	% twice faster
+%toc
+
+tic
+[NbdArr] = gen_NbdArr(Pos, Pos, delta, 1);
+toc
 
 disp('Max neighbors') 
 size(NbdArr)
+
+if plot_circles == 1
+ hold on
+ theta_list = linspace(0, 2* pi , 20);
+ %for i = 30:30	%total_nodes
+ for i = 1:1	%total_nodes
+ 	x = Pos(i,1) +  delta * cos(theta_list);
+ 	y = Pos(i,2) +  delta * sin(theta_list);
+ 
+ 	plot(x, y, 'r')
+
+	axis equal
+ end
+end
+
+
 disp 'Press key to continue'
 pause
 
@@ -114,10 +137,12 @@ case 'multi_particle'
     % gravity applies on the second particle only
     %exforce(:,:,2) = gravity * 1e5;
 
+    % precomputation
     for i = 1:total_particles
 	% get the position and relative distances of the neighbors
 	[xi_1_multi(:,:,i), xi_2_multi(:,:,i), xi_norm_multi(:,:,i)] = precomputation(NbdArr, Pos, Vol);
     end
+
 
     % initial data
      uold_multi = zeros(total_nodes,2, total_particles);

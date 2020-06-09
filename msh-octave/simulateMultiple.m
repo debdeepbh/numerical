@@ -31,11 +31,25 @@ for t = 1:timesteps
 	[u0_multi(:,:,i), u0dot_multi(:,:,i), u0dotdot_multi(:,:,i), stretch_multi(:,:,i)] = update_timeint(uold_multi(:,:,i), uolddot_multi(:,:,i), uolddotdot_multi(:,:,i), dt, NbdArr, Vol_multi(:,:,i), xi_1_multi(:,:,i), xi_2_multi(:,:,i), xi_norm_multi(:,:,i), extforce_multi(:,:,i), cnot, rho);
     end
 
+    % contact forces
+    if total_particles > 1
+	CurrPos_multi = u0_multi + Pos_multi;
+
+%% Edit to search within _all_ particles that are close by
+	
+
+
+
+    end
+
+
+
+    % update the time loop
     uold_multi = u0_multi;
     uolddot_multi = u0dot_multi;
     uolddotdot_multi = u0dotdot_multi;
 
-%% edit to multi particle
+%% edit to accommodate multiple particles
     if break_bonds == 1
 	    % Bond breaking criteria
 	    NbdArr = ((stretch - snot ) < 0).* NbdArr;
