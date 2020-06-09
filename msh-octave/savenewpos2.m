@@ -42,11 +42,11 @@ if i==3
 else
 	scatter(CurrPos(:,1), CurrPos(:,2), dotsize, uvec(:,i), 'filled')
 end
-%colormap summer;
+colormap summer;
 %colormap winter;
 %colormap lines;
 %colormap jet;
-colormap hsv;
+%colormap hsv;
 colorbar;
 
 
