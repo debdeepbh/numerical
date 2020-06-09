@@ -1,4 +1,4 @@
-function [Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm] = precomputation(NbdArr, Pos, Vol) 
+function [Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm, NbdVol] = precomputation(NbdArr, Pos, Vol) 
 % Computes the Position and relative distance (xi, xi_norm) of the neighbors from the center of the peridynamic circle. n = #nodes, l = max number of neighbors
 % Input:
 %	NbdArr: matrix containing the indices of the neighbors, nxl
@@ -30,4 +30,4 @@ Nbd_xi_2 = (Nbd_Pos_2 - Pos_2) .* Mask;
 Nbd_xi_norm = sqrt(Nbd_xi_1.^2 + Nbd_xi_2.^2);
 
 % nodal volume
-%NbdVol = Vol(NbdArr + ~NbdArr) .* (~~NbdArr);
+NbdVol = Vol(NbdArr + ~NbdArr) .* (~~NbdArr);

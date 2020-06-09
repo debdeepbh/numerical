@@ -5,8 +5,8 @@
 clear all
 close all
 
-experiment = 'single_particle' 
-%experiment = 'multi_particle'
+%experiment = 'single_particle' 
+experiment = 'multi_particle'
 
 % plot reference config
 plot_reference = 1;
@@ -69,7 +69,7 @@ disp 'Press key to continue'
 pause
 
 % get the position and relative distances of the neighbors
-[Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm] = precomputation(NbdArr, Pos, Vol);
+[Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm, nbd_Vol] = precomputation(NbdArr, Pos, Vol);
 [total_nodes, dimension] = size(Pos);
 
 % get the material properties
@@ -87,8 +87,6 @@ pause
 
 switch experiment
 case 'single_particle'
-    % need initial condition
-    %[NbdArr_out, u0] = simulate(Pos, NbdArr, Vol, extforce, delta, Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm);
 
     % initial data
     uold = zeros(total_nodes,2);
@@ -96,15 +94,18 @@ case 'single_particle'
     uolddotdot = zeros(total_nodes,2);
 
     % specify
-    uolddot = zeros(total_nodes,2) + [1e4 0];
+    %uolddot = zeros(total_nodes,2) + [1e4 0];
 
     % external force
-    %[extforce] = external_force(geometry, Pos, NbdArr, delta);
+    [extforce] = external_force(geometry, Pos, NbdArr, delta);
     %extforce = gravity;
-    extforce = zeros(total_nodes, 2);
+    %extforce = zeros(total_nodes, 2);
+
+    disp 'Press key to continue'
+    pause
 
     % simulate with initial data
-    [NbdArr_out, u0] = simulate_initial(uold, uolddot, uolddotdot, Pos, NbdArr, Vol, extforce, delta, Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm, timesteps);
+    [NbdArr_out, u0] = simulate_initial(uold, uolddot, uolddotdot, Pos, NbdArr, nbd_Vol, extforce, delta, Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm, timesteps);
 
 
 case 'multi_particle'
@@ -112,11 +113,14 @@ case 'multi_particle'
     %total_particles = 1;
     total_particles = 2;
 
+
+    contact_radius = delta/2;
+
     % particle location, scaling, and rotation
     particle_scaling = ones(total_particles, 1);
     particle_rotation = zeros(total_particles, 1);
     % % Specify
-    particle_shift = [0, 0; 0, 2.5];
+    particle_shift = [0, 0; 0, 2.1];
     %particle_shift = [0, 0];
 
     % locations of the particles
@@ -125,7 +129,7 @@ case 'multi_particle'
 	Pos_multi(:,:,i) = particle_scaling(i) * Pos + particle_shift(i, :);
     end
 
-    % does volume of individual particle have to change?
+    % volume of the nodes
     Vol_multi = zeros( [size(Vol), total_particles]);
     for i = 1:total_particles
 %% Caution: verify that the volume gets multiplied by the scaling to the power the dimension
@@ -137,22 +141,28 @@ case 'multi_particle'
     % gravity applies on the second particle only
     %exforce(:,:,2) = gravity * 1e5;
 
+    % neighborhood  array
+    NbdArr_multi = zeros( [size(NbdArr), total_particles]);
+    for i = 1:total_particles
+	NbdArr_multi(:,:,i) = NbdArr;
+    end
+
     % precomputation
     for i = 1:total_particles
 	% get the position and relative distances of the neighbors
-	[xi_1_multi(:,:,i), xi_2_multi(:,:,i), xi_norm_multi(:,:,i)] = precomputation(NbdArr, Pos, Vol);
+	[xi_1_multi(:,:,i), xi_2_multi(:,:,i), xi_norm_multi(:,:,i), nbd_Vol_multi(:,:,i)] = precomputation(NbdArr_multi(:,:,i), Pos_multi(:,:,i), Vol_multi(:,:,i));
     end
 
-
     % initial data
-     uold_multi = zeros(total_nodes,2, total_particles);
-     uolddot_multi = zeros(total_nodes,2, total_particles);
-     uolddotdot_multi = zeros(total_nodes,2, total_particles);
+    uold_multi = zeros(total_nodes,2, total_particles);
+    uolddot_multi = zeros(total_nodes,2, total_particles);
+    uolddotdot_multi = zeros(total_nodes,2, total_particles);
 
-     % specify
-    uolddot_multi(:,:,2) = zeros(total_nodes,2) + [0 -1e3];
+    % specify
+    %uolddot_multi(:,:,2) = zeros(total_nodes,2) + [0 -1e3];
+    uolddot_multi(:,:,2) = zeros(total_nodes,2) + [0 -1e2];
     
-    [NbdArr_out, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr, Vol_multi, extforce_multi, delta, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, timesteps);
+    [NbdArr_out_multi, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, timesteps);
 
 otherwise
     disp 'No experiment provided'
