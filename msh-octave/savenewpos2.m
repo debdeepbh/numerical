@@ -16,8 +16,12 @@ dotsize = 10;
 scaling = 5;
 %scaling = 10;
 
+normalize = 0;
+
 CurrPos = Pos + scaling * uvec;
 
+CurrPos1 = CurrPos(:,1);
+CurrPos2 = CurrPos(:,2); 
 %% turn off visible figure
 %set(0, 'DefaultFigureVisible', 'off');
 %f = figure('visible', 'off');
@@ -27,12 +31,31 @@ filename = strcat('img/', filestr, sprintf('pos%d_%03d.png', i, counter));
 if i==3
 	u_norm = sqrt(uvec(:,1).^2 + uvec(:,2).^2);
 
-	scatter(CurrPos(:,1), CurrPos(:,2), dotsize, u_norm, 'filled')
+	if normalize == 1
+	    u_norm_min =  min(u_norm);
+	    u_norm_range = max(u_norm) - u_norm_min;
+	    u_norm_normalized =  (u_norm - u_norm_min) ./ (u_norm_range);
+	    scatter(CurrPos(:,1), CurrPos(:,2), dotsize, u_norm_normalized, 'filled')
+	else
+	    scatter(CurrPos(:,1), CurrPos(:,2), dotsize, u_norm, 'filled')
+	end
 else
 	scatter(CurrPos(:,1), CurrPos(:,2), dotsize, uvec(:,i), 'filled')
 end
-colormap summer;
+%colormap summer;
+%colormap winter;
+%colormap lines;
+%colormap jet;
+colormap hsv;
 colorbar;
+
+
+if normalize ==1 
+    caxis([0 1])
+else	
+    %caxis ([0 4e-5])
+end
+
 
 space = 0.001;
 %xmin = min(Pos(:,1)) - space;
