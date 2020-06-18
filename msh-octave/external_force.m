@@ -43,6 +43,19 @@ switch geometry
 
 		extforce = [ zeros(totalnodes, 1),  top_edges .* (-sigma)];
 
+	case 'peridem'
+		% north pole
+		point_north = 1e-3 * [cos(pi/2), sin(pi/2)];
+		diff = Pos - point_north;
+		top_edges = ( sqrt(diff(:,1).^2 + diff(:,2).^2) < 2*delta );
+		%top_edges = ( sqrt(diff(:,1).^2 + diff(:,2).^2) < 1e-10 );
+
+		%dx = 0.002/4;
+		%sigma = 12e6/dx;
+		sigma = 12e5;
+
+		extforce = [ zeros(totalnodes, 1),  top_edges .* (-sigma)];
+
 	otherwise
 
 end

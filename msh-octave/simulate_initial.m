@@ -19,8 +19,8 @@ imgcounter = 1;
 %dt = 25e-9;
 dt = 25e-8;
 
-f = figure('visible','off');
-%f = figure('visible','on');
+%f = figure('visible','off');
+f = figure('visible','on');
 tic
 
 for t = 1:timesteps
@@ -50,7 +50,7 @@ for t = 1:timesteps
 
     if mod(t, 50) == 0
 		t
-		savenewpos2(u0, Pos, 3, imgcounter, f, 'test')
+		savenewpos2(u0, Pos, 3, imgcounter, f, 'single_')
 		imgcounter = imgcounter + 1;
     end
 

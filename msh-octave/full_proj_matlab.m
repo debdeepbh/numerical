@@ -8,10 +8,14 @@ close all
 %experiment = 'single_particle' 
 experiment = 'multi_particle'
 
+do_pause = 'no'
+%do_pause = 'yes'
+
 % plot reference config
 plot_reference = 1;
 plot_circles = 1;
-timesteps = 1800;
+%timesteps = 10800;
+timesteps = 1e5;	% peridem
 
 %geometry = 'sodalime'
 %geometry = 'circle'
@@ -34,8 +38,12 @@ load('geometry.mat')
 scatter(Pos(:,1), Pos(:,2), 5, 'filled')
 axis equal
 
-disp 'Press key to continue'
-pause
+switch do_pause
+    case 'yes'
+	disp 'Press key to continue'
+	pause
+    otherwise
+end
 
 % generate the neighbor-list
 %[NbdArr] = gen_nbdlist(Pos, delta);
@@ -64,9 +72,13 @@ if plot_circles == 1
  end
 end
 
+switch do_pause
+    case 'yes'
+	disp 'Press key to continue'
+	pause
+    otherwise
+end
 
-disp 'Press key to continue'
-pause
 
 % get the position and relative distances of the neighbors
 [Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm, nbd_Vol] = precomputation(NbdArr, Pos, Vol);
@@ -75,15 +87,19 @@ pause
 % get the material properties
 [delta, rho, Gnot, E, nu, snot, cnot] = material_properties(delta);
 
-% gravity, amplified
+% gravity
 gravity = zeros(size(Pos));
-gravity(:,2) = - 9.8 * rho * 1e5;
+gravity(:,2) = - 9.8;
 
 disp 'Precomputation done.'
 
+switch do_pause
+    case 'yes'
+	disp 'Press key to continue'
+	pause
+    otherwise
+end
 
-disp 'Press key to continue'
-pause
 
 switch experiment
 case 'single_particle'
@@ -101,8 +117,13 @@ case 'single_particle'
     %extforce = gravity;
     %extforce = zeros(total_nodes, 2);
 
-    disp 'Press key to continue'
-    pause
+    switch do_pause
+	case 'yes'
+	    disp 'Press key to continue'
+	    pause
+	otherwise
+    end
+
 
     % simulate with initial data
     [NbdArr_out, u0] = simulate_initial(uold, uolddot, uolddotdot, Pos, NbdArr, nbd_Vol, extforce, delta, Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm, timesteps);
@@ -114,13 +135,17 @@ case 'multi_particle'
     total_particles = 2;
 
 
-    contact_radius = delta/2;
+    %contact_radius = delta/2;
+    contact_radius = 1e-3/6;	% peridem
 
     % particle location, scaling, and rotation
     particle_scaling = ones(total_particles, 1);
     particle_rotation = zeros(total_particles, 1);
     % % Specify
-    particle_shift = [0, 0; 0, 2.1];
+    falling_from = 5e-3;	% 5 mm
+    %virtual_distance = 1e-3 + contact_radius + 1e-3;
+    virtual_distance = 2.2e-3;
+    particle_shift = [0, 0; 0, virtual_distance];
     %particle_shift = [0, 0];
 
     % locations of the particles
@@ -136,10 +161,12 @@ case 'multi_particle'
 	Vol_multi(:,i) = ( (particle_scaling(i)).^dimension) .* Vol;
     end
 
-    % external forces on particles
+    % default external forces on particles
     extforce_multi = zeros( [size(Pos), total_particles]);
-    % gravity applies on the second particle only
-    %exforce(:,:,2) = gravity * 1e5;
+
+    % specify external forces on particles
+    % % gravity applies on the second particle only
+    %exforce(:,:,2) = gravity .* Vol_multi(:,:,2) .* rho;
 
     % neighborhood  array
     NbdArr_multi = zeros( [size(NbdArr), total_particles]);
@@ -153,16 +180,25 @@ case 'multi_particle'
 	[xi_1_multi(:,:,i), xi_2_multi(:,:,i), xi_norm_multi(:,:,i), nbd_Vol_multi(:,:,i)] = precomputation(NbdArr_multi(:,:,i), Pos_multi(:,:,i), Vol_multi(:,:,i));
     end
 
-    % initial data
+    % default initial data
     uold_multi = zeros(total_nodes,2, total_particles);
     uolddot_multi = zeros(total_nodes,2, total_particles);
     uolddotdot_multi = zeros(total_nodes,2, total_particles);
 
-    % specify
-    %uolddot_multi(:,:,2) = zeros(total_nodes,2) + [0 -1e3];
-    uolddot_multi(:,:,2) = zeros(total_nodes,2) + [0 -1e2];
+    % specify initial data
+    %uolddot_multi(:,:,2) = zeros(total_nodes,2) + [0 -1e1];
+
+    % falling from a height
+    uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -sqrt(2*9.8* (falling_from - virtual_distance))];
+    uolddotdot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -9.8];
+
+    % normal stiffness (From Foster's paper)
+    bulk_modulus =  E/ (3 * ( 1 - 2 * nu));
+    normal_stiffness = 18 * bulk_modulus /( pi * delta^5);
+%% debugging
+	%normal_stiffness = normal_stiffness * 1e-5;
     
-    [NbdArr_out_multi, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, timesteps);
+    [NbdArr_out_multi, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, timesteps);
 
 otherwise
     disp 'No experiment provided'

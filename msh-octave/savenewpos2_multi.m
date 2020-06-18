@@ -1,4 +1,4 @@
-function savenewpos2_multi(total_particles, uvec, Pos, j, counter, f, filestr)
+function savenewpos2_multi(total_particles, uvec, Pos, j, counter, f, filestr, contact_radius)
 % Save current positions to a file. n=#nodes
 % Input:
 %	uvec: displacement vector, nx2
@@ -14,7 +14,7 @@ function savenewpos2_multi(total_particles, uvec, Pos, j, counter, f, filestr)
 dotsize = 10;
 
 
-scaling = 5;
+scaling = 1;
 %scaling = 10;
 
 CurrPos = Pos + scaling * uvec;
@@ -28,6 +28,14 @@ switch j
 
 	    hold on
 	end
+
+	particle_number = 2;
+	% plot contact radius
+	top_node = 6;
+	bottom_node = 16;
+	theta = 0:0.1:2*pi;
+	plot(CurrPos(bottom_node,1, particle_number) + contact_radius * cos(theta), CurrPos(bottom_node,2, particle_number) + contact_radius * sin(theta));
+
 	hold off
     otherwise
 	for i = 1:total_particles
@@ -57,5 +65,7 @@ space = 0.001;
 %axis([xlimit ylimit])
 
 axis equal
+xlim([-2 2]* 1e-3)
+ylim([-1 4]* 1e-3)
 
 saveas(f, filename);

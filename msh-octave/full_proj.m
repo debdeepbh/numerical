@@ -6,7 +6,8 @@ clear all
 close all
 
 
-geometry='circle'
+geometry='peridem'
+%geometry='circle'
 %geometry='sodalime'
 
 switch geometry
@@ -18,6 +19,9 @@ case 'sodalime'
 case 'circle'
 	delta = 0.5;
 	meshsize = delta/2;
+case 'peridem'
+	delta = 1e-3;	% peridem, all the nodes are neighbors
+	meshsize = 1e-3/8;
 otherwise
 
 end
