@@ -9,7 +9,7 @@ function [Pos, Vol, T] = genmesh2(geometry, meshsize)
 %	Vol:
 
 % plot the indices of the nodes, very slow when there are many nodes
-draw_text = 0;
+draw_text = 1;
 
 
 switch geometry
@@ -26,6 +26,11 @@ case 'circle'
 	steps = 20;
 	angles = linspace(0, 2*pi- 2*pi/steps, steps)';
 	P = [ cos(angles), sin(angles)]; 
+case 'peridem'
+	% circle, Caution: the last node should _NOT_ overlap with the first!
+	steps = 20;
+	angles = linspace(0, 2*pi- 2*pi/steps, steps)';
+	P = 1e-3 * [ cos(angles), sin(angles)]; % 1mm size
 otherwise
 
 end
