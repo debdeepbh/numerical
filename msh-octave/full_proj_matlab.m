@@ -5,8 +5,11 @@
 clear all
 close all
 
-%experiment = 'single_particle' 
-experiment = 'multi_particle'
+experiment = 'single_particle' 
+%experiment = 'multi_particle'
+
+% simulate sodalime crack
+simulate_sodalime_prenotch = 0;
 
 do_pause = 'no'
 %do_pause = 'yes'
@@ -35,6 +38,9 @@ load('Vol.mat')
 load('T.mat')
 load('geometry.mat')
 
+
+
+
 scatter(Pos(:,1), Pos(:,2), 5, 'filled')
 axis equal
 
@@ -54,6 +60,19 @@ end
 tic
 [NbdArr] = gen_NbdArr(Pos, Pos, delta, 1);
 toc
+
+if simulate_sodalime_prenotch == 1
+    %% for sodalime crack test, borrowing from old code
+    load('PosCrack.mat')
+    Pos  = PosCrack;
+    delta =  0.002;
+    dx = delta/4;
+    dy = delta/4;
+    Vol = zeros(size(PosCrack)) + dx * dy;
+    %% for sodalime crack test, borrowing from old code
+    load('Nbd.mat')
+    NbdArr = Nbd;
+end
 
 disp('Max neighbors') 
 size(NbdArr)
@@ -124,25 +143,37 @@ case 'single_particle'
 	otherwise
     end
 
+    break_bonds = 1;
 
     % simulate with initial data
-    [NbdArr_out, u0] = simulate_initial(uold, uolddot, uolddotdot, Pos, NbdArr, nbd_Vol, extforce, delta, Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm, timesteps);
+    [NbdArr_out, u0] = simulate_initial(uold, uolddot, uolddotdot, Pos, NbdArr, Vol, nbd_Vol, extforce, delta, Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm, timesteps, break_bonds);
 
 
 case 'multi_particle'
+
+    example = 'two_balls'
+    switch example
+        case 'two_balls'
+	    total_particles = 2;
+	    contact_radius = 1.74e-04;	% peridem
+    	
+        otherwise
+    	
+    end
+
     % scaling, shifting, rotation
     %total_particles = 1;
     total_particles = 2;
 
 
     %contact_radius = delta/2;
-    contact_radius = 1e-3/6;	% peridem
+    contact_radius = 1.74e-04;	% peridem
 
     % particle location, scaling, and rotation
     particle_scaling = ones(total_particles, 1);
     particle_rotation = zeros(total_particles, 1);
     % % Specify
-    falling_from = 5e-3;	% 5 mm
+    falling_from = 3e-3;	% 5 mm
     %virtual_distance = 1e-3 + contact_radius + 1e-3;
     virtual_distance = 2.2e-3;
     particle_shift = [0, 0; 0, virtual_distance];
@@ -165,8 +196,9 @@ case 'multi_particle'
     extforce_multi = zeros( [size(Pos), total_particles]);
 
     % specify external forces on particles
+    % this is actually external force density, i.e. Force/Volume, or Acceleration * density
     % % gravity applies on the second particle only
-    %exforce(:,:,2) = gravity .* Vol_multi(:,:,2) .* rho;
+    exforce(:,:,2) = gravity .* rho;
 
     % neighborhood  array
     NbdArr_multi = zeros( [size(NbdArr), total_particles]);
@@ -190,11 +222,17 @@ case 'multi_particle'
 
     % falling from a height
     uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -sqrt(2*9.8* (falling_from - virtual_distance))];
-    uolddotdot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -9.8];
+    %uolddotdot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -9.8];
+
+      %uolddot_multi(:,:,2) = zeros(total_nodes, 2) + [0, -1.3e-01];	% peridem
+      %uolddotdot_multi(:,:,2) = zeros(total_nodes, 2) + [0, -10];	% peridem
+
 
     % normal stiffness (From Foster's paper)
-    bulk_modulus =  E/ (3 * ( 1 - 2 * nu));
-    normal_stiffness = 18 * bulk_modulus /( pi * delta^5);
+    %bulk_modulus =  E/ (3 * ( 1 - 2 * nu));
+  %bulk_modulus = 2.e+09	% peridem
+    %normal_stiffness = 18 * bulk_modulus /( pi * delta^5);
+      normal_stiffness = (7.385158e+05)^2;	% peridem
 %% debugging
 	%normal_stiffness = normal_stiffness * 1e-5;
     

@@ -19,7 +19,7 @@ diffMat = repmat(Pos_neighbor, 1, total_nodes) - reshape(Pos_center', 1, []);
 
 % indices that are within delta distance
 % caution: this is a column matrix, i.e. each column has the neighbor indices
-neighbor_indices = ( sqrt(diffMat(:, 1:2:end).^2 + diffMat(:, 2:2:end).^2) < delta ) .* indices_all;
+neighbor_indices = ( sqrt(diffMat(:, 1:2:end).^2 + diffMat(:, 2:2:end).^2) <= delta ) .* indices_all;
 
 switch remove_center
     case 1
