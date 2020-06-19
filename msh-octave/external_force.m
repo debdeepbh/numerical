@@ -24,7 +24,7 @@ switch geometry
 		% distribute the external force over the 
 		%sigma = 12e6/sum(top_edge_location);
 		%dx = delta/4;
-		dx = 0.002/4;
+		dx = delta/2;
 		%sigma = 12e6/sum(top_edge_location);
 		sigma = 12e6/dx;
 
@@ -38,8 +38,8 @@ switch geometry
 		%top_edges = ( sqrt(diff(:,1).^2 + diff(:,2).^2) < 1e-10 );
 
 		dx = 0.002/4;
-		%sigma = 12e6/dx;
-		sigma = 12e5;
+		sigma = 12e6/dx;
+		%sigma = 12e5;
 
 		extforce = [ zeros(totalnodes, 1),  top_edges .* (-sigma)];
 

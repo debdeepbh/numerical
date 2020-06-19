@@ -1,7 +1,5 @@
-function [NbdArr_out, u0] = simulate_initial(uold, uolddot, uolddotdot, Pos, NbdArr, nbd_Vol, extforce, delta, xi_1, xi_2, xi_norm, timesteps)
+function [NbdArr_out, u0] = simulate_initial(uold, uolddot, uolddotdot, Pos, NbdArr, Vol, nbd_Vol, extforce, delta, xi_1, xi_2, xi_norm, timesteps, break_bonds)
 
-% break bonds or not
-break_bonds = 0;
 
 close all
 
@@ -16,8 +14,8 @@ total_nodes = length(NbdArr);
 
 
 imgcounter = 1;
-%dt = 25e-9;
-dt = 25e-8;
+dt = 25e-9;
+%dt = 25e-8;
 
 %f = figure('visible','off');
 f = figure('visible','on');
@@ -32,6 +30,7 @@ for t = 1:timesteps
     [totalintforce, stretch] = peridynamic_force(u0, NbdArr, nbd_Vol, xi_1, xi_2, xi_norm, cnot);
 
     % accelaration, combine all the forces
+% debuggin: include Volume
     %u0dotdot = (1/rho) .*( totalintforce .* Vol + extforce) ;
     u0dotdot = (1/rho) .*( totalintforce  + extforce) ;
 

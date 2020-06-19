@@ -15,8 +15,10 @@ draw_text = 1;
 switch geometry
 case 'sodalime'
 	% Define a polygon using
-	%P = [10 10; 40 15; 40 35; 20 25; 15 30];
-	P = [0.1 0; 0.2 0; 0.2 0.04; 0.1 0.04];
+	%P = [0.1 0; 0.2 0; 0.2 0.04; 0.1 0.04];
+
+	% with pre-notch
+	P = [0.1, 0; 0.2, 0; 0.2, 0.04; 0.1, 0.04; 0.1, (0.04/2) + meshsize/2; (0.1 + 0.2)/2, (0.04/2) + meshsize/2; (0.1 + 0.2)/2, (0.04/2) - meshsize/2; 0.1, (0.04/2) - meshsize/2 ];
 	%%  Plot the polygon
 	%
 	%drawPolygon(P, '-o')
