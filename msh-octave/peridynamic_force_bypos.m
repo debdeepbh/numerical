@@ -1,13 +1,5 @@
 function [totalintforce, stretch] = peridynamic_force_bypos(CurrPos, NbdArr, nbd_Vol, xi_1, xi_2, xi_norm, cnot, delta, use_influence_function) 
-% Function description
-% Input:
-%	uold: 
-%	uolddot: 
-%	uolddotdot: 
-%	: 
-%
-% Output:
-%	out:
+% Computes the peridynamic force from current position vectors
 
 
 restrict = (NbdArr > 0);

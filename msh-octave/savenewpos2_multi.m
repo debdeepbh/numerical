@@ -1,4 +1,4 @@
-function savenewpos2_multi(total_particles, CurrPos, Quantity, counter, f, filestr, contact_radius)
+function savenewpos2_multi(total_particles, CurrPos, Quantity, counter, f, filestr, contact_radius, time)
 % Save current positions to a file. n=#nodes
 % Input:
 %	CurrPos: position vector, nx2xtotal_particle
@@ -38,6 +38,7 @@ colormap summer;
 colorbar;
 
 
+title(strcat('time = ', num2str(time), ' ms'))
 
 space = 0.001;
 %xmin = min(Pos(:,1)) - space;

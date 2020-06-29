@@ -1,10 +1,14 @@
 function [NbdArr_out, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, timesteps, delta);
 
+
 % break bonds or not
 break_bonds = 0;
 
 %save_plot = 0;
 save_plot = 1;
+
+%use_influence_function = 0
+use_influence_function = 1
 
 close all
 
@@ -46,17 +50,14 @@ for t = 1:timesteps
     peridynamic_force_multi = zeros(size(u0_multi));
     contact_force_multi = zeros(size(u0_multi));
 
-
 %% for debugging, only one particle
     %for i=2
     for i=1:total_particles
 
 	% internal force - peridynamic
-	[peri_force, stretch] = peridynamic_force_peridem(CurrPos_multi(:,:,i), NbdArr_multi(:,:,i), nbd_Vol_multi(:,:,i), xi_1_multi(:,:,i), xi_2_multi(:,:,i), xi_norm_multi(:,:,i), cnot, delta, i, t) ;
+	%[peri_force, stretch] = peridynamic_force_peridem(CurrPos_multi(:,:,i), NbdArr_multi(:,:,i), nbd_Vol_multi(:,:,i), xi_1_multi(:,:,i), xi_2_multi(:,:,i), xi_norm_multi(:,:,i), cnot, delta, i, t) ;
 
-
-	peridynamic_force_multi(:,:,i) = peri_force;
-	stretch_multi(:,:,i) = stretch;
+  [peridynamic_force_multi(:,:,i), stretch_multi(:,:,i)] = peridynamic_force_bypos(CurrPos_multi(:,:,i), NbdArr_multi(:,:,i), nbd_Vol_multi(:,:,i), xi_1_multi(:,:,i), xi_2_multi(:,:,i), xi_norm_multi(:,:,i), cnot, delta, use_influence_function) ;
 
 
 
@@ -70,6 +71,7 @@ for t = 1:timesteps
 
 	    % placeholder for total contact force on the nodes of i-th body
 	    cf_contrib_i = zeros(total_nodes, 2);
+
 	    other_particles = nonzeros( (1:total_particles).*(1:total_particles ~= i) );
 
 	    for j = other_particles
@@ -186,8 +188,11 @@ for t = 1:timesteps
 	    NbdArr_multi = ((stretch_multi - snot ) < 0).* NbdArr_multi;
     end
 
-    if mod(t, 2) == 0
+    if (mod(t, 300) == 0) || ( t == 1)
 		fprintf('t: %d\n', t)
+
+		time = dt * t * 1e3;	% micro seconds
+
 		%fprintf('(i,j) = (%d, %d)\n', i,j)
 		%%fprintf('contact neighbors: %d\n', contact_NbdArr(16,:));
 		%contact_NbdArr(16,:)
@@ -200,12 +205,13 @@ for t = 1:timesteps
 		Quantity = peridynamic_force_multi(:,2,:);
 		switch save_plot
 		    case 1
-			savenewpos2_multi(total_particles, CurrPos_multi, Quantity, imgcounter, f, 'multi_', contact_radius)
+			savenewpos2_multi(total_particles, CurrPos_multi, Quantity, imgcounter, f, 'multi_', contact_radius, time);
 		    otherwise
 			
 		end
 		imgcounter = imgcounter + 1;
     end
+
 
 end
 
