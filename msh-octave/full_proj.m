@@ -6,9 +6,9 @@ clear all
 close all
 
 
-%geometry='peridem'
+geometry='peridem'
 %geometry='circle'
-geometry='sodalime'
+%geometry='sodalime'
 
 switch geometry
 case 'sodalime'
@@ -16,9 +16,6 @@ case 'sodalime'
 	delta = 0.004;	% for glass slab
 	%delta = 0.012;	% peridynamic horizon
 	%delta = 0.25;	% for the unit circle 
-	meshsize = delta/2;
-case 'circle'
-	delta = 0.5;
 	meshsize = delta/2;
 case 'peridem'
 	delta = 1e-3;	% peridem, all the nodes are neighbors

@@ -23,11 +23,6 @@ case 'sodalime'
 	%
 	%drawPolygon(P, '-o')
 	%pause (1)
-case 'circle'
-	% circle, Caution: the last node should _NOT_ overlap with the first!
-	steps = 20;
-	angles = linspace(0, 2*pi- 2*pi/steps, steps)';
-	P = [ cos(angles), sin(angles)]; 
 case 'peridem'
 	% circle, Caution: the last node should _NOT_ overlap with the first!
 	steps = 20;
