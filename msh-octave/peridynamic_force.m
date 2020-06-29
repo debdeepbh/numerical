@@ -16,19 +16,25 @@ disp_1 = u0(:,1);
 disp_2 = u0(:,2);
 
 %% Displacements of the neighbors
-u_1_p = disp_1(NbdArr + (~NbdArr));
-u_2_p = disp_2(NbdArr + (~NbdArr));
+u_1_p = disp_1(NbdArr + ~NbdArr);
+u_2_p = disp_2(NbdArr + ~NbdArr);
 
 eta_1 = u_1_p - disp_1;
 eta_2 = u_2_p - disp_2;
 
+
 eta_p_xi_1 = eta_1 + xi_1;
 eta_p_xi_2 = eta_2 + xi_2;
+
+eta_p_xi_1 = eta_p_xi_1 .* restrict;
+eta_p_xi_2 = eta_p_xi_2 .* restrict;
 
 eta_p_xi_norm = sqrt(eta_p_xi_1.^2 + eta_p_xi_2.^2);
 
 % to avoid dividing by zero 
 stretch = (eta_p_xi_norm - xi_norm)./(xi_norm + (~xi_norm));
+%% ignore negative stretch
+%stretch = stretch .* (stretch > 0);
 
 unitvec_1 =  eta_p_xi_1 ./ (eta_p_xi_norm + ~eta_p_xi_norm) .* restrict;
 unitvec_2 =  eta_p_xi_2 ./ (eta_p_xi_norm + ~eta_p_xi_norm) .* restrict;

@@ -9,10 +9,11 @@ experiment = 'single_particle'
 %experiment = 'multi_particle'
 
 % simulate sodalime crack
-simulate_sodalime_prenotch = 0;
+%simulate_sodalime_prenotch = 0;
+simulate_sodalime_prenotch = 1;
 
-do_pause = 'no'
-%do_pause = 'yes'
+%do_pause = 'no'
+do_pause = 'yes'
 
 % plot reference config
 plot_reference = 1;
@@ -152,10 +153,9 @@ case 'single_particle'
 case 'multi_particle'
 
     example = 'two_balls'
+
     switch example
         case 'two_balls'
-	    total_particles = 2;
-	    contact_radius = 1.74e-04;	% peridem
     	
         otherwise
     	
@@ -227,16 +227,15 @@ case 'multi_particle'
       %uolddot_multi(:,:,2) = zeros(total_nodes, 2) + [0, -1.3e-01];	% peridem
       %uolddotdot_multi(:,:,2) = zeros(total_nodes, 2) + [0, -10];	% peridem
 
-
     % normal stiffness (From Foster's paper)
-    %bulk_modulus =  E/ (3 * ( 1 - 2 * nu));
-  %bulk_modulus = 2.e+09	% peridem
-    %normal_stiffness = 18 * bulk_modulus /( pi * delta^5);
-      normal_stiffness = (7.385158e+05)^2;	% peridem
+    bulk_modulus =  E/ (3 * ( 1 - 2 * nu));
+  %bulk_modulus = 2.0e+09	% peridem
+    normal_stiffness = 18 * bulk_modulus /( pi * delta^5);
+      %normal_stiffness = (7.385158e+05)^2;	% peridem
 %% debugging
 	%normal_stiffness = normal_stiffness * 1e-5;
     
-    [NbdArr_out_multi, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, timesteps);
+ [NbdArr_out, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, timesteps, delta);
 
 otherwise
     disp 'No experiment provided'

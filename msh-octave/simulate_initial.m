@@ -12,10 +12,12 @@ total_nodes = length(NbdArr);
 %uolddot = zeros(total_nodes,2);
 %uolddotdot = zeros(total_nodes,2);
 
+use_influence_function = 0
+%use_influence_function = 1
 
 imgcounter = 1;
-dt = 25e-9;
-%dt = 25e-8;
+%dt = 25e-9;
+dt = 25e-8;
 
 %f = figure('visible','off');
 f = figure('visible','on');
@@ -23,11 +25,16 @@ tic
 
 for t = 1:timesteps
     %for t = 1:2800
+    t
 
     % loop starts
     u0 = uold + dt * uolddot + dt * dt * 0.5 * uolddotdot;
 
-    [totalintforce, stretch] = peridynamic_force(u0, NbdArr, nbd_Vol, xi_1, xi_2, xi_norm, cnot);
+    CurrPos = u0 + Pos;
+
+    %[totalintforce, stretch] = peridynamic_force(u0, NbdArr, nbd_Vol, xi_1, xi_2, xi_norm, cnot);
+
+    [totalintforce, stretch] = peridynamic_force_bypos(CurrPos, NbdArr, nbd_Vol, xi_1, xi_2, xi_norm, cnot, delta, use_influence_function);
 
     % accelaration, combine all the forces
 % debuggin: include Volume
@@ -49,7 +56,8 @@ for t = 1:timesteps
 
     if mod(t, 50) == 0
 		t
-		savenewpos2(u0, Pos, 3, imgcounter, f, 'single_')
+		time = dt * t * 1e6 ; % micro second
+		savenewpos2(u0, Pos, 3, imgcounter, f, 'single_', time)
 		imgcounter = imgcounter + 1;
     end
 

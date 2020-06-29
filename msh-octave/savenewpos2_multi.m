@@ -48,8 +48,8 @@ space = 0.001;
 %ylimit = [ymin ymax];
 %axis([xlimit ylimit])
 
-axis equal
 xlim([-2 2]* 1e-3)
 ylim([-1 4]* 1e-3)
 
+axis equal
 saveas(f, filename);
