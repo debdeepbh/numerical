@@ -9,6 +9,7 @@ function [extforce] = external_force(geometry, Pos, NbdArr, delta)
 % plot force
 plot_force = 1;
 
+
 gravity = 9.8;
 totalnodes = length(Pos);
 extforce = zeros(totalnodes,2); % extforce(i,:) = external force on i-th serial

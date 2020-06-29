@@ -22,7 +22,7 @@ case 'circle'
 	meshsize = delta/2;
 case 'peridem'
 	delta = 1e-3;	% peridem, all the nodes are neighbors
-	meshsize = 1e-3/8;
+	meshsize = 1e-3/5;
 otherwise
 
 end

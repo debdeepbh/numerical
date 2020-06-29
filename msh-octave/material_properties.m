@@ -38,9 +38,11 @@ switch experiment
 	rho=1200	% peridem
 	nu = 0.22;	% peridem
 
-	lambda = E * nu / ((1 + nu)*( 1 - 2 * nu));
-	cnot = 24 * lambda/ (pi * delta^3);
+	%lambda = E * nu / ((1 + nu)*( 1 - 2 * nu));
+	%cnot = 24 * lambda/ (pi * delta^3);
 
+
+	cnot = 24 * E /( (1 - nu) * pi * delta^3);
 
 	Gnot = 135;
 	snot = sqrt(4 * pi * Gnot /(9*E*delta));

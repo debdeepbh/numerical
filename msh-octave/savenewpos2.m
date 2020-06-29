@@ -1,4 +1,4 @@
-function savenewpos2(uvec, Pos, i, counter, f, filestr)
+function savenewpos2(uvec, Pos, i, counter, f, filestr, time)
 % Save current positions to a file. n=#nodes
 % Input:
 %	uvec: displacement vector, nx2
@@ -48,6 +48,8 @@ colormap summer;
 %colormap jet;
 %colormap hsv;
 colorbar;
+
+title(num2str(time));
 
 
 if normalize ==1 
