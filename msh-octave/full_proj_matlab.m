@@ -192,13 +192,22 @@ case 'multi_particle'
     %starting_distance = 2.2e-3;
     starting_distance = 5e-3;
     particle_shift = [0, 0; 0, falling_from];
+% particle on the bottom is flipped to ensure symmetric collision
+    particle_rotation = [pi; 0];
     %particle_shift = [0, 0];
 
     % locations of the particles
     Pos_multi = zeros( [size(Pos), total_particles]);
+
     for i = 1:total_particles
-	Pos_multi(:,:,i) = particle_scaling(i) * Pos + particle_shift(i, :);
+	rot_matrix = [cos(particle_rotation(i)), -sin(particle_rotation(i)); sin(particle_rotation(i)), cos(particle_rotation(i))]
+	Pos_multi(:,:,i) = particle_scaling(i) * (rot_matrix * (Pos'))' + particle_shift(i, :);
+	%Pos_multi(:,:,i) = particle_scaling(i) * Pos + particle_shift(i, :);
     end
+
+%% rotation
+% % rotate the second particle by an angle
+
 
     % volume of the nodes
     Vol_multi = zeros( [size(Vol), total_particles]);
