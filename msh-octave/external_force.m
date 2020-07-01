@@ -31,14 +31,14 @@ switch geometry
 
 		% hopefully the top and bottom edges are non-overlapping
 		extforce = [zeros(totalnodes, 1), top_edge_location] .* sigma + [zeros(totalnodes, 1), bottom_edge_location] .* (-sigma);
-	case 'circle'
+	case 'unitcircle'
 		% north pole
 		point_north = [cos(pi/2), sin(pi/2)];
 		diff = Pos - point_north;
 		top_edges = ( sqrt(diff(:,1).^2 + diff(:,2).^2) < 2*delta );
 		%top_edges = ( sqrt(diff(:,1).^2 + diff(:,2).^2) < 1e-10 );
 
-		dx = 0.002/4;
+		dx = delta;
 		sigma = 12e6/dx;
 		%sigma = 12e5;
 
@@ -56,6 +56,8 @@ switch geometry
 		sigma = 12e5;
 
 		extforce = [ zeros(totalnodes, 1),  top_edges .* (-sigma)];
+	    case 'gravity'
+		extforce = zeros(totalnodes, 2) + [0 -10]; 
 
 	otherwise
 

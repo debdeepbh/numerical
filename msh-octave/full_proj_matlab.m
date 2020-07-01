@@ -24,6 +24,8 @@ plot_circles = 1;
 %timesteps = 10800;
 timesteps = 1e5;	% peridem
 
+modulo = 100;
+
 %geometry = 'sodalime'
 %geometry = 'circle'
 
@@ -133,13 +135,16 @@ case 'single_particle'
     uolddot = zeros(total_nodes,2);
     uolddotdot = zeros(total_nodes,2);
 
-    % specify
-    %uolddot = zeros(total_nodes,2) + [1e4 0];
+    extforce = zeros(total_nodes, 2);
+
+%% specify initial data
+    %uold = zeros(total_nodes,2) + [0 1e-3];
+    uolddot = zeros(total_nodes,2) + [0, 4e4];
+    uolddotdot = (zeros(total_nodes, 2) + [0 -16e7] );
 
     % external force
-    [extforce] = external_force(geometry, Pos, NbdArr, delta);
-    %extforce = gravity;
-    %extforce = zeros(total_nodes, 2);
+    %[extforce] = external_force(geometry, Pos, NbdArr, delta);
+    extforce = (zeros(total_nodes, 2) + [0 -16e7] ) * rho;
 
     switch do_pause
 	case 'yes'
@@ -150,8 +155,12 @@ case 'single_particle'
 
     break_bonds = 1;
 
+%dt = 25e-9;
+dt = 25e-8;
+
     % simulate with initial data
-    [NbdArr_out, u0] = simulate_initial(uold, uolddot, uolddotdot, Pos, NbdArr, Vol, nbd_Vol, extforce, delta, Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm, timesteps, break_bonds);
+    [NbdArr_out, u0] = simulate_initial(uold, uolddot, uolddotdot, Pos, NbdArr, Vol, nbd_Vol, extforce, delta, Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm, timesteps, break_bonds, material, dt);
+    %[NbdArr_out, u0] = test_int(uold, uolddot, uolddotdot, Pos, NbdArr, Vol, nbd_Vol, extforce, delta, Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm, timesteps, break_bonds, material, dt);
 
 
 case 'multi_particle'
@@ -177,9 +186,11 @@ case 'multi_particle'
     particle_scaling = ones(total_particles, 1);
     particle_rotation = zeros(total_particles, 1);
     % % Specify
-    falling_from = 2.5e-3;	% 5 mm
+    %falling_from = 2.5e-3;	% 5 mm
+    falling_from = 5e-3;	% 5 mm
     %virtual_distance = 1e-3 + contact_radius + 1e-3;
-    starting_distance = 2.2e-3;
+    %starting_distance = 2.2e-3;
+    starting_distance = 5e-3;
     particle_shift = [0, 0; 0, falling_from];
     %particle_shift = [0, 0];
 
@@ -219,7 +230,8 @@ case 'multi_particle'
 
 %% specify initial data
     uold_multi(:,:,2) = zeros(total_nodes,2) + [0 (starting_distance - falling_from)];
-    uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -sqrt(2*9.8* (falling_from - starting_distance))];
+    uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -60* sqrt(2* 10 * (0.3e-3))];
+    %uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -sqrt(2* 10 * (falling_from - starting_distance))];
     %uolddotdot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -10];
 
   %uolddot_multi(:,:,2) = zeros(total_nodes, 2) + [0, -1.3e-01];	% peridem
@@ -227,16 +239,44 @@ case 'multi_particle'
 
     % specify external force density on particles i.e. Force/Volume, or Acceleration * density
     % % gravity applies on the second particle only
-    exforce(:,:,2) = zeros(total_nodes, 2) +  [0, -10.* rho];
+    %extforce_multi(:,:,2) = zeros(total_nodes, 2) +  [0, -10 .* rho];
 
 
-    % normal stiffness (From Foster's paper)
-    normal_stiffness = 18 * bulk_modulus /( pi * delta^5);
+    % % normal stiffness (From Foster's paper)
+    %normal_stiffness = 18 * bulk_modulus /( pi * delta^5);
+    normal_stiffness = 18 * bulk_modulus /( pi * delta^4);	% from silling-askari05
+
+    % % peridem
+    %mass_particle = pi * (1e-3)^2 * rho;
+    %meq = mass_particle;% harmonic mean of particles of same size
+    %Vmax_by_delmax = (7.385158e+05);
+    %normal_stiffness = meq * Vmax_by_delmax^2;
+
       %normal_stiffness = (7.385158e+05)^2;	% peridem
 %% debugging
 	%normal_stiffness = normal_stiffness * 1e-5;
     
- [NbdArr_out, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, timesteps, delta);
+%dt = 0.02/timesteps;	% peridem
+dt = 0.02/1e5;	% peridem
+
+ [NbdArr_out, u0_multi, store_location, store_vel_min, store_vel_max] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo);
+
+ time_ss = (1:length(store_location)) *  dt * modulo * 1e3;
+ figure
+ plot(time_ss, store_location);
+ title('Location of the center')
+ axis equal
+
+ figure
+ plot(time_ss, store_vel_min);
+ hold on
+ plot(time_ss, store_vel_max);
+ hold off
+ legend('min', 'max')
+ title('Vertical velocity')
+ axis equal
+
+
 
 otherwise
     disp 'No experiment provided'

@@ -50,7 +50,9 @@ space = 0.001;
 %axis([xlimit ylimit])
 
 xlim([-2 2]* 1e-3)
-ylim([-1 4]* 1e-3)
+ylim([-10 10]* 1e-3)
 
 axis equal
+grid on
+
 saveas(f, filename);

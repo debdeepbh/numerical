@@ -1,4 +1,4 @@
-function savenewpos2(uvec, Pos, i, counter, f, filestr, time)
+function savenewpos2(uvec, Pos, i, counter, f, filestr, time, scaling)
 % Save current positions to a file. n=#nodes
 % Input:
 %	uvec: displacement vector, nx2
@@ -13,7 +13,6 @@ function savenewpos2(uvec, Pos, i, counter, f, filestr, time)
 dotsize = 10;
 
 
-scaling = 5;
 %scaling = 10;
 
 normalize = 0;
@@ -49,7 +48,7 @@ colormap summer;
 %colormap hsv;
 colorbar;
 
-title(num2str(time));
+title( strcat('time = ', num2str(time), 'ms') );
 
 
 if normalize ==1 
@@ -64,9 +63,14 @@ space = 0.001;
 %ymin = min(Pos(:,2)) - space;
 %xmax = max(Pos(:,1)) + space;
 %ymax = max(Pos(:,2)) + space;
-%xlimit = [xmin xmax];
-%ylimit = [ymin ymax];
 %axis([xlimit ylimit])
+
+xlim ([-2 2]);
+ylim ([-2 10]);
+
+%axis tight
+
+grid on
 
 axis equal
 
