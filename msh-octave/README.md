@@ -181,3 +181,7 @@ Steps
 X=ones(10000);
 sqrt(X).^sqrt(X).^sqrt(X).^sqrt(X).^sqrt(X).^sqrt(X)
 ```
+
+# Physics with numerical schemes
+
+* When using velocity Verlet scheme, if the body is under a constant gravity, we need to specify that gravity in initial acceleration (`uolddotdot`) as well as the external force density (`extforce`) as `extforce = zeros(totalnodes, 2) + [0 -10] * rho`. To see that we need to specify this is both places, we can consider the ODE _u''(t) = a_ whose solution is _u(t) = 1/2 * a * t^2_. This is the case when the total internal force is zero. So, after `n` iterations, the displacement should be _1/2*a * (n *dt)^2_ where _dt_ is the timestep size. Follow the steps of the scheme and make sure that that is the case.

@@ -1,10 +1,10 @@
-function [NbdArr_out, u0] = simulate_initial(uold, uolddot, uolddotdot, Pos, NbdArr, Vol, nbd_Vol, extforce, delta, xi_1, xi_2, xi_norm, timesteps, break_bonds)
+function [NbdArr_out, u0] = simulate_initial(uold, uolddot, uolddotdot, Pos, NbdArr, Vol, nbd_Vol, extforce, delta, xi_1, xi_2, xi_norm, timesteps, break_bonds, material, dt)
 
 
 close all
 
 % get the material properties
-[delta, rho, Gnot, E, nu, snot, cnot] = material_properties(delta);
+[delta, rho, Gnot, E, nu, snot, cnot] = material_properties(delta, material);
 
 total_nodes = length(NbdArr);
 % % time integration updaters
@@ -16,8 +16,9 @@ use_influence_function = 0
 %use_influence_function = 1
 
 imgcounter = 1;
-%dt = 25e-9;
-dt = 25e-8;
+
+%% for gravity test
+%dt = 1e-3;
 
 %f = figure('visible','off');
 f = figure('visible','on');
@@ -36,10 +37,14 @@ for t = 1:timesteps
 
     [totalintforce, stretch] = peridynamic_force_bypos(CurrPos, NbdArr, nbd_Vol, xi_1, xi_2, xi_norm, cnot, delta, use_influence_function);
 
+
+
     % accelaration, combine all the forces
 % debuggin: include Volume
     %u0dotdot = (1/rho) .*( totalintforce .* Vol + extforce) ;
     u0dotdot = (1/rho) .*( totalintforce  + extforce) ;
+
+    max(max(u0dotdot))
 
     % velocity
     u0dot = uolddot + dt * 0.5 * uolddotdot + dt * 0.5 * u0dotdot;
@@ -56,8 +61,10 @@ for t = 1:timesteps
 
     if mod(t, 50) == 0
 		t
-		time = dt * t * 1e6 ; % micro second
-		savenewpos2(u0, Pos, 3, imgcounter, f, 'single_', time)
+		time = dt * t * 1e3 ; % milli second
+
+		scaling = 1;
+		savenewpos2(u0, Pos, 3, imgcounter, f, 'single_', time, scaling)
 		imgcounter = imgcounter + 1;
     end
 

@@ -28,6 +28,11 @@ case 'peridem'
 	steps = 20;
 	angles = linspace(0, 2*pi- 2*pi/steps, steps)';
 	P = 1e-3 * [ cos(angles), sin(angles)]; % 1mm size
+case 'unitcircle'
+	% circle, Caution: the last node should _NOT_ overlap with the first!
+	steps = 20;
+	angles = linspace(0, 2*pi- 2*pi/steps, steps)';
+	P = [ cos(angles), sin(angles)]; % 1mm size
 otherwise
 
 end
