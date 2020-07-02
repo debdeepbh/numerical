@@ -26,9 +26,6 @@ timesteps = 1e5;	% peridem
 
 modulo = 100;
 
-%geometry = 'sodalime'
-%geometry = 'circle'
-
 %delta = 0.002;	% for glass slab
 %delta = 0.012;	% peridynamic horizon
 %delta = 0.25;	% for the unit circle 
@@ -37,15 +34,11 @@ load('delta.mat')
 %meshsize = delta/3;
 load('meshsize.mat')
 
-
 disp ('Loading matrices: Pos.mat, Vol.mat, T.mat\n')
 load('Pos.mat')
 load('Vol.mat')
 load('T.mat')
 load('geometry.mat')
-
-
-
 
 scatter(Pos(:,1), Pos(:,2), 5, 'filled')
 axis equal
@@ -64,7 +57,7 @@ end
 %toc
 
 tic
-[NbdArr] = gen_NbdArr(Pos, Pos, delta, 1);
+[NbdArr] = gen_NbdArr(Pos, Pos, delta, 1);	% fastest
 toc
 
 if simulate_sodalime_prenotch == 1
@@ -176,7 +169,8 @@ case 'multi_particle'
 
     % scaling, shifting, rotation
     %total_particles = 1;
-    total_particles = 2;
+    %total_particles = 2;	% 2 particles
+    total_particles = 3;	% 3 particles
 
 
     %contact_radius = delta/2;
@@ -191,10 +185,14 @@ case 'multi_particle'
     %virtual_distance = 1e-3 + contact_radius + 1e-3;
     %starting_distance = 2.2e-3;
     starting_distance = 5e-3;
-    particle_shift = [0, 0; 0, falling_from];
+    %particle_shift = [0, 0; 0, falling_from];	% 2 particles
+    particle_shift = [-5/2, 0; 5/2, 0; 0, 5 * sin(pi/3)] * 1e-3; % 3 particles
 % particle on the bottom is flipped to ensure symmetric collision
-    particle_rotation = [pi; 0];
-    %particle_shift = [0, 0];
+    %particle_rotation = [pi; 0];	% for elastic collision of unit circles % 2 particles
+    %particle_rotation = [pi - pi/8; -pi/8];	% for pacman collision
+    %particle_rotation = [pi - pi/8; -pi/8];	% for circle_w_prenotch
+    %particle_rotation = [0; 0];	% for triangles
+    particle_rotation = [pi/3; pi/3; pi/3]; % 3 particles
 
     % locations of the particles
     Pos_multi = zeros( [size(Pos), total_particles]);
@@ -239,9 +237,12 @@ case 'multi_particle'
 
 %% specify initial data
     uold_multi(:,:,2) = zeros(total_nodes,2) + [0 (starting_distance - falling_from)];
-    uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -60* sqrt(2* 10 * (0.3e-3))];
+    %uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -60* sqrt(2* 10 * (0.3e-3))];	% 2 particles
     %uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -sqrt(2* 10 * (falling_from - starting_distance))];
     %uolddotdot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -10];
+    uolddot_multi(:,:,1) = zeros(total_nodes,2) +  -[sqrt(3)/2, 1/2 ] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
+    uolddot_multi(:,:,2) = zeros(total_nodes,2) +  -[-sqrt(3)/2, 1/2 ] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
+    uolddot_multi(:,:,3) = zeros(total_nodes,2) +  -[0, -1] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
 
   %uolddot_multi(:,:,2) = zeros(total_nodes, 2) + [0, -1.3e-01];	% peridem
   %uolddotdot_multi(:,:,2) = zeros(total_nodes, 2) + [0, -10];	% peridem

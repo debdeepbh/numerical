@@ -6,7 +6,10 @@ clear all
 close all
 
 
-geometry='peridem'
+%geometry='peridem'
+%geometry='pacman'
+%geometry = 'peridem_w_prenotch'
+geometry = 'peridem_triangle'
 %geometry='unitcircle'
 %geometry='sodalime'
 
@@ -19,6 +22,15 @@ case 'sodalime'
 	meshsize = delta/2;
 case 'peridem'
 	delta = 1e-3;	% peridem, all the nodes are neighbors
+	meshsize = delta/5;
+case 'pacman'
+	delta = 1e-3;	% peridem, all the nodes are neighbors
+	meshsize = delta/5;
+case 'peridem_w_prenotch'
+	delta = 1e-3;
+	meshsize = delta/5;
+case 'peridem_triangle'
+	delta = 1e-3;
 	meshsize = delta/5;
 case 'unitcircle'
 	meshsize = 1/5;
