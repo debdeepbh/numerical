@@ -52,6 +52,8 @@ E = 9 * bulk_modulus * shear_modulus / ( 9 * bulk_modulus + shear_modulus);
 
 	Gnot = 135;
 	snot = sqrt(4 * pi * Gnot /(9*E*delta));
+%% debug
+	%snot = sqrt(4 * pi * Gnot /(9*E*delta))/10;
 		
     otherwise
 	

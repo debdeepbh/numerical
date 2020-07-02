@@ -2,7 +2,8 @@ function [NbdArr_out_multi, u0_multi, store_location, store_vel_min, store_vel_m
 
 
 % break bonds or not
-break_bonds = 0;
+break_bonds = 1;
+%break_bonds = 1;
 
 %save_plot = 0;
 save_plot = 1;
@@ -173,6 +174,7 @@ for t = 1:timesteps
 	NbdArr_multi = ((stretch_multi - snot ) < 0).* NbdArr_multi;
     end
 
+
     %if (mod(t, 100) == 0) || ( t == 1)
     if mod(t, modulo) == 0
 		fprintf('t: %d\n', t)
@@ -202,8 +204,8 @@ for t = 1:timesteps
 			savenewpos2_multi(total_particles, CurrPos_multi, Quantity, imgcounter, f, 'elastic_collision_', contact_radius, time);
 		    otherwise
 
-		    end
-		    imgcounter = imgcounter + 1;
+		end
+		imgcounter = imgcounter + 1;
     end
 
 

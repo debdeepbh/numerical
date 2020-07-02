@@ -28,11 +28,30 @@ case 'peridem'
 	steps = 20;
 	angles = linspace(0, 2*pi- 2*pi/steps, steps)';
 	P = 1e-3 * [ cos(angles), sin(angles)]; % 1mm size
+case 'pacman'
+	% circle, Caution: the last node should _NOT_ overlap with the first!
+	steps = 20;
+	% opening of 90 degrees
+	angle_mouth = pi/2;
+	angles = linspace(0, 2*pi- angle_mouth, steps)';
+	P = 1e-3 * [ cos(angles), sin(angles)]; % 1mm size
+	P = [P; 0, 0]
 case 'unitcircle'
 	% circle, Caution: the last node should _NOT_ overlap with the first!
 	steps = 20;
 	angles = linspace(0, 2*pi- 2*pi/steps, steps)';
 	P = [ cos(angles), sin(angles)]; % 1mm size
+case 'peridem_w_prenotch'
+	% circle, Caution: the last node should _NOT_ overlap with the first!
+	steps = 20;
+	% opening of 90 degrees
+	angle_mouth = pi/2;
+	angles = linspace(0 + 2*pi/steps/2, 2*pi- 2*pi/steps/2, steps)';
+	P = 1e-3 * [ cos(angles), sin(angles)]; % 1mm size
+	P = [P; 0, 0]
+    case 'peridem_triangle'
+	side_length = 2e-3;
+	P = [-side_length/2, 0; side_length/2 , 0; 0, side_length * sin(pi/3)]
 otherwise
 
 end
