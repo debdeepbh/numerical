@@ -7,9 +7,9 @@ close all
 
 
 %geometry='peridem'
-%geometry='pacman'
+geometry='pacman'
 %geometry = 'peridem_w_prenotch'
-geometry = 'peridem_triangle'
+%geometry = 'peridem_triangle'
 %geometry='unitcircle'
 %geometry='sodalime'
 

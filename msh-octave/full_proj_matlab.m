@@ -26,6 +26,17 @@ timesteps = 1e5;	% peridem
 
 modulo = 100;
 
+% break bonds or not
+%break_bonds = 0;
+break_bonds = 1;
+
+%total_particles = 1;
+total_particles = 2;	% 2 particles
+%total_particles = 3;	% 3 particles
+
+%specified_initial_data = '3_equidistant'
+specified_initial_data = '2_vertical'
+
 %delta = 0.002;	% for glass slab
 %delta = 0.012;	% peridynamic horizon
 %delta = 0.25;	% for the unit circle 
@@ -55,10 +66,13 @@ end
 %tic
 %[NbdArr] = gen_nbdlist2(Pos, delta);	% twice faster
 %toc
-
+%tic
+%[NbdArr] = gen_NbdArr(Pos, Pos, delta, 1);	% fastest, not anymore
+%toc
 tic
-[NbdArr] = gen_NbdArr(Pos, Pos, delta, 1);	% fastest
+[NbdArr] = gen_NbdArr_varlength(Pos, Pos, delta, 1);	% fastest
 toc
+
 
 if simulate_sodalime_prenotch == 1
     %% for sodalime crack test, borrowing from old code
@@ -146,7 +160,6 @@ case 'single_particle'
 	otherwise
     end
 
-    break_bonds = 1;
 
 %dt = 25e-9;
 dt = 25e-8;
@@ -158,19 +171,9 @@ dt = 25e-8;
 
 case 'multi_particle'
 
-    example = 'two_balls'
 
-    switch example
-        case 'two_balls'
-    	
-        otherwise
-    	
-    end
 
     % scaling, shifting, rotation
-    %total_particles = 1;
-    %total_particles = 2;	% 2 particles
-    total_particles = 3;	% 3 particles
 
 
     %contact_radius = delta/2;
@@ -180,19 +183,29 @@ case 'multi_particle'
     particle_scaling = ones(total_particles, 1);
     particle_rotation = zeros(total_particles, 1);
     % % Specify
-    %falling_from = 2.5e-3;	% 5 mm
-    falling_from = 5e-3;	% 5 mm
-    %virtual_distance = 1e-3 + contact_radius + 1e-3;
-    %starting_distance = 2.2e-3;
-    starting_distance = 5e-3;
-    %particle_shift = [0, 0; 0, falling_from];	% 2 particles
-    particle_shift = [-5/2, 0; 5/2, 0; 0, 5 * sin(pi/3)] * 1e-3; % 3 particles
-% particle on the bottom is flipped to ensure symmetric collision
-    %particle_rotation = [pi; 0];	% for elastic collision of unit circles % 2 particles
-    %particle_rotation = [pi - pi/8; -pi/8];	% for pacman collision
-    %particle_rotation = [pi - pi/8; -pi/8];	% for circle_w_prenotch
-    %particle_rotation = [0; 0];	% for triangles
-    particle_rotation = [pi/3; pi/3; pi/3]; % 3 particles
+    switch specified_initial_data
+    case '2_vertical'
+	%falling_from = 2.5e-3;	% 5 mm
+	falling_from = 5e-3;	% 5 mm
+
+	%starting_distance = 2.2e-3;
+	starting_distance = 5e-3;
+
+	particle_shift = [0, 0; 0, falling_from];	% 2 particles
+
+	% particle on the bottom is flipped to ensure symmetric collision
+	%particle_rotation = [pi; 0];	% for elastic collision of unit circles % 2 particles
+	particle_rotation = [pi - pi/8; -pi/8];	% for pacman collision
+	%particle_rotation = [pi - pi/8; -pi/8];	% for circle_w_prenotch
+	%particle_rotation = [0; 0];	% for triangles
+    case '3_equidistant'
+	particle_shift = [-5/2, 0; 5/2, 0; 0, 5 * sin(pi/3)] * 1e-3; % 3 particles
+	particle_rotation = [pi/3; pi/3; pi/3]; % 3 particles
+    	
+        otherwise
+    	
+    end
+    
 
     % locations of the particles
     Pos_multi = zeros( [size(Pos), total_particles]);
@@ -236,13 +249,20 @@ case 'multi_particle'
     extforce_multi = zeros( [size(Pos), total_particles]);
 
 %% specify initial data
-    uold_multi(:,:,2) = zeros(total_nodes,2) + [0 (starting_distance - falling_from)];
-    %uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -60* sqrt(2* 10 * (0.3e-3))];	% 2 particles
-    %uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -sqrt(2* 10 * (falling_from - starting_distance))];
-    %uolddotdot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -10];
-    uolddot_multi(:,:,1) = zeros(total_nodes,2) +  -[sqrt(3)/2, 1/2 ] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
-    uolddot_multi(:,:,2) = zeros(total_nodes,2) +  -[-sqrt(3)/2, 1/2 ] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
-    uolddot_multi(:,:,3) = zeros(total_nodes,2) +  -[0, -1] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
+    switch specified_initial_data
+	case '2_vertical'
+	    uold_multi(:,:,2) = zeros(total_nodes,2) + [0 (starting_distance - falling_from)];
+	    uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -60* sqrt(2* 10 * (0.3e-3))];	% 2 particles
+	    %uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -sqrt(2* 10 * (falling_from - starting_distance))];
+	    uolddotdot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -10];
+
+        case '3_equidistant'
+	    uolddot_multi(:,:,1) = zeros(total_nodes,2) +  -[sqrt(3)/2, 1/2 ] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
+	    uolddot_multi(:,:,2) = zeros(total_nodes,2) +  -[-sqrt(3)/2, 1/2 ] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
+	    uolddot_multi(:,:,3) = zeros(total_nodes,2) +  -[0, -1] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
+        otherwise
+    	
+    end
 
   %uolddot_multi(:,:,2) = zeros(total_nodes, 2) + [0, -1.3e-01];	% peridem
   %uolddotdot_multi(:,:,2) = zeros(total_nodes, 2) + [0, -10];	% peridem
@@ -269,7 +289,7 @@ case 'multi_particle'
 %dt = 0.02/timesteps;	% peridem
 dt = 0.02/1e5;	% peridem
 
- [NbdArr_out, u0_multi, store_location, store_vel_min, store_vel_max] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo);
+ [NbdArr_out, u0_multi, store_location, store_vel_min, store_vel_max] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds);
 
  time_ss = (1:length(store_location)) *  dt * modulo * 1e3;
  figure
