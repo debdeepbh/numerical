@@ -30,6 +30,8 @@ modulo = 100;
 %break_bonds = 0;
 break_bonds = 1;
 
+with_wall = 1
+
 %total_particles = 1;
 total_particles = 2;	% 2 particles
 %total_particles = 3;	% 3 particles
@@ -186,10 +188,10 @@ case 'multi_particle'
     switch specified_initial_data
     case '2_vertical'
 	%falling_from = 2.5e-3;	% 5 mm
-	falling_from = 5e-3;	% 5 mm
+	falling_from = 3e-3;	% 5 mm
 
 	%starting_distance = 2.2e-3;
-	starting_distance = 5e-3;
+	starting_distance = 3e-3;
 
 	particle_shift = [0, 0; 0, falling_from];	% 2 particles
 
@@ -289,7 +291,7 @@ case 'multi_particle'
 %dt = 0.02/timesteps;	% peridem
 dt = 0.02/1e5;	% peridem
 
- [NbdArr_out, u0_multi, store_location, store_vel_min, store_vel_max] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds);
+ [NbdArr_out, u0_multi, store_location, store_vel_min, store_vel_max] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall);
 
  time_ss = (1:length(store_location)) *  dt * modulo * 1e3;
  figure

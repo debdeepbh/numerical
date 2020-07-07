@@ -173,6 +173,7 @@ Steps
 ##### Running the code
 1. In Octave, run `full_proj`, close the program after various matrices are saved to the disk (e.g. `Pos.m`  etc). The mesh is generated in this step and the nodal volumes are computed (`Vol.mat`).
 1. In Matlab, run `full_proj_matlab` to load the information and simulate the dynamics.
+1. To include the wall, run `full_proj` in octave with `geometry = 'peridem_wall'` once. Then, run the same script with `geometry = ` _somethingElse_. 
 
 
 # Multithreading

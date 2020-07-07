@@ -7,7 +7,8 @@ close all
 
 
 %geometry='peridem'
-geometry='pacman'
+%geometry='pacman'
+geometry='peridem_wall'
 %geometry = 'peridem_w_prenotch'
 %geometry = 'peridem_triangle'
 %geometry='unitcircle'
@@ -35,6 +36,9 @@ case 'peridem_triangle'
 case 'unitcircle'
 	meshsize = 1/5;
 	delta = meshsize;	% peridem, all the nodes are neighbors
+case 'peridem_wall'
+	delta = 1e-3;
+	meshsize = delta/5;
 otherwise
 
 end
@@ -44,15 +48,30 @@ end
 
 printf('total nodes: %d \n', length(Pos));
 
-printf('Saving matrices: Pos.mat, Vol.mat, T.mat\n')
+switch geometry
+    case 'peridem_wall'
+	wall_Pos = Pos;
+	wall_Vol = Vol;
+	wall_T = T;
 
-% save in matlab-readable format
-save -mat7-binary 'Pos.mat' 'Pos'
-save -mat7-binary 'Vol.mat' 'Vol'
-save -mat7-binary 'T.mat' 'T'
-save -mat7-binary 'delta.mat' 'delta'
-save -mat7-binary 'meshsize.mat' 'meshsize'
-save -mat7-binary 'geometry.mat' 'geometry'
+	printf('Saving matrices: wall_Pos.mat, wall_Vol.mat, wall_T.mat\n')
+	% save in matlab-readable format
+	save -mat7-binary 'wall_Pos.mat' 'wall_Pos'
+	save -mat7-binary 'wall_Vol.mat' 'wall_Vol'
+	save -mat7-binary 'wall_T.mat' 'wall_T'
+	
+    otherwise
+	printf('Saving matrices: Pos.mat, Vol.mat, T.mat\n')
+
+	% save in matlab-readable format
+	save -mat7-binary 'Pos.mat' 'Pos'
+	save -mat7-binary 'Vol.mat' 'Vol'
+	save -mat7-binary 'T.mat' 'T'
+	save -mat7-binary 'delta.mat' 'delta'
+	save -mat7-binary 'meshsize.mat' 'meshsize'
+	save -mat7-binary 'geometry.mat' 'geometry'
+
+end
 
 disp 'Press key to continue'
 pause

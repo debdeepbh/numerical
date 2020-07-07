@@ -52,6 +52,12 @@ case 'peridem_w_prenotch'
     case 'peridem_triangle'
 	side_length = 2e-3;
 	P = [-side_length/2, 0; side_length/2 , 0; 0, side_length * sin(pi/3)]
+    case 'peridem_wall'
+	% thickness
+	%a = 5*meshsize * 1e3;	% in mm
+	a = meshsize * 1e3;	% in mm
+	P = 1e-3 * [-2,3; -2,-2; 2,-2; 2,3; 2+a,3; 2+a,-2-a; -2-a, -2-a; -2-a,3];
+	%P = 1e-3 * [-2,3; -2,-2; 2,-2; 2,3; 2+a,3; 2+a,-2-a; -2-a, -2-a; -2-a,3];
 otherwise
 
 end
