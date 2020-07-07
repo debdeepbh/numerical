@@ -1,4 +1,4 @@
-function [NbdArr_out_multi, u0_multi, store_location, store_vel_min, store_vel_max  ] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds);
+function [NbdArr_out_multi, u0_multi, store_location, store_vel_min, store_vel_max  ] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall);
 
 
 % break bonds or not
@@ -6,12 +6,25 @@ function [NbdArr_out_multi, u0_multi, store_location, store_vel_min, store_vel_m
 %save_plot = 0;
 save_plot = 1;
 
-%use_influence_function = 0
-use_influence_function = 1
+use_influence_function = 0
+%use_influence_function = 1
 
 close all
 
 [total_nodes, temp, temp] = size(NbdArr_multi);
+
+switch with_wall
+    case 1
+	load('wall_Pos');
+	load('wall_Vol');
+	load('wall_T');
+
+    otherwise
+	
+end
+
+% wall displacement
+wall_u0 = zeros(size(wall_Pos));
 
 % pairwise contacts, n choose 2
 contact_indices = nchoosek(1:total_particles, 2);
@@ -32,6 +45,10 @@ for t = 1:timesteps
     % computing current position
     CurrPos_multi = u0_multi + Pos_multi;
 
+    % current wall position
+    wall_CurrPos = wall_u0 + wall_Pos ;
+
+
     % placeholder for contact forces on nodes due to neighboring particles
     peridynamic_force_multi = zeros(size(u0_multi));
     contact_force_multi = zeros(size(u0_multi));
@@ -40,114 +57,71 @@ for t = 1:timesteps
     %for i=2
     for i=1:total_particles
 
+	% information about the central particle
+	CurrPos_center = CurrPos_multi(:,:,i);
+	min_Pos_center = min(CurrPos_center);
+	max_Pos_center = max(CurrPos_center);
+
 	% internal force - peridynamic
-	[peridynamic_force_multi(:,:,i), stretch_multi(:,:,i)] = peridynamic_force_bypos(CurrPos_multi(:,:,i), NbdArr_multi(:,:,i), nbd_Vol_multi(:,:,i), xi_1_multi(:,:,i), xi_2_multi(:,:,i), xi_norm_multi(:,:,i), cnot, delta, use_influence_function) ;
+	[peridynamic_force_multi(:,:,i), stretch_multi(:,:,i)] = peridynamic_force_bypos(CurrPos_center, NbdArr_multi(:,:,i), nbd_Vol_multi(:,:,i), xi_1_multi(:,:,i), xi_2_multi(:,:,i), xi_norm_multi(:,:,i), cnot, delta, use_influence_function) ;
 
-	% contact forces
+	% pairwise contact forces
 	if total_particles > 1
-
-	    % information about the central particle
-	    CurrPos_center = CurrPos_multi(:,:,i);
-	    CurrPos_center_1 = CurrPos_center(:,1);
-	    CurrPos_center_2 = CurrPos_center(:,2);
-
-	    % placeholder for total contact force on the nodes of i-th body
-	    cf_contrib_i = zeros(total_nodes, 2);
-
 	    % % Caution: without the trailing transpose ('), for loop misunderstands the sequence as a vector, i.e. without the trailing ', j = [2;3]!!
 	    % Must be a row vector for the for loop to sample from.
 	    other_particles = (nonzeros( (1:total_particles).*(1:total_particles ~= i) ))';
 
+	    % placeholder for total contact force on the nodes of i-th body
+	    cf_contrib_on_center = zeros(total_nodes, 2);
 	    for j = other_particles
 		% information about the neighboring particle
 		CurrPos_neighbor = CurrPos_multi(:,:,j);
-		CurrPos_neighbor_1 = CurrPos_neighbor(:,1);
-		CurrPos_neighbor_2 = CurrPos_neighbor(:,2);
+		min_Pos_neighbor = min(CurrPos_neighbor);
+		max_Pos_neighbor = max(CurrPos_neighbor);
 
 
-		Vol_neighbor = Vol_multi(:,:,j);
+		if intersects_box(min_Pos_center, max_Pos_center, min_Pos_neighbor, max_Pos_neighbor)
+		    fprintf('contact (%d, %d) \n', i,j);
+		    Vol_neighbor = Vol_multi(:,:,j);
+		    % nodes in the neighboring body that are contact_radius-close to the nodes in the central body
+		    %% edit this function to output the difference between the points as well!!
+		    [contact_NbdArr] = gen_NbdArr_varlength(CurrPos_center, CurrPos_neighbor, contact_radius, 0);
 
-		% nodes in the neighboring body that are contact_radius-close to the nodes in the central body
-		%% edit this function to output the difference between the points as well!!
-		%% distance norm
-		%[contact_NbdArr] = gen_NbdArr(CurrPos_center, CurrPos_neighbor, contact_radius, 0);
-		[contact_NbdArr] = gen_NbdArr_varlength(CurrPos_center, CurrPos_neighbor, contact_radius, 0);
-		% mask for contact neighbors
-		mask = ~~contact_NbdArr;
+		    % get the contact for on the center due to the neighbor
+		    [total_contact_force] = contact_force(contact_NbdArr, CurrPos_center, CurrPos_neighbor, Vol_neighbor, contact_radius, normal_stiffness) ;
 
-		% volume of the contact neighbors
-		cnbd_Vol_neighbor = Vol_neighbor(contact_NbdArr + ~contact_NbdArr) .* mask;
-
-		% direction vectors from the nodes in the central body to the delta-close nodes in the neighboring body
-		direction_1 = (CurrPos_neighbor_1(contact_NbdArr + ~contact_NbdArr) - CurrPos_center_1) .* mask;
-		direction_2 = (CurrPos_neighbor_2(contact_NbdArr + ~contact_NbdArr) - CurrPos_center_2) .* mask;
-
-		direction_norm = sqrt(direction_1.^2  + direction_2.^2);
-
-		% in the negative direction, i.e. from the neighbors to the center
-		direction_unit_1 = - direction_1 ./ (direction_norm + ~direction_norm) .* mask;
-		direction_unit_2 = - direction_2 ./ (direction_norm + ~direction_norm) .* mask;
-
-		% flipping the signs
-		%% debug
-		%direction_unit_1 =  direction_1 ./ (direction_norm + ~direction_norm) .* mask;
-		%direction_unit_2 =  direction_2 ./ (direction_norm + ~direction_norm) .* mask;
-
-		% positive contact radius
-		cont_rad_contrib = (contact_radius - direction_norm);
-		positive_cont_rad_contrib = cont_rad_contrib .* (cont_rad_contrib > 0);
-
-		%% Check this formula to see if the volume is properly accounted for
-		% multiplied by the volumes of contact neighbors
-		contact_force_1 = normal_stiffness .* positive_cont_rad_contrib .* cnbd_Vol_neighbor .* direction_unit_1;
-		contact_force_2 = normal_stiffness .* positive_cont_rad_contrib .* cnbd_Vol_neighbor .* direction_unit_2;
-
-		total_contact_force = [sum(contact_force_1, 2) sum(contact_force_2,2)];  
-		%% add this force to total internal force
-		cf_contrib_i = cf_contrib_i + total_contact_force;
+		    %% add this force to total internal force
+		    cf_contrib_on_center = cf_contrib_on_center + total_contact_force;
+		end
 
 	    end	% endfor loop in j
-
-	    contact_force_multi(:,:, i) = cf_contrib_i;
-
-
-	    %% when contact occurs
-	    %if length(contact_NbdArr(16,:)) > 0
-	    %i	%=2 is the center
-	    %j	%=1 is the neighbor
-	    % % contact_NbdArr contains indices of the neighbor 1
-	    % % node 16 on the central body, neighbors in neighbor body
-	    %contact_NbdArr(16,:)
-	    %
-	    %disp 'direction_units'
-	    %[direction_unit_1(16, :); direction_unit_2(16, :)]
-	    %
-	    %disp 'dir norm'
-	    %direction_norm(16,:)
-	    %
-	    %disp 'positive contact_radius_contrib'
-	    %positive_cont_rad_contrib(16,:)
-	    %
-	    %fprintf('peridynmic force: (%f, %f)\n', peridynamic_force_multi(16,1,i), peridynamic_force_multi(16,2,i))
-	    %
-	    %fprintf('contact force: (%f, %f)\n', contact_force_multi(16, 1, i), contact_force_multi(16, 2, i))
-	    %fprintf('total contact force: (%f, %f)\n', total_contact_force(16, 1), total_contact_force(16, 2))
-	    %
-	    %
-	    %Quantity = peridynamic_force_multi(:,2,:);
-	    %switch save_plot
-	    %case 1
-	    %savenewpos2_multi(total_particles, CurrPos_multi, Quantity, imgcounter, f, 'multi_', contact_radius)
-	    %otherwise
-	    %
-	    %end
-	    %imgcounter = imgcounter + 1;
-	    %
-	    %pause
-	    %end
-
+	    % add to the total contact force
+	    contact_force_multi(:,:, i) = cf_contrib_on_center;
 	end	%endif
 
+	% % interaction with the wall
+	switch with_wall
+	    case 1
+
+		% for rectangular wall
+		wall_bottom = -2 * 1e-3;
+		wall_left = -2 * 1e-3;
+		wall_right = 2 * 1e-3;
+		wall_top = 10;	% fake
+
+		if (min_Pos_center(1) < (wall_left + contact_radius)) | ( min_Pos_center(2) < (wall_bottom + contact_radius) ) | (max_Pos_center(1) > (wall_right - contact_radius)) | (max_Pos_center(2) > (wall_top - contact_radius))
+		    fprintf('wall contact %d\n',i);
+
+
+		    [wall_contact_NbdArr] = gen_NbdArr_varlength(CurrPos_center, wall_CurrPos, contact_radius, 0);
+		    [wall_contact_force] = contact_force(wall_contact_NbdArr, CurrPos_center, wall_CurrPos, wall_Vol, contact_radius, normal_stiffness) ;
+
+		    % add it to the total contact force
+		    contact_force_multi(:,:, i) = cf_contrib_on_center + wall_contact_force;
+		end
+	    otherwise
+		
+	end
     end %endfor loop in i
 
     % add all the force densities
@@ -203,8 +177,13 @@ for t = 1:timesteps
 		Quantity = peridynamic_force_multi(:,2,:);
 		switch save_plot
 		case 1
-			savenewpos2_multi(total_particles, CurrPos_multi, Quantity, imgcounter, f, 'elastic_collision_', contact_radius, time);
+		    switch with_wall
+		    case 1
+			savenewpos2_multi_with_wall(total_particles, CurrPos_multi, wall_CurrPos, Quantity, imgcounter, f, 'elastic_collision_', contact_radius, time);
 		    otherwise
+			savenewpos2_multi(total_particles, CurrPos_multi, Quantity, imgcounter, f, 'elastic_collision_', contact_radius, time);
+		    end
+		otherwise
 
 		end
 		imgcounter = imgcounter + 1;
