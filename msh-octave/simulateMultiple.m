@@ -1,9 +1,7 @@
-function [NbdArr_out_multi, u0_multi, store_location, store_vel_min, store_vel_max  ] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo);
+function [NbdArr_out_multi, u0_multi, store_location, store_vel_min, store_vel_max  ] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds);
 
 
 % break bonds or not
-break_bonds = 1;
-%break_bonds = 1;
 
 %save_plot = 0;
 save_plot = 1;
@@ -56,7 +54,9 @@ for t = 1:timesteps
 	    % placeholder for total contact force on the nodes of i-th body
 	    cf_contrib_i = zeros(total_nodes, 2);
 
-	    other_particles = nonzeros( (1:total_particles).*(1:total_particles ~= i) );
+	    % % Caution: without the trailing transpose ('), for loop misunderstands the sequence as a vector, i.e. without the trailing ', j = [2;3]!!
+	    % Must be a row vector for the for loop to sample from.
+	    other_particles = (nonzeros( (1:total_particles).*(1:total_particles ~= i) ))';
 
 	    for j = other_particles
 		% information about the neighboring particle
@@ -64,12 +64,14 @@ for t = 1:timesteps
 		CurrPos_neighbor_1 = CurrPos_neighbor(:,1);
 		CurrPos_neighbor_2 = CurrPos_neighbor(:,2);
 
+
 		Vol_neighbor = Vol_multi(:,:,j);
 
 		% nodes in the neighboring body that are contact_radius-close to the nodes in the central body
 		%% edit this function to output the difference between the points as well!!
 		%% distance norm
-		[contact_NbdArr] = gen_NbdArr(CurrPos_center, CurrPos_neighbor, contact_radius, 0);
+		%[contact_NbdArr] = gen_NbdArr(CurrPos_center, CurrPos_neighbor, contact_radius, 0);
+		[contact_NbdArr] = gen_NbdArr_varlength(CurrPos_center, CurrPos_neighbor, contact_radius, 0);
 		% mask for contact neighbors
 		mask = ~~contact_NbdArr;
 

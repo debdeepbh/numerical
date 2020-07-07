@@ -14,7 +14,7 @@ function [NbdArr] = gen_NbdArr(Pos_center, Pos_neighbor, delta, remove_center)
 
 indices_all = (1:total_nodes)';
 
-% from i-th repetition Pos, subtract i-th row of Pos
+% from i-th repetition of Pos_neighbor, subtract i-th row of Pos
 diffMat = repmat(Pos_neighbor, 1, total_nodes) - reshape(Pos_center', 1, []);
 
 % indices that are within delta distance
