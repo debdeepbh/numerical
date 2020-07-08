@@ -56,10 +56,43 @@ case 'peridem_w_prenotch'
 	% thickness
 	%a = 5*meshsize * 1e3;	% in mm
 	a = meshsize * 1e3;	% in mm
+		% for rectangular wall
+		wall_bottom = -2 * 1e-3;
+		wall_left = -2 * 1e-3;
+		wall_right = 2 * 1e-3;
+		wall_top = 10;	% fake
 	P = 1e-3 * [-2,3; -2,-2; 2,-2; 2,3; 2+a,3; 2+a,-2-a; -2-a, -2-a; -2-a,3];
 	%P = 1e-3 * [-2,3; -2,-2; 2,-2; 2,3; 2+a,3; 2+a,-2-a; -2-a, -2-a; -2-a,3];
+    case 'peridem_tube'
+	% thickness
+	s = meshsize;
+
+	contact_radius = 1.74e-04;	% peridem
+	space = contact_radius/2;
+		% % for rectangular wall, enter internal surface information
+		%wall_left = -1 * 1e-3;
+		%wall_right = 1 * 1e-3;
+		%wall_bottom = -1 * 1e-3;
+		%wall_top = 3 * 1e-3;	% fake
+		wall_left = -1 * 1e-3-space;
+		wall_right = 1 * 1e-3+space;
+		wall_bottom = -1 * 1e-3;
+		wall_top = 3 * 1e-3;	% fake
+	P = [wall_left,wall_top; wall_left,wall_bottom; wall_right,wall_bottom;  wall_right, wall_top; wall_right+s,wall_top; wall_right+s, wall_bottom-s; wall_left-s,wall_bottom-s; wall_left-s, wall_top];
 otherwise
 
+end
+
+switch geometry
+    case {'peridem_wall', 'peridem_tube'}
+	printf('Saving wall inner dimension: wall_left, right, top, bottom.mat\n')
+	% save in matlab-readable format
+	save -mat7-binary 'wall_left.mat' 'wall_left'
+	save -mat7-binary 'wall_right.mat' 'wall_right'
+	save -mat7-binary 'wall_bottom.mat' 'wall_bottom'
+	save -mat7-binary 'wall_top.mat' 'wall_top'
+    otherwise
+	
 end
 
 

@@ -171,9 +171,11 @@ Steps
 * `genmesh2()` (Octave) produces a mesh where each vertex of the triangle is a node and the nodal volume is the sum of 1/3 of each of the neighboring triangular elements.
 
 ##### Running the code
-1. In Octave, run `full_proj`, close the program after various matrices are saved to the disk (e.g. `Pos.m`  etc). The mesh is generated in this step and the nodal volumes are computed (`Vol.mat`).
+1. [deprecated] In Octave, run `full_proj`, close the program after various matrices are saved to the disk (e.g. `Pos.m`  etc). The mesh is generated in this step and the nodal volumes are computed (`Vol.mat`).
+ To include the wall, run `full_proj` in octave with `geometry = 'peridem_wall'` once. Then, run the same script with `geometry = ` _somethingElse_. 
+1. Use `genmesh3` in octave instead of `full_proj`.
+
 1. In Matlab, run `full_proj_matlab` to load the information and simulate the dynamics.
-1. To include the wall, run `full_proj` in octave with `geometry = 'peridem_wall'` once. Then, run the same script with `geometry = ` _somethingElse_. 
 
 
 # Multithreading

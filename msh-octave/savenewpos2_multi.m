@@ -21,7 +21,7 @@ filename = strcat('img/', filestr, sprintf('pos%d_%03d.png', j, counter));
 
 	% plot contact radius
 	% around this particle
-	particle_index = 2;
+	particle_index = 1;
 	% centered at this node
 	top_node = 6;
 	bottom_node = 16;
