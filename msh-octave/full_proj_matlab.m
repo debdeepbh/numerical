@@ -27,10 +27,11 @@ timesteps = 1e5;	% peridem
 modulo = 100;
 
 % break bonds or not
-%break_bonds = 0;
-break_bonds = 1
+break_bonds = 0;
+%break_bonds = 1
 
-with_wall = 1
+with_wall = 0
+%with_wall = 1
 
 %allow_friction = 0
 allow_friction = 1
@@ -40,7 +41,8 @@ friction_coefficient = 0.5;
 %total_particles = 3;	% 3 particles
 
 %specified_initial_data = '3_equidistant'
-specified_initial_data = '2_vertical'
+%specified_initial_data = '2_vertical'
+specified_initial_data = 'friction_test'
 
 %delta = 0.002;	% for glass slab
 %delta = 0.012;	% peridynamic horizon
@@ -187,6 +189,33 @@ case 'multi_particle'
 
     % % Specify
     switch specified_initial_data
+    case 'friction_test'
+	falling_from = 3e-3;	% 5 mm
+	%starting_distance = 2.2e-3;
+	starting_distance = 3e-3;
+	particle_shift = [0, 0; 2e-3+contact_radius/2, falling_from];	% 2 particles
+	%particle_shift = [0, 0; -2e-3 + contact_radius, falling_from];	% 2 particles
+	%particle_shift = [0, 0; 0, falling_from];	% 2 particles
+	%particle_rotation = [pi; 0];	% for elastic collision of unit circles % 2 particles
+	particle_rotation = [pi/6; -pi/6];
+
+	%% Initial data
+	uold_multi(:,:,2) = zeros(total_nodes,2) + [0 (starting_distance - falling_from)];
+	uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -60* sqrt(2* 10 * (0.3e-3))];
+	%uolddotdot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -10];
+    case 'friction_test'
+	falling_from = 3e-3;	% 5 mm
+	%starting_distance = 2.2e-3;
+	starting_distance = 3e-3;
+	particle_shift = [0, 0; -2e-3 + contact_radius, falling_from];	% 2 particles
+	%particle_shift = [0, 0; 0, falling_from];	% 2 particles
+	%particle_rotation = [pi; 0];	% for elastic collision of unit circles % 2 particles
+	particle_rotation = [pi/6; -pi/6];
+
+	%% Initial data
+	uold_multi(:,:,2) = zeros(total_nodes,2) + [0 (starting_distance - falling_from)];
+	uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -60* sqrt(2* 10 * (0.3e-3))];
+	%uolddotdot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -10];
     case '2_vertical'
 	%falling_from = 2.5e-3;	% 5 mm
 	falling_from = 3e-3;	% 5 mm
@@ -220,11 +249,12 @@ case 'multi_particle'
 	uolddot_multi(:,:,1) = zeros(total_nodes,2) +  -[sqrt(3)/2, 1/2 ] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
 	uolddot_multi(:,:,2) = zeros(total_nodes,2) +  -[-sqrt(3)/2, 1/2 ] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
 	uolddot_multi(:,:,3) = zeros(total_nodes,2) +  -[0, -1] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
+
     otherwise
 	disp('No initial setup specified, assuming default.')
     end
 
-    %% Necessary but default variable 
+    %% Necessary variables, if not defined
     %% geometry
     if ~exist('total_particles', 'var')
 	% compute the total number of particles from the shift
