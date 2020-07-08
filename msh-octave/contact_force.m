@@ -1,4 +1,4 @@
-function [total_contact_force] = contact_force(contact_NbdArr, CurrPos_center, CurrPos_neighbor, Vol_neighbor, contact_radius, normal_stiffness) 
+function [total_contact_force, contact_force_1, contact_force_2, direction_unit_1, direction_unit_2] = contact_force(contact_NbdArr, CurrPos_center, CurrPos_neighbor, Vol_neighbor, contact_radius, normal_stiffness) 
 % Computes the contact force on the central body due to the neighboring body
 % 
 % Input:
@@ -11,6 +11,8 @@ function [total_contact_force] = contact_force(contact_NbdArr, CurrPos_center, C
 %
 % Output:
 %	total_contact_force: Total contact force being applied on the nodes of the central body due to the neighboring body, nx2
+%	direction_unit_1: first component of direction vector from the center to neighbor, nxl, l=#neighbors
+%	direction_unit_2: second component of direction vector from the center to neighbor, nxl, l=#neighbors
 
 CurrPos_center_1 = CurrPos_center(:,1);
 CurrPos_center_2 = CurrPos_center(:,2);
@@ -30,9 +32,9 @@ direction_2 = (CurrPos_neighbor_2(contact_NbdArr + ~contact_NbdArr) - CurrPos_ce
 
 direction_norm = sqrt(direction_1.^2  + direction_2.^2);
 
-% in the negative direction, i.e. from the neighbors to the center
-direction_unit_1 = - direction_1 ./ (direction_norm + ~direction_norm) .* mask;
-direction_unit_2 = - direction_2 ./ (direction_norm + ~direction_norm) .* mask;
+% unit vector from center to neighbor
+direction_unit_1 = direction_1 ./ (direction_norm + ~direction_norm) .* mask;
+direction_unit_2 = direction_2 ./ (direction_norm + ~direction_norm) .* mask;
 
 % positive contact radius
 cont_rad_contrib = (contact_radius - direction_norm);
@@ -40,7 +42,8 @@ positive_cont_rad_contrib = cont_rad_contrib .* (cont_rad_contrib > 0);
 
 %% Check this formula to see if the volume is properly accounted for
 % multiplied by the volumes of contact neighbors
-contact_force_1 = normal_stiffness .* positive_cont_rad_contrib .* cnbd_Vol_neighbor .* direction_unit_1;
-contact_force_2 = normal_stiffness .* positive_cont_rad_contrib .* cnbd_Vol_neighbor .* direction_unit_2;
+% in the negative direction, i.e. force acts on the center in the direction from the neighbors to the center
+contact_force_1 = - normal_stiffness .* positive_cont_rad_contrib .* cnbd_Vol_neighbor .* direction_unit_1;
+contact_force_2 = - normal_stiffness .* positive_cont_rad_contrib .* cnbd_Vol_neighbor .* direction_unit_2;
 
 total_contact_force = [sum(contact_force_1, 2) sum(contact_force_2,2)];  

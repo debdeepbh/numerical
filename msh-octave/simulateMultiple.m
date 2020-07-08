@@ -1,4 +1,4 @@
-function [NbdArr_out_multi, u0_multi, store_location, store_vel_min, store_vel_max  ] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall);
+function [NbdArr_out_multi, u0_multi, store_location, store_vel_min, store_vel_max  ] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall, allow_friction, friction_coefficient);
 
 
 % break bonds or not
@@ -18,7 +18,6 @@ switch with_wall
 	load('wall_Pos');
 	load('wall_Vol');
 	load('wall_T');
-
     otherwise
 	
 end
@@ -52,6 +51,7 @@ for t = 1:timesteps
     % placeholder for contact forces on nodes due to neighboring particles
     peridynamic_force_multi = zeros(size(u0_multi));
     contact_force_multi = zeros(size(u0_multi));
+    friction_force_multi = zeros(size(u0_multi));
 
 %% for debugging, only one particle
     %for i=2
@@ -62,6 +62,9 @@ for t = 1:timesteps
 	min_Pos_center = min(CurrPos_center);
 	max_Pos_center = max(CurrPos_center);
 
+	vel_center_1 = uolddot_multi(:,1,i);
+	vel_center_2 = uolddot_multi(:,2,i);
+
 	% internal force - peridynamic
 	[peridynamic_force_multi(:,:,i), stretch_multi(:,:,i)] = peridynamic_force_bypos(CurrPos_center, NbdArr_multi(:,:,i), nbd_Vol_multi(:,:,i), xi_1_multi(:,:,i), xi_2_multi(:,:,i), xi_norm_multi(:,:,i), cnot, delta, use_influence_function) ;
 
@@ -71,8 +74,9 @@ for t = 1:timesteps
 	    % Must be a row vector for the for loop to sample from.
 	    other_particles = (nonzeros( (1:total_particles).*(1:total_particles ~= i) ))';
 
-	    % placeholder for total contact force on the nodes of i-th body
+	    % placeholder for various types of forces on the nodes of i-th body
 	    cf_contrib_on_center = zeros(total_nodes, 2);
+	    ff_contrib_on_center = zeros(total_nodes, 2);
 	    for j = other_particles
 		% information about the neighboring particle
 		CurrPos_neighbor = CurrPos_multi(:,:,j);
@@ -88,20 +92,65 @@ for t = 1:timesteps
 		    [contact_NbdArr] = gen_NbdArr_varlength(CurrPos_center, CurrPos_neighbor, contact_radius, 0);
 
 		    % get the contact for on the center due to the neighbor
-		    [total_contact_force] = contact_force(contact_NbdArr, CurrPos_center, CurrPos_neighbor, Vol_neighbor, contact_radius, normal_stiffness) ;
+		    %[total_contact_force, contact_force_1, contact_force_2, direction_unit_1, direction_unit_2] = contact_force(contact_NbdArr, CurrPos_center, CurrPos_neighbor, Vol_neighbor, contact_radius, normal_stiffness) ;
+		    [total_contact_force, contact_force_1, contact_force_2, direction_unit_1, direction_unit_2] = contact_force(contact_NbdArr, CurrPos_center, CurrPos_neighbor, Vol_neighbor, contact_radius, normal_stiffness);
 
 		    %% add this force to total internal force
 		    cf_contrib_on_center = cf_contrib_on_center + total_contact_force;
-		end
 
-	    end	% endfor loop in j
-	    % add to the total contact force
-	    contact_force_multi(:,:, i) = cf_contrib_on_center;
-	end	%endif
+		    % % Tangential friction force
+		    total_friction_force = zeros(size(Pos_multi));
+		    switch allow_friction
+		    case 1
+			mask = (~~contact_NbdArr);
+
+			% getting the contact force on i-th node from the force density by multiplying by the volume of the node
+			contact_force_norm = sqrt(contact_force_1.^2 + contact_force_2.^2) .* Vol_multi(:,:,i);
+
+			% contact velocity
+			% % Caution: this should be computed from u0dot actually, but that is not available until the end of the loop
+			vel_neighbor_1 = uolddot_multi(:,1,j);
+			vel_neighbor_2 = uolddot_multi(:,2,j);
+
+			% relative velocity
+			vel_direction_1 = (vel_neighbor_1(contact_NbdArr + ~contact_NbdArr) - vel_center_1) .* mask;
+			vel_direction_2 = (vel_neighbor_2(contact_NbdArr + ~contact_NbdArr) - vel_center_2) .* mask;
+
+			vel_direction_norm = sqrt(vel_direction_1.^2  + vel_direction_2.^2);
+
+			%  in the direction from center to neighbor
+			vel_direction_unit_1 = vel_direction_1 ./ (vel_direction_norm + ~vel_direction_norm) .* mask;
+			vel_direction_unit_2 = vel_direction_2 ./ (vel_direction_norm + ~vel_direction_norm) .* mask;
+
+			% projection of unit velocity onto the direction unit vector
+			vel_normal_projection = vel_direction_unit_1 .* direction_unit_1 + vel_direction_unit_2 .* direction_unit_2; 
+
+			% v - (v.e)e
+			vel_tangential_1 = (vel_direction_1 - vel_normal_projection .* vel_direction_1) .* mask; 
+			vel_tangential_2 = (vel_direction_2 - vel_normal_projection .* vel_direction_2) .* mask;
+
+			% tangential friction force acts in the opposite direction of velocity
+			friction_force_1 = - friction_coefficient .* contact_force_norm .* vel_tangential_1;
+			friction_force_2 = - friction_coefficient .* contact_force_norm .* vel_tangential_2;
+
+			total_friction_force = [sum(friction_force_1, 2), sum(friction_force_2,2)];  
+
+			% add the friction force contribution from neighbor j
+			ff_contrib_on_center = ff_contrib_on_center + total_friction_force;
+		    otherwise
+		    end
+
+		end	%endif close-by
+
+	end	% endfor loop in j
+
+	contact_force_multi(:,:, i) = cf_contrib_on_center;
+	friction_force_multi(:,:, i) = ff_contrib_on_center;
+    end	%endif
 
 	% % interaction with the wall
 	switch with_wall
-	    case 1
+	case 1
 
 		% for rectangular wall
 		wall_bottom = -2 * 1e-3;
@@ -119,13 +168,15 @@ for t = 1:timesteps
 		    % add it to the total contact force
 		    contact_force_multi(:,:, i) = cf_contrib_on_center + wall_contact_force;
 		end
-	    otherwise
-		
+	otherwise
 	end
+
+	%% end of contact for computations
+
     end %endfor loop in i
 
     % add all the force densities
-    total_force_multi = peridynamic_force_multi + contact_force_multi;
+    total_force_multi = peridynamic_force_multi + contact_force_multi + friction_force_multi;
 
     % accelaration
     u0dotdot_multi = (1/rho) .*( total_force_multi + extforce_multi) ;
