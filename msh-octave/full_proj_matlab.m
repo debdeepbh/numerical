@@ -28,9 +28,13 @@ modulo = 100;
 
 % break bonds or not
 %break_bonds = 0;
-break_bonds = 1;
+break_bonds = 1
 
 with_wall = 1
+
+%allow_friction = 0
+allow_friction = 1
+friction_coefficient = 0.5;
 
 %total_particles = 1;
 total_particles = 2;	% 2 particles
@@ -291,7 +295,7 @@ case 'multi_particle'
 %dt = 0.02/timesteps;	% peridem
 dt = 0.02/1e5;	% peridem
 
- [NbdArr_out, u0_multi, store_location, store_vel_min, store_vel_max] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall);
+ [NbdArr_out, u0_multi, store_location, store_vel_min, store_vel_max] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall, allow_friction, friction_coefficient);
 
  time_ss = (1:length(store_location)) *  dt * modulo * 1e3;
  figure
