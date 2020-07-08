@@ -37,7 +37,6 @@ allow_friction = 1
 friction_coefficient = 0.5;
 
 %total_particles = 1;
-total_particles = 2;	% 2 particles
 %total_particles = 3;	% 3 particles
 
 %specified_initial_data = '3_equidistant'
@@ -178,25 +177,21 @@ dt = 25e-8;
 case 'multi_particle'
 
 
-
-    % scaling, shifting, rotation
-
+    dt = 0.02/1e5;	% peridem
 
     %contact_radius = delta/2;
     contact_radius = 1.74e-04;	% peridem
+    % % normal stiffness (From Foster's paper)
+    %normal_stiffness = 18 * bulk_modulus /( pi * delta^5);
+    normal_stiffness = 18 * bulk_modulus /( pi * delta^4);	% from silling-askari05
 
-    % particle location, scaling, and rotation
-    particle_scaling = ones(total_particles, 1);
-    particle_rotation = zeros(total_particles, 1);
     % % Specify
     switch specified_initial_data
     case '2_vertical'
 	%falling_from = 2.5e-3;	% 5 mm
 	falling_from = 3e-3;	% 5 mm
-
 	%starting_distance = 2.2e-3;
 	starting_distance = 3e-3;
-
 	particle_shift = [0, 0; 0, falling_from];	% 2 particles
 
 	% particle on the bottom is flipped to ensure symmetric collision
@@ -204,96 +199,80 @@ case 'multi_particle'
 	particle_rotation = [pi - pi/8; -pi/8];	% for pacman collision
 	%particle_rotation = [pi - pi/8; -pi/8];	% for circle_w_prenotch
 	%particle_rotation = [0; 0];	% for triangles
+
+	%% Initial data
+	uold_multi(:,:,2) = zeros(total_nodes,2) + [0 (starting_distance - falling_from)];
+	uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -60* sqrt(2* 10 * (0.3e-3))];	% 2 particles
+	%uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -sqrt(2* 10 * (falling_from - starting_distance))];
+	uolddotdot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -10];
+	%uolddot_multi(:,:,2) = zeros(total_nodes, 2) + [0, -1.3e-01];	% peridem
+	%uolddotdot_multi(:,:,2) = zeros(total_nodes, 2) + [0, -10];	% peridem
+
+	% specify external force density on particles i.e. Force/Volume, or Acceleration * density
+	% % gravity applies on the second particle only
+	%extforce_multi(:,:,2) = zeros(total_nodes, 2) +  [0, -10 .* rho];
+
     case '3_equidistant'
 	particle_shift = [-5/2, 0; 5/2, 0; 0, 5 * sin(pi/3)] * 1e-3; % 3 particles
 	particle_rotation = [pi/3; pi/3; pi/3]; % 3 particles
-    	
-        otherwise
-    	
+
+	%% initial data
+	uolddot_multi(:,:,1) = zeros(total_nodes,2) +  -[sqrt(3)/2, 1/2 ] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
+	uolddot_multi(:,:,2) = zeros(total_nodes,2) +  -[-sqrt(3)/2, 1/2 ] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
+	uolddot_multi(:,:,3) = zeros(total_nodes,2) +  -[0, -1] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
+    otherwise
+	disp('No initial setup specified, assuming default.')
     end
-    
 
-    % locations of the particles
-    Pos_multi = zeros( [size(Pos), total_particles]);
+    %% Necessary but default variable 
+    %% geometry
+    if ~exist('total_particles', 'var')
+	% compute the total number of particles from the shift
+	[total_particles, temp] = size(particle_shift);
+	total_particles
+    else
+	fprintf('specified total_particles = %d',total_particles);
+    end
+    if ~exist('particle_scaling', 'var')
+	% particle location, scaling, and rotation
+	particle_scaling = ones(total_particles, 1);
+    end
+    if ~exist('particle_rotation', 'var')
+	particle_rotation = zeros(total_particles, 1);
+    end
+    if ~exist('particle_shift', 'var')
+	particle_shift = zeros(total_particles, dimension);
+    end
 
+    %% initial data
+    if ~exist('uold_multi', 'var')
+	uold_multi = zeros(total_nodes,2, total_particles);
+    end
+    if ~exist('uolddot_multi', 'var')
+	uolddot_multi = zeros(total_nodes,2, total_particles);
+    end
+    if ~exist('uolddotdot_multi', 'var')
+	uolddotdot_multi = zeros(total_nodes,2, total_particles);
+    end
+    if ~exist('extforce_multi', 'var')
+	% default external force density on particles
+	extforce_multi = zeros( [size(Pos), total_particles]);
+    end
+
+    % generate the geometry
+    %Pos_multi = zeros( [size(Pos), total_particles]);
+    %Vol_multi = zeros( [size(Vol), total_particles]);
+    %NbdArr_multi = zeros( [size(NbdArr), total_particles]);
     for i = 1:total_particles
 	rot_matrix = [cos(particle_rotation(i)), -sin(particle_rotation(i)); sin(particle_rotation(i)), cos(particle_rotation(i))]
 	Pos_multi(:,:,i) = particle_scaling(i) * (rot_matrix * (Pos'))' + particle_shift(i, :);
-	%Pos_multi(:,:,i) = particle_scaling(i) * Pos + particle_shift(i, :);
-    end
-
-%% rotation
-% % rotate the second particle by an angle
-
-
-    % volume of the nodes
-    Vol_multi = zeros( [size(Vol), total_particles]);
-    for i = 1:total_particles
-%% Caution: verify that the volume gets multiplied by the scaling to the power the dimension
 	Vol_multi(:,i) = ( (particle_scaling(i)).^dimension) .* Vol;
-    end
-
-
-    % neighborhood  array
-    NbdArr_multi = zeros( [size(NbdArr), total_particles]);
-    for i = 1:total_particles
 	NbdArr_multi(:,:,i) = NbdArr;
-    end
-
-    % precomputation
-    for i = 1:total_particles
+	%% precomputation
 	% get the position and relative distances of the neighbors
-	[xi_1_multi(:,:,i), xi_2_multi(:,:,i), xi_norm_multi(:,:,i), nbd_Vol_multi(:,:,i)] = precomputation(NbdArr_multi(:,:,i), Pos_multi(:,:,i), Vol_multi(:,:,i));
+	[xi_1_multi(:,:,i), xi_2_multi(:,:,i), xi_norm_multi(:,:,i), nbd_Vol_multi(:,:,i)] = precomputation(NbdArr_multi(:,:,i), Pos_multi(:,:,i), Vol_multi(:,i));
     end
 
-    % default initial data
-    uold_multi = zeros(total_nodes,2, total_particles);
-    uolddot_multi = zeros(total_nodes,2, total_particles);
-    uolddotdot_multi = zeros(total_nodes,2, total_particles);
-
-    % default external force density on particles
-    extforce_multi = zeros( [size(Pos), total_particles]);
-
-%% specify initial data
-    switch specified_initial_data
-	case '2_vertical'
-	    uold_multi(:,:,2) = zeros(total_nodes,2) + [0 (starting_distance - falling_from)];
-	    uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -60* sqrt(2* 10 * (0.3e-3))];	% 2 particles
-	    %uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -sqrt(2* 10 * (falling_from - starting_distance))];
-	    uolddotdot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -10];
-
-        case '3_equidistant'
-	    uolddot_multi(:,:,1) = zeros(total_nodes,2) +  -[sqrt(3)/2, 1/2 ] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
-	    uolddot_multi(:,:,2) = zeros(total_nodes,2) +  -[-sqrt(3)/2, 1/2 ] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
-	    uolddot_multi(:,:,3) = zeros(total_nodes,2) +  -[0, -1] * -60* sqrt(2* 10 * (0.3e-3));	% 3 particles
-        otherwise
-    	
-    end
-
-  %uolddot_multi(:,:,2) = zeros(total_nodes, 2) + [0, -1.3e-01];	% peridem
-  %uolddotdot_multi(:,:,2) = zeros(total_nodes, 2) + [0, -10];	% peridem
-
-    % specify external force density on particles i.e. Force/Volume, or Acceleration * density
-    % % gravity applies on the second particle only
-    %extforce_multi(:,:,2) = zeros(total_nodes, 2) +  [0, -10 .* rho];
-
-
-    % % normal stiffness (From Foster's paper)
-    %normal_stiffness = 18 * bulk_modulus /( pi * delta^5);
-    normal_stiffness = 18 * bulk_modulus /( pi * delta^4);	% from silling-askari05
-
-    % % peridem
-    %mass_particle = pi * (1e-3)^2 * rho;
-    %meq = mass_particle;% harmonic mean of particles of same size
-    %Vmax_by_delmax = (7.385158e+05);
-    %normal_stiffness = meq * Vmax_by_delmax^2;
-
-      %normal_stiffness = (7.385158e+05)^2;	% peridem
-%% debugging
-	%normal_stiffness = normal_stiffness * 1e-5;
-    
-%dt = 0.02/timesteps;	% peridem
-dt = 0.02/1e5;	% peridem
 
  [NbdArr_out, u0_multi, store_location, store_vel_min, store_vel_max] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall, allow_friction, friction_coefficient);
 
@@ -311,8 +290,6 @@ dt = 0.02/1e5;	% peridem
  legend('min', 'max')
  title('Vertical velocity')
  axis equal
-
-
 
 otherwise
     disp 'No experiment provided'

@@ -86,7 +86,7 @@ for t = 1:timesteps
 
 		if intersects_box(min_Pos_center, max_Pos_center, min_Pos_neighbor, max_Pos_neighbor)
 		    fprintf('contact (%d, %d) \n', i,j);
-		    Vol_neighbor = Vol_multi(:,:,j);
+		    Vol_neighbor = Vol_multi(:,j);
 		    % nodes in the neighboring body that are contact_radius-close to the nodes in the central body
 		    %% edit this function to output the difference between the points as well!!
 		    [contact_NbdArr] = gen_NbdArr_varlength(CurrPos_center, CurrPos_neighbor, contact_radius, 0);
@@ -105,7 +105,7 @@ for t = 1:timesteps
 			mask = (~~contact_NbdArr);
 
 			% getting the contact force on i-th node from the force density by multiplying by the volume of the node
-			contact_force_norm = sqrt(contact_force_1.^2 + contact_force_2.^2) .* Vol_multi(:,:,i);
+			contact_force_norm = sqrt(contact_force_1.^2 + contact_force_2.^2) .* Vol_multi(:,i);
 
 			% contact velocity
 			% % Caution: this should be computed from u0dot actually, but that is not available until the end of the loop
