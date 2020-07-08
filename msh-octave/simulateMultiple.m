@@ -18,12 +18,12 @@ switch with_wall
 	load('wall_Pos');
 	load('wall_Vol');
 	load('wall_T');
+	% wall displacement
+	wall_u0 = zeros(size(wall_Pos));
     otherwise
 	
 end
 
-% wall displacement
-wall_u0 = zeros(size(wall_Pos));
 
 % pairwise contacts, n choose 2
 contact_indices = nchoosek(1:total_particles, 2);
@@ -44,8 +44,12 @@ for t = 1:timesteps
     % computing current position
     CurrPos_multi = u0_multi + Pos_multi;
 
-    % current wall position
-    wall_CurrPos = wall_u0 + wall_Pos ;
+    switch with_wall
+        case 1
+	    % current wall position
+	    wall_CurrPos = wall_u0 + wall_Pos ;
+        otherwise
+    end
 
 
     % placeholder for contact forces on nodes due to neighboring particles
@@ -54,13 +58,14 @@ for t = 1:timesteps
     friction_force_multi = zeros(size(u0_multi));
 
 %% for debugging, only one particle
-    %for i=2
-    for i=1:total_particles
+    for i=2
+    %for i=1:total_particles
 
 	% information about the central particle
 	CurrPos_center = CurrPos_multi(:,:,i);
 	min_Pos_center = min(CurrPos_center);
 	max_Pos_center = max(CurrPos_center);
+	Vol_center = Vol_multi(:,i);
 
 	vel_center_1 = uolddot_multi(:,1,i);
 	vel_center_2 = uolddot_multi(:,2,i);
@@ -83,17 +88,17 @@ for t = 1:timesteps
 		min_Pos_neighbor = min(CurrPos_neighbor);
 		max_Pos_neighbor = max(CurrPos_neighbor);
 
+		if intersects_box(min_Pos_center - contact_radius, max_Pos_center + contact_radius, min_Pos_neighbor, max_Pos_neighbor)
 
-		if intersects_box(min_Pos_center, max_Pos_center, min_Pos_neighbor, max_Pos_neighbor)
 		    fprintf('contact (%d, %d) \n', i,j);
+
 		    Vol_neighbor = Vol_multi(:,j);
 		    % nodes in the neighboring body that are contact_radius-close to the nodes in the central body
 		    %% edit this function to output the difference between the points as well!!
 		    [contact_NbdArr] = gen_NbdArr_varlength(CurrPos_center, CurrPos_neighbor, contact_radius, 0);
 
 		    % get the contact for on the center due to the neighbor
-		    %[total_contact_force, contact_force_1, contact_force_2, direction_unit_1, direction_unit_2] = contact_force(contact_NbdArr, CurrPos_center, CurrPos_neighbor, Vol_neighbor, contact_radius, normal_stiffness) ;
-		    [total_contact_force, contact_force_1, contact_force_2, direction_unit_1, direction_unit_2] = contact_force(contact_NbdArr, CurrPos_center, CurrPos_neighbor, Vol_neighbor, contact_radius, normal_stiffness);
+		    [total_contact_force, nbd_contact_force_1, nbd_contact_force_2, nbd_direction_unit_1, nbd_direction_unit_2] = contact_force(contact_NbdArr, CurrPos_center, CurrPos_neighbor, Vol_neighbor, contact_radius, normal_stiffness);
 
 		    %% add this force to total internal force
 		    cf_contrib_on_center = cf_contrib_on_center + total_contact_force;
@@ -102,38 +107,13 @@ for t = 1:timesteps
 		    total_friction_force = zeros(size(Pos_multi));
 		    switch allow_friction
 		    case 1
-			mask = (~~contact_NbdArr);
-
-			% getting the contact force on i-th node from the force density by multiplying by the volume of the node
-			contact_force_norm = sqrt(contact_force_1.^2 + contact_force_2.^2) .* Vol_multi(:,i);
-
 			% contact velocity
 			% % Caution: this should be computed from u0dot actually, but that is not available until the end of the loop
 			vel_neighbor_1 = uolddot_multi(:,1,j);
 			vel_neighbor_2 = uolddot_multi(:,2,j);
 
-			% relative velocity
-			vel_direction_1 = (vel_neighbor_1(contact_NbdArr + ~contact_NbdArr) - vel_center_1) .* mask;
-			vel_direction_2 = (vel_neighbor_2(contact_NbdArr + ~contact_NbdArr) - vel_center_2) .* mask;
-
-			vel_direction_norm = sqrt(vel_direction_1.^2  + vel_direction_2.^2);
-
-			%  in the direction from center to neighbor
-			vel_direction_unit_1 = vel_direction_1 ./ (vel_direction_norm + ~vel_direction_norm) .* mask;
-			vel_direction_unit_2 = vel_direction_2 ./ (vel_direction_norm + ~vel_direction_norm) .* mask;
-
-			% projection of unit velocity onto the direction unit vector
-			vel_normal_projection = vel_direction_unit_1 .* direction_unit_1 + vel_direction_unit_2 .* direction_unit_2; 
-
-			% v - (v.e)e
-			vel_tangential_1 = (vel_direction_1 - vel_normal_projection .* vel_direction_1) .* mask; 
-			vel_tangential_2 = (vel_direction_2 - vel_normal_projection .* vel_direction_2) .* mask;
-
-			% tangential friction force acts in the opposite direction of velocity
-			friction_force_1 = - friction_coefficient .* contact_force_norm .* vel_tangential_1;
-			friction_force_2 = - friction_coefficient .* contact_force_norm .* vel_tangential_2;
-
-			total_friction_force = [sum(friction_force_1, 2), sum(friction_force_2,2)];  
+			% compute the total friction force acting on the nodes in the central body due the neighboring body
+			[total_friction_force] = friction_force(contact_NbdArr, vel_center_1, vel_center_2, vel_neighbor_1, vel_neighbor_2, nbd_contact_force_1, nbd_contact_force_2, nbd_direction_unit_1, nbd_direction_unit_2, Vol_center, friction_coefficient);
 
 			% add the friction force contribution from neighbor j
 			ff_contrib_on_center = ff_contrib_on_center + total_friction_force;
@@ -159,7 +139,8 @@ for t = 1:timesteps
 		wall_top = 10;	% fake
 
 		if (min_Pos_center(1) < (wall_left + contact_radius)) | ( min_Pos_center(2) < (wall_bottom + contact_radius) ) | (max_Pos_center(1) > (wall_right - contact_radius)) | (max_Pos_center(2) > (wall_top - contact_radius))
-		    fprintf('wall contact %d\n',i);
+
+		    %fprintf('wall contact %d\n',i);
 
 
 		    [wall_contact_NbdArr] = gen_NbdArr_varlength(CurrPos_center, wall_CurrPos, contact_radius, 0);
@@ -193,51 +174,44 @@ for t = 1:timesteps
     uolddot_multi = u0dot_multi;
     uolddotdot_multi = u0dotdot_multi;
 
-
-
     if break_bonds == 1
 	%% edit to accommodate multiple particles, introduce NbdArr_multi
 	% Bond breaking criteria
 	NbdArr_multi = ((stretch_multi - snot ) < 0).* NbdArr_multi;
     end
 
-
     %if (mod(t, 100) == 0) || ( t == 1)
     if mod(t, modulo) == 0
-		fprintf('t: %d\n', t)
 
-		location_center = (min(CurrPos_multi(:,2,2)) + max(CurrPos_multi(:,2,2))) /2 * 1e3;
-		vel_min = min(u0dot_multi(:,2,2));
-		vel_max = max(u0dot_multi(:,2,2));
+	file_string = 'friction_collision_';
 
-		store_location(imgcounter) = location_center;
-		store_vel_min(imgcounter) = vel_min;
-		store_vel_max(imgcounter) = vel_max;
+	fprintf('t: %d\n', t)
 
-		time = dt * t * 1e3;	% micro seconds
+	location_center = (min(CurrPos_multi(:,2,2)) + max(CurrPos_multi(:,2,2))) /2 * 1e3;
+	vel_min = min(u0dot_multi(:,2,2));
+	vel_max = max(u0dot_multi(:,2,2));
 
-		%fprintf('(i,j) = (%d, %d)\n', i,j)
-		%%fprintf('contact neighbors: %d\n', contact_NbdArr(16,:));
-		%contact_NbdArr(16,:)
+	store_location(imgcounter) = location_center;
+	store_vel_min(imgcounter) = vel_min;
+	store_vel_max(imgcounter) = vel_max;
 
-		%fprintf('contact force contribution: %f\n', contact_force_multi(16,:,2))
-		%fprintf ('peridynamic force contribution: %f\n', peridynamic_force_multi(16,:,2) )
+	time = dt * t * 1e3;	% micro seconds
 
-		% plot this quantity
-		%Quantity = contact_force_multi(:,2,:);
-		Quantity = peridynamic_force_multi(:,2,:);
-		switch save_plot
-		case 1
-		    switch with_wall
-		    case 1
-			savenewpos2_multi_with_wall(total_particles, CurrPos_multi, wall_CurrPos, Quantity, imgcounter, f, 'elastic_collision_', contact_radius, time);
-		    otherwise
-			savenewpos2_multi(total_particles, CurrPos_multi, Quantity, imgcounter, f, 'elastic_collision_', contact_radius, time);
-		    end
-		otherwise
+	% plot this quantity
+	%Quantity = contact_force_multi(:,2,:);
+	Quantity = peridynamic_force_multi(:,2,:);
+	switch save_plot
+	case 1
+	    switch with_wall
+	    case 1
+		savenewpos2_multi_with_wall(total_particles, CurrPos_multi, wall_CurrPos, Quantity, imgcounter, f, file_string, contact_radius, time);
+	    otherwise
+		savenewpos2_multi(total_particles, CurrPos_multi, Quantity, imgcounter, f, file_string, contact_radius, time);
+	    end
+	otherwise
 
-		end
-		imgcounter = imgcounter + 1;
+	end
+	imgcounter = imgcounter + 1;
     end
 
 

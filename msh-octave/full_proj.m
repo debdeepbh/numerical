@@ -6,9 +6,9 @@ clear all
 close all
 
 
-%geometry='peridem'
+geometry='peridem'
 %geometry='pacman'
-geometry='peridem_wall'
+%geometry='peridem_wall'
 %geometry = 'peridem_w_prenotch'
 %geometry = 'peridem_triangle'
 %geometry='unitcircle'
