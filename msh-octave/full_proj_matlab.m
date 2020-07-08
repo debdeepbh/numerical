@@ -30,11 +30,11 @@ modulo = 100;
 break_bonds = 0;
 %break_bonds = 1
 
-with_wall = 0
-%with_wall = 1
+%with_wall = 0
+with_wall = 1
 
-%allow_friction = 0
-allow_friction = 1
+allow_friction = 0
+%allow_friction = 1
 friction_coefficient = 0.5;
 
 %total_particles = 1;
@@ -42,7 +42,8 @@ friction_coefficient = 0.5;
 
 %specified_initial_data = '3_equidistant'
 %specified_initial_data = '2_vertical'
-specified_initial_data = 'friction_test'
+%specified_initial_data = 'friction_test'
+specified_initial_data = 'falling_tube'
 
 %delta = 0.002;	% for glass slab
 %delta = 0.012;	% peridynamic horizon
@@ -189,19 +190,16 @@ case 'multi_particle'
 
     % % Specify
     switch specified_initial_data
-    case 'friction_test'
+    case 'falling_tube'
 	falling_from = 3e-3;	% 5 mm
 	%starting_distance = 2.2e-3;
 	starting_distance = 3e-3;
-	particle_shift = [0, 0; 2e-3+contact_radius/2, falling_from];	% 2 particles
-	%particle_shift = [0, 0; -2e-3 + contact_radius, falling_from];	% 2 particles
-	%particle_shift = [0, 0; 0, falling_from];	% 2 particles
+	particle_shift = [0, falling_from];	% 2 particles
 	%particle_rotation = [pi; 0];	% for elastic collision of unit circles % 2 particles
-	particle_rotation = [pi/6; -pi/6];
 
 	%% Initial data
-	uold_multi(:,:,2) = zeros(total_nodes,2) + [0 (starting_distance - falling_from)];
-	uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -60* sqrt(2* 10 * (0.3e-3))];
+	uold_multi(:,:,1) = zeros(total_nodes,2) + [0 (starting_distance - falling_from)];
+	uolddot_multi(:,:,1) = zeros(total_nodes,2) +  [0, -60* sqrt(2* 10 * (0.3e-3))];
 	%uolddotdot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -10];
     case 'friction_test'
 	falling_from = 3e-3;	% 5 mm
@@ -304,7 +302,7 @@ case 'multi_particle'
     end
 
 
- [NbdArr_out, u0_multi, store_location, store_vel_min, store_vel_max] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall, allow_friction, friction_coefficient);
+ [NbdArr_out, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall, allow_friction, friction_coefficient);
 
  time_ss = (1:length(store_location)) *  dt * modulo * 1e3;
  figure

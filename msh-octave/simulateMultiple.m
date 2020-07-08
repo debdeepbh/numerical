@@ -1,4 +1,4 @@
-function [NbdArr_out_multi, u0_multi, store_location, store_vel_min, store_vel_max  ] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall, allow_friction, friction_coefficient);
+function [NbdArr_out_multi, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall, allow_friction, friction_coefficient);
 
 
 % break bonds or not
@@ -18,16 +18,18 @@ switch with_wall
 	load('wall_Pos');
 	load('wall_Vol');
 	load('wall_T');
+
+	% wall dimension
+	load('wall_left');
+	load('wall_right');
+	load('wall_top');
+	load('wall_bottom');
+
 	% wall displacement
 	wall_u0 = zeros(size(wall_Pos));
     otherwise
 	
 end
-
-
-% pairwise contacts, n choose 2
-contact_indices = nchoosek(1:total_particles, 2);
-[total_contacts, temp] = size(contact_indices);
 
 imgcounter = 1;
 %dt = 25e-9;
@@ -58,8 +60,8 @@ for t = 1:timesteps
     friction_force_multi = zeros(size(u0_multi));
 
 %% for debugging, only one particle
-    for i=2
-    %for i=1:total_particles
+    %for i=2
+    for i=1:total_particles
 
 	% information about the central particle
 	CurrPos_center = CurrPos_multi(:,:,i);
@@ -74,6 +76,7 @@ for t = 1:timesteps
 	[peridynamic_force_multi(:,:,i), stretch_multi(:,:,i)] = peridynamic_force_bypos(CurrPos_center, NbdArr_multi(:,:,i), nbd_Vol_multi(:,:,i), xi_1_multi(:,:,i), xi_2_multi(:,:,i), xi_norm_multi(:,:,i), cnot, delta, use_influence_function) ;
 
 	% pairwise contact forces
+%% this if statement can probably be safely removed, since other_particles will produce empty list when total_particles == 1
 	if total_particles > 1
 	    % % Caution: without the trailing transpose ('), for loop misunderstands the sequence as a vector, i.e. without the trailing ', j = [2;3]!!
 	    % Must be a row vector for the for loop to sample from.
@@ -122,33 +125,45 @@ for t = 1:timesteps
 
 		end	%endif close-by
 
-	end	% endfor loop in j
+	    end	% endfor loop in j
 
-	contact_force_multi(:,:, i) = cf_contrib_on_center;
-	friction_force_multi(:,:, i) = ff_contrib_on_center;
-    end	%endif
+	    contact_force_multi(:,:, i) = cf_contrib_on_center;
+	    friction_force_multi(:,:, i) = ff_contrib_on_center;
+	end	%endif total_particles > 1
 
-	% % interaction with the wall
+	% % interaction between the i-th particle (center) and the wall
 	switch with_wall
 	case 1
+	    % if near the wall
+	    if (min_Pos_center(1) < (wall_left + contact_radius)) | ( min_Pos_center(2) < (wall_bottom + contact_radius) ) | (max_Pos_center(1) > (wall_right - contact_radius)) | (max_Pos_center(2) > (wall_top - contact_radius))
 
-		% for rectangular wall
-		wall_bottom = -2 * 1e-3;
-		wall_left = -2 * 1e-3;
-		wall_right = 2 * 1e-3;
-		wall_top = 10;	% fake
+		%fprintf('wall contact %d\n',i);
 
-		if (min_Pos_center(1) < (wall_left + contact_radius)) | ( min_Pos_center(2) < (wall_bottom + contact_radius) ) | (max_Pos_center(1) > (wall_right - contact_radius)) | (max_Pos_center(2) > (wall_top - contact_radius))
+		[wall_contact_NbdArr] = gen_NbdArr_varlength(CurrPos_center, wall_CurrPos, contact_radius, 0);
+		%[wall_contact_force] = contact_force(wall_contact_NbdArr, CurrPos_center, wall_CurrPos, wall_Vol, contact_radius, normal_stiffness) ;
+		[wall_contact_force, wall_nbd_contact_force_1, wall_nbd_contact_force_2, wall_nbd_direction_unit_1, wall_nbd_direction_unit_2] = contact_force(wall_contact_NbdArr, CurrPos_center, wall_CurrPos, wall_Vol, contact_radius, normal_stiffness);
 
-		    %fprintf('wall contact %d\n',i);
+		% add it to the total contact force on the i-th particle due to wall
+		contact_force_multi(:,:, i) = contact_force_multi(:,:,i) + wall_contact_force;
+		switch allow_friction
+		case 1
+			% contact velocity
 
+			% velocity of neighbor, i.e., the wall
+			vel_neighbor_1 = zeros(size(wall_Pos));
+			vel_neighbor_2 = zeros(size(wall_Pos));
 
-		    [wall_contact_NbdArr] = gen_NbdArr_varlength(CurrPos_center, wall_CurrPos, contact_radius, 0);
-		    [wall_contact_force] = contact_force(wall_contact_NbdArr, CurrPos_center, wall_CurrPos, wall_Vol, contact_radius, normal_stiffness) ;
+			% compute the total friction force acting on the nodes in the central body due the neighboring body
+			[wall_friction_force] = friction_force(wall_contact_NbdArr, vel_center_1, vel_center_2, vel_neighbor_1, vel_neighbor_2, wall_nbd_contact_force_1, wall_nbd_contact_force_2, wall_nbd_direction_unit_1, wall_nbd_direction_unit_2, Vol_center, friction_coefficient);
 
-		    % add it to the total contact force
-		    contact_force_multi(:,:, i) = cf_contrib_on_center + wall_contact_force;
+			% add the friction force contribution from neighbor j
+			friction_force_multi(:,:,i) = friction_force_multi(:,:,i) + wall_friction_force;
+		otherwise
 		end
+
+
+
+	    end
 	otherwise
 	end
 
@@ -183,17 +198,9 @@ for t = 1:timesteps
     %if (mod(t, 100) == 0) || ( t == 1)
     if mod(t, modulo) == 0
 
-	file_string = 'friction_collision_';
+	file_string = 'no_friction_collision_';
 
 	fprintf('t: %d\n', t)
-
-	location_center = (min(CurrPos_multi(:,2,2)) + max(CurrPos_multi(:,2,2))) /2 * 1e3;
-	vel_min = min(u0dot_multi(:,2,2));
-	vel_max = max(u0dot_multi(:,2,2));
-
-	store_location(imgcounter) = location_center;
-	store_vel_min(imgcounter) = vel_min;
-	store_vel_max(imgcounter) = vel_max;
 
 	time = dt * t * 1e3;	% micro seconds
 

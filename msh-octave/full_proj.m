@@ -6,9 +6,10 @@ clear all
 close all
 
 
-geometry='peridem'
+%geometry='peridem'
 %geometry='pacman'
 %geometry='peridem_wall'
+geometry='peridem_tube'
 %geometry = 'peridem_w_prenotch'
 %geometry = 'peridem_triangle'
 %geometry='unitcircle'
@@ -39,6 +40,9 @@ case 'unitcircle'
 case 'peridem_wall'
 	delta = 1e-3;
 	meshsize = delta/5;
+case 'peridem_tube'
+	delta = 1e-3;
+	meshsize = delta/5;
 otherwise
 
 end
@@ -49,7 +53,7 @@ end
 printf('total nodes: %d \n', length(Pos));
 
 switch geometry
-    case 'peridem_wall'
+    case {'peridem_wall' , 'peridem_tube'}
 	wall_Pos = Pos;
 	wall_Vol = Vol;
 	wall_T = T;
