@@ -21,8 +21,9 @@ do_pause = 'no'
 % plot reference config
 plot_reference = 1;
 plot_circles = 1;
+timesteps = 5000;
 %timesteps = 10800;
-timesteps = 1e5;	% peridem
+%timesteps = 1e5;	% peridem
 
 modulo = 100;
 
@@ -33,17 +34,19 @@ break_bonds = 0;
 %with_wall = 0
 with_wall = 1
 
-allow_friction = 0
-%allow_friction = 1
+%allow_friction = 0
+allow_contact = 1
+allow_friction = 1
 friction_coefficient = 0.5;
 
 %total_particles = 1;
 %total_particles = 3;	% 3 particles
 
 %specified_initial_data = '3_equidistant'
-%specified_initial_data = '2_vertical'
+specified_initial_data = '2_vertical'
 %specified_initial_data = 'friction_test'
-specified_initial_data = 'falling_tube'
+%specified_initial_data = 'falling_tube'
+%specified_initial_data = 'single_falling'
 
 %delta = 0.002;	% for glass slab
 %delta = 0.012;	% peridynamic horizon
@@ -201,6 +204,15 @@ case 'multi_particle'
 	uold_multi(:,:,1) = zeros(total_nodes,2) + [0 (starting_distance - falling_from)];
 	uolddot_multi(:,:,1) = zeros(total_nodes,2) +  [0, -60* sqrt(2* 10 * (0.3e-3))];
 	%uolddotdot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -10];
+    case 'single_falling'
+	falling_from = 3e-3;	% 5 mm
+	particle_shift = [0, falling_from];	% 2 particles
+	particle_rotation = [pi/6];
+
+	%% Initial data
+	uold_multi(:,:,1) = zeros(total_nodes,2);
+	uolddot_multi(:,:,1) = zeros(total_nodes,2) +  [0, -60* sqrt(2* 10 * (0.3e-3))];
+
     case 'friction_test'
 	falling_from = 3e-3;	% 5 mm
 	%starting_distance = 2.2e-3;
@@ -302,7 +314,7 @@ case 'multi_particle'
     end
 
 
- [NbdArr_out, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall, allow_friction, friction_coefficient);
+ [NbdArr_out, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall, allow_friction, friction_coefficient, allow_contact);
 
  time_ss = (1:length(store_location)) *  dt * modulo * 1e3;
  figure
