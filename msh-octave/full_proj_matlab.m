@@ -34,18 +34,17 @@ break_bonds = 0;
 %with_wall = 0
 with_wall = 1
 
-%allow_friction = 0
 allow_contact = 1
 allow_friction = 1
-friction_coefficient = 0.5;
+friction_coefficient = 0.1;
 
 %total_particles = 1;
 %total_particles = 3;	% 3 particles
 
 %specified_initial_data = '3_equidistant'
-specified_initial_data = '2_vertical'
+%specified_initial_data = '2_vertical'
 %specified_initial_data = 'friction_test'
-%specified_initial_data = 'falling_tube'
+specified_initial_data = 'falling_tube'
 %specified_initial_data = 'single_falling'
 
 %delta = 0.002;	% for glass slab
@@ -194,9 +193,9 @@ case 'multi_particle'
     % % Specify
     switch specified_initial_data
     case 'falling_tube'
-	falling_from = 3e-3;	% 5 mm
+	falling_from = 3.5e-3;	% 5 mm
 	%starting_distance = 2.2e-3;
-	starting_distance = 3e-3;
+	starting_distance = 3.5e-3;
 	particle_shift = [0, falling_from];	% 2 particles
 	%particle_rotation = [pi; 0];	% for elastic collision of unit circles % 2 particles
 
@@ -314,22 +313,26 @@ case 'multi_particle'
     end
 
 
- [NbdArr_out, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall, allow_friction, friction_coefficient, allow_contact);
+    [NbdArr_out, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall, allow_friction, friction_coefficient, allow_contact);
 
- time_ss = (1:length(store_location)) *  dt * modulo * 1e3;
- figure
- plot(time_ss, store_location);
- title('Location of the center')
- axis equal
+    plot_extra = 0;
 
- figure
- plot(time_ss, store_vel_min);
- hold on
- plot(time_ss, store_vel_max);
- hold off
- legend('min', 'max')
- title('Vertical velocity')
- axis equal
+    if plot_extra == 1
+	time_ss = (1:length(store_location)) *  dt * modulo * 1e3;
+	figure
+	plot(time_ss, store_location);
+	title('Location of the center')
+	axis equal
+
+	figure
+	plot(time_ss, store_vel_min);
+	hold on
+	plot(time_ss, store_vel_max);
+	hold off
+	legend('min', 'max')
+	title('Vertical velocity')
+	axis equal
+    end
 
 otherwise
     disp 'No experiment provided'
