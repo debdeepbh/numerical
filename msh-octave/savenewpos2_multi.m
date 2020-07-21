@@ -9,6 +9,7 @@ function savenewpos2_multi(total_particles, CurrPos, Quantity, counter, f, files
 % Output:
 %	:
 
+plot_contact_radius = 1;
 
 dotsize = 10;
 
@@ -19,15 +20,18 @@ filename = strcat('img/', filestr, sprintf('pos%d_%03d.png', j, counter));
 	    hold on
 	end
 
-	% plot contact radius
-	% around this particle
-	particle_index = 1;
-	% centered at this node
-	top_node = 6;
-	bottom_node = 16;
-	theta = 0:0.1:2*pi;
-	plot(CurrPos(bottom_node,1, particle_index) + contact_radius * cos(theta), CurrPos(bottom_node,2, particle_index) + contact_radius * sin(theta));
-
+	switch plot_contact_radius
+	    case 1
+		% plot contact radius
+		% around this particle
+		particle_index = 1;
+		% centered at this node
+		top_node = 6;
+		bottom_node = 16;
+		theta = 0:0.1:2*pi;
+		plot(CurrPos(bottom_node,1, particle_index) + contact_radius * cos(theta), CurrPos(bottom_node,2, particle_index) + contact_radius * sin(theta));
+	    otherwise
+	end
 	hold off
 
 colormap summer;
@@ -49,8 +53,15 @@ space = 0.001;
 %ylimit = [ymin ymax];
 %axis([xlimit ylimit])
 
-xlim([-2 2]* 1e-3)
-ylim([-10 10]* 1e-3)
+% % Usual
+%xlim([-2 2]* 1e-3)
+%ylim([-10 10]* 1e-3)
+
+% % Tub
+%xlim([-10 10]* 1e-3)
+%ylim([-10 10]* 1e-3)
+axis tight
+
 
 axis equal
 grid on

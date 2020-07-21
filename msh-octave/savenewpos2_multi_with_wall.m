@@ -9,8 +9,10 @@ function savenewpos2_multi_with_wall(total_particles, CurrPos, wall_CurrPos, Qua
 % Output:
 %	:
 
+plot_contact_radius = 0;
 
-dotsize = 10;
+dotsize = 5;
+wall_dotsize = 10;
 
 filename = strcat('img/', filestr, sprintf('pos%d_%03d.png', j, counter));
 
@@ -21,21 +23,25 @@ filename = strcat('img/', filestr, sprintf('pos%d_%03d.png', j, counter));
 
 
 	% for wall, plot the position in color, for now
-	scatter(wall_CurrPos(:,1), wall_CurrPos(:,2), dotsize, wall_CurrPos(:,2), 'filled')
+	scatter(wall_CurrPos(:,1), wall_CurrPos(:,2), dotsize*5, wall_CurrPos(:,2), 'filled')
 
-	% plot contact radius
-	% around this particle
-	particle_index = 1;
-	% centered at this node
-	top_node = 6;
-	bottom_node = 16;
-	theta = 0:0.1:2*pi;
-	plot(CurrPos(bottom_node,1, particle_index) + contact_radius * cos(theta), CurrPos(bottom_node,2, particle_index) + contact_radius * sin(theta));
+	switch plot_contact_radius
+	    case 1
+		% plot contact radius
+		% around this particle
+		particle_index = 1;
+		% centered at this node
+		top_node = 6;
+		bottom_node = 16;
+		theta = 0:0.1:2*pi;
+		plot(CurrPos(bottom_node,1, particle_index) + contact_radius * cos(theta), CurrPos(bottom_node,2, particle_index) + contact_radius * sin(theta));
+	    otherwise
+	end
 
 	hold off
 
-colormap summer;
-%colormap winter;
+%colormap summer;
+colormap winter;
 %colormap lines;
 %colormap jet;
 %colormap hsv;
@@ -53,8 +59,13 @@ space = 0.001;
 %ylimit = [ymin ymax];
 %axis([xlimit ylimit])
 
-xlim([-2.5 2.5]* 1e-3)
-ylim([-3.5 5]* 1e-3)
+% % usual
+%xlim([-2.5 2.5]* 1e-3)
+%ylim([-3.5 5]* 1e-3)
+
+% % pile_box
+xlim([-4.5 4.5]* 1e-3)
+ylim([-5.5 5.5]* 1e-3)
 
 axis equal
 grid on

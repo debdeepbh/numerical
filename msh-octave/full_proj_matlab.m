@@ -21,7 +21,9 @@ do_pause = 'no'
 % plot reference config
 plot_reference = 1;
 plot_circles = 1;
-timesteps = 1e5;
+%timesteps = 600;
+timesteps = 50000;
+%timesteps = 1e5;
 %timesteps = 10800;
 %timesteps = 1e5;	% peridem
 
@@ -34,20 +36,23 @@ break_bonds = 0;
 allow_contact = 1
 allow_friction = 1
 allow_damping = 1
-friction_coefficient = 0.1;
-damping_ratio = 2;
+friction_coefficient = 0.3;
+damping_ratio = 0.8;
 
 %total_particles = 1;
 %total_particles = 3;	% 3 particles
 
 %specified_initial_data = '3_equidistant'
 %specified_initial_data = '2_vertical'
-specified_initial_data = '2_vertical_balls'
+%specified_initial_data = '2_vertical_balls'
 %specified_initial_data = 'friction_test'
 %specified_initial_data = 'falling_tube'
 %specified_initial_data = 'friction_energy'
 %specified_initial_data = 'falling_tube_gravity'
 %specified_initial_data = 'single_falling'
+%specified_initial_data = 'big_box'
+specified_initial_data = 'pile_settle'
+
 
 %delta = 0.002;	% for glass slab
 %delta = 0.012;	% peridynamic horizon
@@ -206,6 +211,65 @@ case 'multi_particle'
 
 	with_wall = 1
 	wall_type = 'rectangle'
+
+    case 'big_box'
+	[X, Y] = meshgrid(linspace(-8e-3, 8e-3, 3));
+	particle_shift = [reshape(X, [], 1), reshape(Y, [], 1)];
+
+	total_balls = length(particle_shift);
+	particle_scaling = (1.5 - 1) * rand(total_balls, 1) + 1; 
+	particle_rotation = (2*pi -0) * rand(total_balls, 1)+ 0;
+
+	% gravity
+	for i = 1:total_balls
+	    uolddotdot_multi(:,:,i) = zeros(total_nodes,2) +  [0, -5000];
+	    extforce_multi(:,:,i) = zeros(total_nodes, 2) +  [0, -5000 .* rho];
+	end
+
+
+
+	with_wall = 1
+	wall_type = 'box'
+
+    case 'pile_settle'
+
+	% wall dimension
+	load('wall_left');
+	load('wall_right');
+	load('wall_top');
+	load('wall_bottom');
+	% distribute balls between x = (-4,4) and y = [-5,5]
+
+	max_radius_scaling = 0.5;
+	min_radius_scaling = 0.2;
+	max_radius = max_radius_scaling * 1e-3;
+
+	num_x = 6;
+	num_y = 20;
+
+	% nozzle area
+	move_closer = 1e-3;
+	base_x = linspace(move_closer + wall_left + max_radius + contact_radius, wall_right - max_radius - contact_radius - move_closer, num_x );
+	%base_y = linspace(wall_bottom + max_radius + contact_radius, wall_top - max_radius - contact_radius, num_y );
+	top_extra = 5e-3;
+	base_y = linspace(wall_bottom + max_radius + contact_radius, top_extra + wall_top - max_radius - contact_radius, num_y );
+
+	[X, Y] = meshgrid(base_x, base_y);
+	particle_shift = [reshape(X, [], 1), reshape(Y, [], 1)] + [0, 0.5e-3];
+
+	total_balls = length(particle_shift);
+	particle_scaling = (max_radius_scaling - min_radius_scaling) * rand(total_balls, 1) + min_radius_scaling; 
+	particle_rotation = (2*pi -0) * rand(total_balls, 1)+ 0;
+
+	% gravity
+	for i = 1:total_balls
+	    uolddot_multi(:,:,i) = zeros(total_nodes,2) +  [0, -1];
+	    uolddotdot_multi(:,:,i) = zeros(total_nodes,2) +  [0, -5000];
+	    extforce_multi(:,:,i) = zeros(total_nodes, 2) +  [0, -5000 .* rho];
+	end
+
+	with_wall = 1
+	wall_type = 'box'
 
     case 'falling_tube'
 	falling_from = 5e-3;	% 5 mm

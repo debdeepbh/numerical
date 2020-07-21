@@ -60,8 +60,8 @@ for t = 1:timesteps
     damping_force_multi = zeros(size(u0_multi));
 
 %% for debugging, only one particle
-    for i=2
-    %for i=1:total_particles
+    %for i=2
+    for i=1:total_particles
 
 	% information about the central particle
 	CurrPos_center = CurrPos_multi(:,:,i);
@@ -92,16 +92,16 @@ for t = 1:timesteps
 	    % if nearby
 	    if intersects_box(min_Pos_center - contact_radius, max_Pos_center + contact_radius, min_Pos_neighbor, max_Pos_neighbor)
 
-		fprintf('contact (%d, %d) \n', i,j);
+		%fprintf('contact (%d, %d) \n', i,j);
 
 		Vol_neighbor = Vol_multi(:,j);
 		velocity_neighbor = uolddot_multi(:,:,j);
 
 		[total_contact_force, total_friction_force, total_damping_force] = pairwise_forces(CurrPos_center, CurrPos_neighbor, velocity_center, velocity_neighbor, Vol_neighbor, contact_radius, normal_stiffness, friction_coefficient, damping_ratio, rho);
 
-	disp('damping')
-	max(max(total_contact_force))
-	max(max(total_damping_force))
+	%disp('damping')
+	%max(max(total_contact_force))
+	%max(max(total_damping_force))
 
 		cf_contrib_on_center = cf_contrib_on_center + total_contact_force;
 		ff_contrib_on_center = ff_contrib_on_center + total_friction_force;
@@ -131,7 +131,7 @@ for t = 1:timesteps
 	    end	%endswitch wall_type
 
 	    if wall_contact_true 
-		fprintf('wall contact %d\n',i);
+		%fprintf('wall contact %d\n',i);
 
 
 		% here, neighbor is the wall
@@ -177,7 +177,7 @@ for t = 1:timesteps
     %if (mod(t, 100) == 0) || ( t == 1)
     if mod(t, modulo) == 0
 
-	file_string = 'friction_contact_';
+	file_string = 'many_particles_';
 
 	fprintf('t: %d\n', t)
 
