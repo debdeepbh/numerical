@@ -21,30 +21,32 @@ do_pause = 'no'
 % plot reference config
 plot_reference = 1;
 plot_circles = 1;
-timesteps = 5000;
+timesteps = 1e5;
 %timesteps = 10800;
 %timesteps = 1e5;	% peridem
 
-modulo = 100;
+modulo = 300;
 
 % break bonds or not
 break_bonds = 0;
 %break_bonds = 1
 
-%with_wall = 0
-with_wall = 1
-
 allow_contact = 1
 allow_friction = 1
+allow_damping = 1
 friction_coefficient = 0.1;
+damping_ratio = 2;
 
 %total_particles = 1;
 %total_particles = 3;	% 3 particles
 
 %specified_initial_data = '3_equidistant'
 %specified_initial_data = '2_vertical'
+specified_initial_data = '2_vertical_balls'
 %specified_initial_data = 'friction_test'
-specified_initial_data = 'falling_tube'
+%specified_initial_data = 'falling_tube'
+%specified_initial_data = 'friction_energy'
+%specified_initial_data = 'falling_tube_gravity'
 %specified_initial_data = 'single_falling'
 
 %delta = 0.002;	% for glass slab
@@ -172,7 +174,8 @@ case 'single_particle'
 
 
 %dt = 25e-9;
-dt = 25e-8;
+%dt = 25e-8;
+dt = 25e-8*2;
 
     % simulate with initial data
     [NbdArr_out, u0] = simulate_initial(uold, uolddot, uolddotdot, Pos, NbdArr, Vol, nbd_Vol, extforce, delta, Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm, timesteps, break_bonds, material, dt);
@@ -192,17 +195,49 @@ case 'multi_particle'
 
     % % Specify
     switch specified_initial_data
+    case 'friction_energy'
+	particle_shift = [-2e-3, 1e-3 + contact_radius];	% reference position
+
+	uold_multi(:,:,1) = zeros(total_nodes,2);
+	uolddot_multi(:,:,1) = zeros(total_nodes,2) +  [1, 0]
+	% gravity
+	uolddotdot_multi(:,:,1) = zeros(total_nodes,2) +  [0, -5000];
+	extforce_multi(:,:,1) = zeros(total_nodes, 2) +  [0, -5000 .* rho];
+
+	with_wall = 1
+	wall_type = 'rectangle'
+
     case 'falling_tube'
-	falling_from = 3.5e-3;	% 5 mm
+	falling_from = 5e-3;	% 5 mm
 	%starting_distance = 2.2e-3;
 	starting_distance = 3.5e-3;
+	particle_shift = [0, falling_from];	% reference position
+	%particle_rotation = [pi; 0];	% for elastic collision of unit circles % 2 particles
+
+	%% Initial data
+	uold_multi(:,:,1) = zeros(total_nodes,2) + [0 (starting_distance - falling_from)];
+	uolddot_multi(:,:,1) = zeros(total_nodes,2) +  [0, -6* sqrt(2* 50 * (0.3e-3))];
+	% gravity
+	uolddotdot_multi(:,:,1) = zeros(total_nodes,2) +  [0, -50];
+	extforce_multi(:,:,1) = zeros(total_nodes, 2) +  [0, -50 .* rho];
+
+	with_wall = 1
+	wall_type = 'box'
+
+    case 'falling_tube_gravity'
+	falling_from = 7e-3;	% 5 mm
+	%starting_distance = 2.2e-3;
+	starting_distance = 4e-3;
 	particle_shift = [0, falling_from];	% 2 particles
 	%particle_rotation = [pi; 0];	% for elastic collision of unit circles % 2 particles
 
 	%% Initial data
 	uold_multi(:,:,1) = zeros(total_nodes,2) + [0 (starting_distance - falling_from)];
-	uolddot_multi(:,:,1) = zeros(total_nodes,2) +  [0, -60* sqrt(2* 10 * (0.3e-3))];
-	%uolddotdot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -10];
+	%uolddot_multi(:,:,1) = zeros(total_nodes,2) +  [0, -sqrt(2* 10 * (falling_from - starting_distance))];
+	uolddot_multi(:,:,1) = zeros(total_nodes,2) +  [0, -sqrt(2* 10 * (falling_from - starting_distance))];
+	uolddotdot_multi(:,:,1) = zeros(total_nodes,2) +  [0, -10];
+	extforce_multi(:,:,1) = zeros(total_nodes, 2) +  [0, -10 .* rho];
+
     case 'single_falling'
 	falling_from = 3e-3;	% 5 mm
 	particle_shift = [0, falling_from];	% 2 particles
@@ -225,6 +260,10 @@ case 'multi_particle'
 	uold_multi(:,:,2) = zeros(total_nodes,2) + [0 (starting_distance - falling_from)];
 	uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -60* sqrt(2* 10 * (0.3e-3))];
 	%uolddotdot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -10];
+
+	with_wall = 1
+	wall_type = 'box'
+
     case '2_vertical'
 	%falling_from = 2.5e-3;	% 5 mm
 	falling_from = 3e-3;	% 5 mm
@@ -233,8 +272,8 @@ case 'multi_particle'
 	particle_shift = [0, 0; 0, falling_from];	% 2 particles
 
 	% particle on the bottom is flipped to ensure symmetric collision
-	%particle_rotation = [pi; 0];	% for elastic collision of unit circles % 2 particles
-	particle_rotation = [pi - pi/8; -pi/8];	% for pacman collision
+	particle_rotation = [pi; 0];	% for elastic collision of unit circles % 2 particles
+	%particle_rotation = [pi - pi/8; -pi/8];	% for pacman collision
 	%particle_rotation = [pi - pi/8; -pi/8];	% for circle_w_prenotch
 	%particle_rotation = [0; 0];	% for triangles
 
@@ -249,6 +288,22 @@ case 'multi_particle'
 	% specify external force density on particles i.e. Force/Volume, or Acceleration * density
 	% % gravity applies on the second particle only
 	%extforce_multi(:,:,2) = zeros(total_nodes, 2) +  [0, -10 .* rho];
+
+    case '2_vertical_balls'
+	falling_from = 2e-3 + 1e-3;
+	starting_distance = 2e-3 + 0.3e-3;
+	particle_shift = [0, 0; 0, falling_from];	% 2 particles
+	% % particle on the bottom is flipped to ensure symmetric collision
+	particle_rotation = [pi; 0];	% for elastic collision of unit circles % 2 particles
+
+	%% Initial data
+	uold_multi(:,:,2) = zeros(total_nodes,2) + [0 (starting_distance - falling_from)];
+	g_val = 1000;
+	uolddot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -sqrt(2* g_val * abs(starting_distance - falling_from))];	% 2 particles
+	uolddotdot_multi(:,:,2) = zeros(total_nodes,2) +  [0, -g_val];
+
+	% % gravity applies on the second particle only
+	extforce_multi(:,:,2) = zeros(total_nodes, 2) +  [0, -g_val .* rho];
 
     case '3_equidistant'
 	particle_shift = [-5/2, 0; 5/2, 0; 0, 5 * sin(pi/3)] * 1e-3; % 3 particles
@@ -298,6 +353,13 @@ case 'multi_particle'
 	extforce_multi = zeros( [size(Pos), total_particles]);
     end
 
+    if ~exist('with_wall', 'var')
+	with_wall = 0
+    end
+    if ~exist('wall_type', 'var')
+	wall_type = 'box'
+    end
+
     % generate the geometry
     %Pos_multi = zeros( [size(Pos), total_particles]);
     %Vol_multi = zeros( [size(Vol), total_particles]);
@@ -313,29 +375,30 @@ case 'multi_particle'
     end
 
 
-    [NbdArr_out, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall, allow_friction, friction_coefficient, allow_contact);
+    [NbdArr_out, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall, allow_friction, friction_coefficient, allow_contact, allow_damping, damping_ratio, wall_type);
 
+    %plot_extra = 1;
     plot_extra = 0;
 
     if plot_extra == 1
-	time_ss = (1:length(store_location)) *  dt * modulo * 1e3;
 	figure
-	plot(time_ss, store_location);
+	plot(store_time, store_center(:,1), store_time, store_center(:,2));
 	title('Location of the center')
+	legend('x', 'y')
 	axis equal
 
 	figure
-	plot(time_ss, store_vel_min);
 	hold on
-	plot(time_ss, store_vel_max);
+	plot(store_time, store_CurrPos_min(:,1), store_time, store_CurrPos_min(:,2));
 	hold off
-	legend('min', 'max')
-	title('Vertical velocity')
+	legend('x', 'y')
+	title('Minimum')
 	axis equal
     end
 
 otherwise
     disp 'No experiment provided'
+    return
 
 end
 
