@@ -14,9 +14,12 @@ close all
 %geometry='peridem_tube_onesided'
 %geometry = 'peridem_w_prenotch'
 %geometry = 'peridem_triangle'
-geometry = 'peridem_floor'
+%geometry = 'peridem_floor'
 %geometry='unitcircle'
 %geometry='sodalime'
+%geometry='big_box'
+%geometry='pile_box'
+geometry='pile_ball'
 
 
 draw_text = 1;
@@ -90,6 +93,39 @@ case 'peridem_w_prenotch'
 		wall_top = 10;	% fake
 	P = 1e-3 * [-2,3; -2,-2; 2,-2; 2,3; 2+a,3; 2+a,-2-a; -2-a, -2-a; -2-a,3];
 	%P = 1e-3 * [-2,3; -2,-2; 2,-2; 2,3; 2+a,3; 2+a,-2-a; -2-a, -2-a; -2-a,3];
+    case 'big_box'
+	delta = 1e-3;	% peridem, all the nodes are neighbors
+	meshsize = delta/5;
+	% thickness
+	s = meshsize;
+		% for rectangular wall
+		wall_left = -5 * 1e-3;
+		wall_right = 5 * 1e-3;
+		wall_top = 5 * 1e-3;	% fake
+		wall_bottom = -5 * 1e-3;
+	P = [wall_left,wall_top; wall_left,wall_bottom; wall_right,wall_bottom;  wall_right, wall_top; wall_right+s,wall_top; wall_right+s, wall_bottom-s; wall_left-s,wall_bottom-s; wall_left-s, wall_top];
+
+    case 'pile_box'
+	delta = 1e-3;	% peridem, all the nodes are neighbors
+	meshsize = delta/(2);
+	% thickness
+	s = meshsize;
+		% for rectangular wall
+		wall_left = -4 * 1e-3;
+		wall_right = 4 * 1e-3;
+		wall_top = 5 * 1e-3;	% fake
+		wall_bottom = -5 * 1e-3;
+	P = [wall_left,wall_top; wall_left,wall_bottom; wall_right,wall_bottom;  wall_right, wall_top; wall_right+s,wall_top; wall_right+s, wall_bottom-s; wall_left-s,wall_bottom-s; wall_left-s, wall_top];
+
+    case 'pile_ball'
+	delta = 1e-3;	% peridem, all the nodes are neighbors
+	meshsize = delta/(2);
+
+	% circle, Caution: the last node should _NOT_ overlap with the first!
+	steps = 20;
+	angles = linspace(0, 2*pi- 2*pi/steps, steps)';
+	P = 1e-3 * [ cos(angles), sin(angles)]; % 1mm size
+
     case 'peridem_tube'
 	delta = 1e-3;	% peridem, all the nodes are neighbors
 	meshsize = delta/5;
@@ -217,7 +253,7 @@ printf('total nodes: %d \n', length(Pos));
 
 
 switch geometry
-    case {'peridem_wall' , 'peridem_tube', 'peridem_tube_onesided', 'peridem_floor'}
+    case {'peridem_wall' , 'peridem_tube', 'peridem_tube_onesided', 'peridem_floor', 'pile_box'}
 	wall_Pos = Pos;
 	wall_Vol = Vol;
 	wall_T = T;
