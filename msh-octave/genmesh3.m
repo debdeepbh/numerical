@@ -8,7 +8,7 @@ close all
 
 
 %geometry='peridem'
-%geometry='pacman'
+geometry='pacman'
 %geometry='peridem_wall'
 %geometry='peridem_tube'
 %geometry='peridem_tube_onesided'
@@ -19,7 +19,9 @@ close all
 %geometry='sodalime'
 %geometry='big_box'
 %geometry='pile_box'
-geometry='pile_ball'
+%geometry='pile_box_narrow'
+%geometry='pile_ball'
+%geometry='moving_wall'
 
 
 draw_text = 1;
@@ -104,6 +106,28 @@ case 'peridem_w_prenotch'
 		wall_top = 5 * 1e-3;	% fake
 		wall_bottom = -5 * 1e-3;
 	P = [wall_left,wall_top; wall_left,wall_bottom; wall_right,wall_bottom;  wall_right, wall_top; wall_right+s,wall_top; wall_right+s, wall_bottom-s; wall_left-s,wall_bottom-s; wall_left-s, wall_top];
+
+    case 'pile_box_narrow'
+	delta = 1e-3;	% peridem, all the nodes are neighbors
+	meshsize = delta/5;
+	% thickness
+	s = meshsize;
+		% for rectangular wall
+		wall_left = -2 * 1e-3;
+		wall_right = 2 * 1e-3;
+		wall_top = 5 * 1e-3;	% fake
+		wall_bottom = -5 * 1e-3;
+	P = [wall_left,wall_top; wall_left,wall_bottom; wall_right,wall_bottom;  wall_right, wall_top; wall_right+s,wall_top; wall_right+s, wall_bottom-s; wall_left-s,wall_bottom-s; wall_left-s, wall_top];
+
+    case 'moving_wall'
+	delta = 1e-3;	% peridem, all the nodes are neighbors
+	meshsize = delta/5;
+		% for rectangular wall
+		moving_wall_left = -2 * 1e-3;
+		moving_wall_right = 2 * 1e-3;
+		moving_wall_top = 3 * 1e-3;	% fake
+		moving_wall_bottom = 2.8 * 1e-3;
+	P = [moving_wall_left, moving_wall_bottom; moving_wall_right, moving_wall_bottom; moving_wall_right, moving_wall_top; moving_wall_left, moving_wall_top];
 
     case 'pile_box'
 	delta = 1e-3;	% peridem, all the nodes are neighbors
@@ -253,7 +277,7 @@ printf('total nodes: %d \n', length(Pos));
 
 
 switch geometry
-    case {'peridem_wall' , 'peridem_tube', 'peridem_tube_onesided', 'peridem_floor', 'pile_box'}
+    case {'peridem_wall' , 'peridem_tube', 'peridem_tube_onesided', 'peridem_floor', 'pile_box', 'pile_box_narrow'}
 	wall_Pos = Pos;
 	wall_Vol = Vol;
 	wall_T = T;
@@ -271,6 +295,24 @@ switch geometry
 	save -mat7-binary 'wall_right.mat' 'wall_right'
 	save -mat7-binary 'wall_bottom.mat' 'wall_bottom'
 	save -mat7-binary 'wall_top.mat' 'wall_top'
+    case {'moving_wall'}
+	moving_wall_Pos = Pos;
+	moving_wall_Vol = Vol;
+	moving_wall_T = T;
+
+	printf('Saving matrices: moving_wall_Pos.mat, moving_wall_Vol.mat, moving_wall_T.mat\n')
+	% save in matlab-readable format
+	save -mat7-binary 'moving_wall_Pos.mat' 'moving_wall_Pos'
+	save -mat7-binary 'moving_wall_Vol.mat' 'moving_wall_Vol'
+	save -mat7-binary 'moving_wall_T.mat' 'moving_wall_T'
+
+
+	printf('Saving moving_wall inner dimension: moving_wall_left, right, top, bottom.mat\n')
+	% save in matlab-readable format
+	save -mat7-binary 'moving_wall_left.mat' 'moving_wall_left'
+	save -mat7-binary 'moving_wall_right.mat' 'moving_wall_right'
+	save -mat7-binary 'moving_wall_bottom.mat' 'moving_wall_bottom'
+	save -mat7-binary 'moving_wall_top.mat' 'moving_wall_top'
 	
     otherwise
 	printf('Saving matrices: Pos.mat, Vol.mat, T.mat\n')
