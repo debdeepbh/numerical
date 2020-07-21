@@ -1,4 +1,4 @@
-function savenewpos2_multi_with_wall(total_particles, CurrPos, wall_CurrPos, Quantity, counter, f, filestr, contact_radius, time)
+function plot_with_wall(total_particles, CurrPos, wall_CurrPos, moving_wall_CurrPos, Quantity, counter, f, filestr, contact_radius, time)
 % Save current positions to a file. n=#nodes
 % Input:
 %	CurrPos: position vector, nx2xtotal_particle

@@ -36,6 +36,10 @@ break_bonds = 0;
 allow_contact = 1
 allow_friction = 1
 allow_damping = 1
+
+contact_radius = 1e-04;	% edit
+%contact_radius = 1.74e-04;	% peridem
+%contact_radius = delta/2;
 friction_coefficient = 0.3;
 damping_ratio = 0.8;
 
@@ -51,7 +55,9 @@ damping_ratio = 0.8;
 %specified_initial_data = 'falling_tube_gravity'
 %specified_initial_data = 'single_falling'
 %specified_initial_data = 'big_box'
-specified_initial_data = 'pile_settle'
+%specified_initial_data = 'pile_settle'
+%specified_initial_data = 'pile_settle_line'
+specified_initial_data = 'pile_press'
 
 
 %delta = 0.002;	% for glass slab
@@ -192,8 +198,6 @@ case 'multi_particle'
 
     dt = 0.02/1e5;	% peridem
 
-    %contact_radius = delta/2;
-    contact_radius = 1.74e-04;	% peridem
     % % normal stiffness (From Foster's paper)
     %normal_stiffness = 18 * bulk_modulus /( pi * delta^5);
     normal_stiffness = 18 * bulk_modulus /( pi * delta^4);	% from silling-askari05
@@ -231,6 +235,60 @@ case 'multi_particle'
 	with_wall = 1
 	wall_type = 'box'
 
+    case 'pile_press'
+	% wall dimension
+	load('wall_left');
+	load('wall_right');
+	load('wall_top');
+	load('wall_bottom');
+	% distribute balls between x = (-4,4) and y = [-5,5]
+
+	num_x = 4;
+	num_y = 6;
+
+	% for fixed scaling
+	radius_scaling = 0.3;
+	radius = radius_scaling * 1e-3;
+
+	% for random scaling
+	max_radius_scaling = 0.3;
+	min_radius_scaling = 0.1;
+	max_radius = max_radius_scaling * 1e-3;
+
+	% nozzle area
+	base_x = linspace( wall_left + radius + contact_radius, wall_right - radius - contact_radius, num_x );
+	top_offset = 3e-3;
+	bottom_offset = 0e-3;
+	base_y = linspace(wall_bottom + bottom_offset + radius + contact_radius, wall_top - top_offset - radius - contact_radius, num_y );
+
+	[X, Y] = meshgrid(base_x, base_y);
+	particle_shift = [reshape(X, [], 1), reshape(Y, [], 1)] ;
+
+	total_balls = length(particle_shift);
+
+	% % fixed scaling
+	particle_scaling = zeros(total_balls,1) + radius_scaling;
+
+	% % random scaling
+	%particle_scaling = (max_radius_scaling - min_radius_scaling) * rand(total_balls, 1) + min_radius_scaling; 
+
+	particle_rotation = (2*pi -0) * rand(total_balls, 1)+ 0;
+
+	% gravity
+	for i = 1:total_balls
+	    %uolddot_multi(:,:,i) = zeros(total_nodes,2) +  [0, -1];
+	    %uolddotdot_multi(:,:,i) = zeros(total_nodes,2) +  [0, -5000];
+	    %extforce_multi(:,:,i) = zeros(total_nodes, 2) +  [0, -5000 .* rho];
+	end
+
+	with_wall = 1
+	wall_type = 'box'
+
+	with_moving_wall= 1
+	moving_wall_type = 'rectangle'	
+
+	file_string = 'pile_press'
+
     case 'pile_settle'
 
 	% wall dimension
@@ -240,12 +298,12 @@ case 'multi_particle'
 	load('wall_bottom');
 	% distribute balls between x = (-4,4) and y = [-5,5]
 
-	max_radius_scaling = 0.5;
-	min_radius_scaling = 0.2;
+	max_radius_scaling = 0.3;
+	min_radius_scaling = 0.05;
 	max_radius = max_radius_scaling * 1e-3;
 
 	num_x = 6;
-	num_y = 20;
+	num_y = 5;
 
 	% nozzle area
 	move_closer = 1e-3;
@@ -271,6 +329,44 @@ case 'multi_particle'
 	with_wall = 1
 	wall_type = 'box'
 
+	file_string = 'pile_settle'
+
+    case 'pile_settle_line'
+
+	% wall dimension
+	load('wall_left');
+	load('wall_right');
+	load('wall_top');
+	load('wall_bottom');
+	% distribute balls between x = (-4,4) and y = [-5,5]
+
+	max_radius_scaling = 0.15;
+	min_radius_scaling = 0.05;
+	max_radius = max_radius_scaling * 1e-3;
+
+	total_balls = 120;
+
+	low_loc = -3e-3;
+	particle_shift = [zeros(total_balls,1), linspace(low_loc, low_loc + total_balls*2*(max_radius + contact_radius), total_balls)'];
+
+	% % random radius
+	particle_scaling = (max_radius_scaling - min_radius_scaling) * rand(total_balls, 1) + min_radius_scaling; 
+	% % same radius
+	%particle_scaling = zeros(total_balls,1) + 0.15;
+	particle_rotation = (2*pi -0) * rand(total_balls, 1)+ 0;
+
+	% gravity
+	for i = 1:total_balls
+	    uolddot_multi(:,:,i) = zeros(total_nodes,2) +  [0, -1];
+	    uolddotdot_multi(:,:,i) = zeros(total_nodes,2) +  [0, -5000];
+	    extforce_multi(:,:,i) = zeros(total_nodes, 2) +  [0, -5000 .* rho];
+	end
+
+	with_wall = 1
+	wall_type = 'box'
+
+	file_string = 'pile_settle_line'
+
     case 'falling_tube'
 	falling_from = 5e-3;	% 5 mm
 	%starting_distance = 2.2e-3;
@@ -288,6 +384,8 @@ case 'multi_particle'
 	with_wall = 1
 	wall_type = 'box'
 
+file_string = 'falling_tube'
+
     case 'falling_tube_gravity'
 	falling_from = 7e-3;	% 5 mm
 	%starting_distance = 2.2e-3;
@@ -302,6 +400,9 @@ case 'multi_particle'
 	uolddotdot_multi(:,:,1) = zeros(total_nodes,2) +  [0, -10];
 	extforce_multi(:,:,1) = zeros(total_nodes, 2) +  [0, -10 .* rho];
 
+	file_string = 'falling_tube_gravity'
+
+file_string = 'falling_tube'
     case 'single_falling'
 	falling_from = 3e-3;	% 5 mm
 	particle_shift = [0, falling_from];	% 2 particles
@@ -424,6 +525,17 @@ case 'multi_particle'
 	wall_type = 'box'
     end
 
+    if ~exist('with_moving_wall', 'var')
+	with_moving_wall = 0
+    end
+    if ~exist('moving_wall_type', 'var')
+	moving_wall_type = 'rectangle'
+    end
+
+    if ~exist('file_string', 'var')
+	file_string = strcat(specified_initial_data, '_',	num2str(total_particles), '_')
+    end
+
     % generate the geometry
     %Pos_multi = zeros( [size(Pos), total_particles]);
     %Vol_multi = zeros( [size(Vol), total_particles]);
@@ -439,7 +551,7 @@ case 'multi_particle'
     end
 
 
-    [NbdArr_out, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall, allow_friction, friction_coefficient, allow_contact, allow_damping, damping_ratio, wall_type);
+    [NbdArr_out, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall, allow_friction, friction_coefficient, allow_contact, allow_damping, damping_ratio, wall_type, with_moving_wall, moving_wall_type, file_string);
 
     %plot_extra = 1;
     plot_extra = 0;
