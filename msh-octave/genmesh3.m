@@ -10,9 +10,11 @@ close all
 %geometry='peridem'
 %geometry='pacman'
 %geometry='peridem_wall'
-geometry='peridem_tube'
+%geometry='peridem_tube'
+%geometry='peridem_tube_onesided'
 %geometry = 'peridem_w_prenotch'
 %geometry = 'peridem_triangle'
+geometry = 'peridem_floor'
 %geometry='unitcircle'
 %geometry='sodalime'
 
@@ -96,6 +98,7 @@ case 'peridem_w_prenotch'
 
 	contact_radius = 1.74e-04;	% peridem
 	space = contact_radius/2;
+	%space = contact_radius;
 		% % for rectangular wall, enter internal surface information
 		%wall_left = -1 * 1e-3;
 		%wall_right = 1 * 1e-3;
@@ -106,6 +109,45 @@ case 'peridem_w_prenotch'
 		wall_bottom = -1 * 1e-3;
 		wall_top = 3 * 1e-3;	% fake
 	P = [wall_left,wall_top; wall_left,wall_bottom; wall_right,wall_bottom;  wall_right, wall_top; wall_right+s,wall_top; wall_right+s, wall_bottom-s; wall_left-s,wall_bottom-s; wall_left-s, wall_top];
+    case 'peridem_tube_onesided'
+	delta = 1e-3;	% peridem, all the nodes are neighbors
+	meshsize = delta/5;
+	% thickness
+	s = meshsize;
+
+	contact_radius = 1.74e-04;	% peridem
+	space = contact_radius/2;
+	%space = contact_radius;
+		% % for rectangular wall, enter internal surface information
+		%wall_left = -1 * 1e-3;
+		%wall_right = 1 * 1e-3;
+		%wall_bottom = -1 * 1e-3;
+		%wall_top = 3 * 1e-3;	% fake
+		wall_left = -1 * 1e-3-space;
+		wall_right = 2 * 1e-3+space;
+		wall_bottom = -1 * 1e-3;
+		wall_top = 3 * 1e-3;	% fake
+	P = [wall_left,wall_top; wall_left,wall_bottom; wall_right,wall_bottom;  wall_right, wall_top; wall_right+s,wall_top; wall_right+s, wall_bottom-s; wall_left-s,wall_bottom-s; wall_left-s, wall_top];
+
+    case 'peridem_floor'
+	delta = 1e-3;	% peridem, all the nodes are neighbors
+	meshsize = delta/5;
+	% thickness
+	s = meshsize;
+
+	contact_radius = 1.74e-04;	% peridem
+	space = contact_radius/2;
+	%space = contact_radius;
+		% % for rectangular wall, enter internal surface information
+		%wall_left = -1 * 1e-3;
+		%wall_right = 1 * 1e-3;
+		%wall_bottom = -1 * 1e-3;
+		%wall_top = 3 * 1e-3;	% fake
+		wall_left = -2e-3;
+		wall_right = 2e-3;
+		wall_bottom = -0.25e-3;
+		wall_top = 0e-3;
+	P = [wall_left, wall_bottom; wall_right, wall_bottom; wall_right, wall_top; wall_left, wall_top];
 otherwise
 
 end
@@ -175,7 +217,7 @@ printf('total nodes: %d \n', length(Pos));
 
 
 switch geometry
-    case {'peridem_wall' , 'peridem_tube'}
+    case {'peridem_wall' , 'peridem_tube', 'peridem_tube_onesided', 'peridem_floor'}
 	wall_Pos = Pos;
 	wall_Vol = Vol;
 	wall_T = T;
