@@ -30,8 +30,8 @@ timesteps = 50000;
 modulo = 300;
 
 % break bonds or not
-break_bonds = 0;
-%break_bonds = 1
+%break_bonds = 0;
+break_bonds = 1
 
 allow_contact = 1
 allow_friction = 1
@@ -277,8 +277,8 @@ case 'multi_particle'
 	% gravity
 	for i = 1:total_balls
 	    %uolddot_multi(:,:,i) = zeros(total_nodes,2) +  [0, -1];
-	    %uolddotdot_multi(:,:,i) = zeros(total_nodes,2) +  [0, -5000];
-	    %extforce_multi(:,:,i) = zeros(total_nodes, 2) +  [0, -5000 .* rho];
+	    uolddotdot_multi(:,:,i) = zeros(total_nodes,2) +  [0, -500];
+	    extforce_multi(:,:,i) = zeros(total_nodes, 2) +  [0, -500 .* rho];
 	end
 
 	with_wall = 1
@@ -287,7 +287,7 @@ case 'multi_particle'
 	with_moving_wall= 1
 	moving_wall_type = 'rectangle'	
 
-	file_string = 'pile_press'
+	file_string = 'pile_press_E'
 
     case 'pile_settle'
 

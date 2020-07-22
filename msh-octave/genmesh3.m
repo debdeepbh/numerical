@@ -7,8 +7,12 @@ clear all
 close all
 
 
+
+geometry='E'
+%geometry='heart'
+%geometry='leaf'
 %geometry='peridem'
-geometry='pacman'
+%geometry='pacman'
 %geometry='peridem_wall'
 %geometry='peridem_tube'
 %geometry='peridem_tube_onesided'
@@ -27,6 +31,19 @@ geometry='pacman'
 draw_text = 1;
 
 switch geometry
+case	'E'
+	delta = 1e-3;	% peridem, all the nodes are neighbors
+	meshsize = delta/5;
+P = 1/2* [0.02,1.4; 0.02,-1.4; 2.02,-1.4; 2.02,-1.0; 0.42,-1.0; 0.42,-0.2; 1.22,-0.2; 1.22,0.2; 0.42,0.2; 0.42,1.0; 2.02,1.0; 2.02,1.4] * 1e-3;
+case 'heart'
+	delta = 1e-3;	% peridem, all the nodes are neighbors
+	meshsize = delta/5;
+    P = 1/3 * (1e-3 .* [3.2215934,1.0041422; 2.8215933,1.8041421; 2.0215933,2.204142; 1.2215934,2.204142; 0.42159337,1.8041421; 0.021593383,1.0041422; 0.42159337,-0.19585787; 1.6215934,-0.99585783; 2.8215933,-1.7958579; 3.2215934,-2.1958578; 3.6215935,-1.7958579; 6.0215936,-0.19585787; 6.421593,1.0041422; 6.0215936,1.8041421; 5.2215934,2.204142; 4.421593,2.204142; 3.6215935,1.8041421] - [0.0032, 0]);
+
+case	'leaf'
+	delta = 1e-3;	% peridem, all the nodes are neighbors
+	meshsize = delta/5;
+    P = 1e-3 *[2.8624094,3.1853633; 2.0624094,1.1853632; 1.2624093,1.5853633; 1.6624093,-0.014636788; 0.4624093,0.38536322; 1.6624093,-1.2146368; 0.0624093,-1.2146368; 2.8624094,-3.2146368; 5.6624093,-1.2146368; 4.0624094,-1.2146368; 4.862409,0.38536322; 3.6624093,-0.014636788; 4.4624095,1.5853633; 3.6624093,1.1853632]
 case 'sodalime'
 	%delta = 0.002;	% for glass slab
 	delta = 0.004;	% for glass slab

@@ -78,10 +78,18 @@ for t = 1:timesteps
 
     switch with_moving_wall
         case 1
+
+	    %% cheating
+	    if t==30000
+		moving_wall_uolddot = zeros(size(moving_wall_Pos)) + [0 1];
+		moving_wall_uolddotdot = zeros(size(moving_wall_Pos)) + [0 1];
+	    end
+
 	    % update
 	    moving_wall_u0 = moving_wall_uold + dt * moving_wall_uolddot + dt * dt * 0.5 * moving_wall_uolddotdot;
 	    % current wall position
 	    moving_wall_CurrPos = moving_wall_u0 + moving_wall_Pos ;
+
         otherwise
     end
 
