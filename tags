@@ -25,6 +25,7 @@ coeff	wavelet/coeff.m	/^function values = coeff(w, p, q)$/;"	f
 coefthr	wavelet/coefthr.m	/^function wt = coefthr(w, p, rule, method, thr)$/;"	f
 compareErr	wavelet/compareErr.m	/^function compareErr(z, typelist, maxK, p, normlist)$/;"	f
 compress	wavelet/compress.m	/^function w = compress(z, type, p, K)$/;"	f
+contact_force	msh-octave/contact_force.m	/^function [total_contact_force, nbd_contact_force_1, nbd_contact_force_2, nbd_direction_unit_1, nbd_direction_unit_2] = contact_force(contact_NbdArr, CurrPos_center, CurrPos_neighbor, Vol_neighbor, contact_radius, normal_stiffness) $/;"	f
 coord	crack/coord.m	/^function [pos, A] = coord(Nbd, dx, dy, nx, ny)$/;"	f
 coord	crack2/coord.m	/^function [pos, A] = coord(Nbd)$/;"	f
 coord	crack_old/coord.m	/^function [pos, A] = coord(Nbd)$/;"	f
@@ -46,19 +47,31 @@ down	wavelet/down.m	/^function Dz = down(z)$/;"	f
 drawmesh	crack/drawmesh.m	/^function drawmesh(N, dx, dy, nx, ny)$/;"	f
 drawmesh	crack2/drawmesh.m	/^function drawmesh(N)$/;"	f
 drawmesh	crack_old/drawmesh.m	/^function drawmesh(N)$/;"	f
+element2node	msh-octave/element2node.m	/^function outArr = element2node(input)$/;"	f
+external_force	msh-octave/external_force.m	/^function [extforce] = external_force(geometry, Pos, NbdArr, delta) $/;"	f
 fdecall	wavelet/fdecall.m	/^function [fw, mult] = fdecall(fsig, fimp, method, scaling)$/;"	f
 fdecwien	wavelet/fdecwien.m	/^function [fw, mult] = fdecwien(fsig, fimp, noise, scaling)$/;"	f
 filt	wavelet/filt-bak.m	/^function [u, v] = filt(TYPE, N)$/;"	f
 filt	wavelet/filt.m	/^function [u, v] = filt(TYPE, N)$/;"	f
 fold	wavelet/fold.m	/^function y = fold(z)$/;"	f
 forward	pde/forward.m	/^function forward()$/;"	f
+friction_force	msh-octave/friction_force.m	/^function [total_friction_force] = friction_force(contact_NbdArr, vel_center_1, vel_center_2, vel_neighbor_1, vel_neighbor_2, nbd_contact_force_1, nbd_contact_force_2, nbd_direction_unit_1, nbd_direction_unit_2, Vol_center, friction_coefficient) $/;"	f
 fullProj	denoising/fullProj.m	/^function fullProj()$/;"	f
 g	wavelet/l1min.m	/^function r = g (x)$/;"	f
 gaussF2	denoising/gaussF2.m	/^function out = gaussF2(nbdsize, variance, I)    % Gaussian filter$/;"	f
+gen_NbdArr	msh-octave/gen_NbdArr.m	/^function [NbdArr] = gen_NbdArr(Pos_center, Pos_neighbor, delta, remove_center) $/;"	f
+gen_NbdArr_prenotch	msh-octave/gen_NbdArr_prenotch.m	/^function [NbdArr] = gen_NbdArr_prenotch(Pos_center, Pos_neighbor, delta, remove_center) $/;"	f
+gen_NbdArr_varlength	msh-octave/gen_NbdArr_varlength.m	/^function [NbdArr] = gen_NbdArr_varlength(Pos_center, Pos_neighbor, delta, remove_center) $/;"	f
+gen_contact_nbdlist	msh-octave/gen_contact_nbdlist.m	/^function [contact_NbdArr] = gen_contact_nbdlist(CurrPos_multi, contact_radius) $/;"	f
+gen_nbdlist	msh-octave/gen_nbdlist.m	/^function [NbdArr] = gen_nbdlist(Pos, delta) $/;"	f
+gen_nbdlist2	msh-octave/gen_nbdlist2.m	/^function [NbdArr] = gen_nbdlist2(Pos, delta) $/;"	f
 genlam	crack2/genlam.m	/^function  genlam(Nbd) $/;"	f
+genmesh	msh-octave/genmesh.m	/^function [Pos, BdryNodes, Vol] = genmesh(delta) $/;"	f
+genmesh2	msh-octave/genmesh2.m	/^function [Pos, Vol, T] = genmesh2(geometry, meshsize) $/;"	f
 genparams	crack2/genparams.m	/^function  genparams(Nbd) $/;"	f
 genpos	crack2/genpos.m	/^function genpos(Nbd)$/;"	f
 genthr	wavelet/genthr.m	/^function thr = genthr(p, var, method, manual)$/;"	f
+geom	msh-py/test.py	/^geom = pygmsh.built_in.Geometry()$/;"	v
 getantenna	wavelet/getantenna.m	/^function filename = getantenna(num)$/;"	f
 getbasismat	wavelet/getbasismat.m	/^function B = getbasismat(type, p, N)$/;"	f
 getindex	wavelet/getindex.m	/^function [startInd, lastInd] = getindex(N, p, q)$/;"	f
@@ -81,6 +94,7 @@ indj2pos1	crack/indj2pos1.m	/^function x = indj2pos1(j,dx)$/;"	f
 intersects	crack/intersects.m	/^function intrsct=intersects(A1,A2,A3,A4) %Ai = [x y], the coordinate$/;"	f
 intersects	crack2/intersects.m	/^function intrsct=intersects(A1,A2,A3,A4) %Ai = [x y], the coordinate$/;"	f
 intersects	crack_old/intersects.m	/^function intrsct=intersects(A1,A2,A3,A4) %Ai = [x y], the coordinate$/;"	f
+intersects_box	msh-octave/intersects_box.m	/^function [does_intersect] = intersects_box(A_min, A_max, B_min, B_max) $/;"	f
 isolate	wavelet/isolate.m	/^function prj = isolate(z, type, p)$/;"	f
 iwrec	wavelet/iwrec.m	/^function w = iwrec(z, sdim, u, v)$/;"	f
 iwtrans	wavelet/iwtrans.m	/^function w = iwtrans(z, type, p)$/;"	f
@@ -91,6 +105,8 @@ keeplarge	wavelet/keeplarge-cont.m	/^function z = keeplarge(w,k)$/;"	f
 keeplarge	wavelet/keeplarge.m	/^function z = keeplarge(w,k)$/;"	f
 lamgen	crack/lamgen.m	/^function lamgen(Nbd,dx, dy, nx, ny, delta)$/;"	f
 lamgen2	crack/lamgen2.m	/^function lamgen2(Nbd,dx, dy, nx, ny, delta)$/;"	f
+lcar	msh-py/test.py	/^    lcar=0.05$/;"	v
+material_properties	msh-octave/material_properties.m	/^function [delta, rho, Gnot, E, nu, snot, cnot, bulk_modulus] = material_properties(delta, material) $/;"	f
 medF	denoising/medF.m	/^function out = medF(nbdsize, f)$/;"	f
 modf	wavelet/modf.m	/^function y = modf(z)$/;"	f
 multi_error_level	wavelet/.ipynb_checkpoints/multi_error_level-checkpoint.m	/^function errvals = multi_error_level(deconv, f_wax, f_aximp, f_ori, w_ori, noise_sd, alphavals, level_now)$/;"	f
@@ -132,9 +148,14 @@ nbdmap	crack2/nbdmap.m	/^function nbdmap(Nbd)$/;"	f
 nbdmap	crack_old/nbdmap.m	/^function nbdmap(Nbd)$/;"	f
 padfreq	wavelet/padfreq.m	/^function z = padfreq(w, N, eps)$/;"	f
 padz	wavelet/padz.m	/^function w = padz(z)$/;"	f
+pairwise_forces	msh-octave/pairwise_forces.m	/^function [total_contact_force, total_friction_force, total_damping_force] = pairwise_forces(CurrPos_center, CurrPos_neighbor, velocity_center, velocity_neighbor, Vol_neighbor, contact_radius, normal_stiffness, friction_coefficient, damping_ratio, rho)$/;"	f
 params	crack2/params.m	/^function [lam_00, lam_10, lam_20] = params(i,j)$/;"	f
+peridynamic_force	msh-octave/peridynamic_force.m	/^function [totalintforce, stretch] = peridynamic_force(u0, NbdArr, nbd_Vol, xi_1, xi_2, xi_norm, cnot) $/;"	f
+peridynamic_force_bypos	msh-octave/peridynamic_force_bypos.m	/^function [totalintforce, stretch] = peridynamic_force_bypos(CurrPos, NbdArr, nbd_Vol, xi_1, xi_2, xi_norm, cnot, delta, use_influence_function) $/;"	f
+peridynamic_force_peridem	msh-octave/peridynamic_force_peridem.m	/^function [totalintforce, stretch ] = peridynamic_force_peridem(CurrPos, NbdArr, nbd_Vol, xi_1, xi_2, xi_norm, cnot, delta, i, t) $/;"	f
 phi	wavelet/l1min.m	/^function obj = phi (x)$/;"	f
 planktaper	wavelet/planktaper.m	/^function w = planktaper(N,eps)$/;"	f
+plot_with_wall	msh-octave/plot_with_wall.m	/^function plot_with_wall(total_particles, CurrPos, wall_CurrPos, moving_wall_CurrPos, Quantity, counter, f, filestr, contact_radius, time)$/;"	f
 plotbasis	wavelet/plotbasis.m	/^function plotbasis(type, p, N)$/;"	f
 plotcoeffs	wavelet/plotcoeffs.m	/^function plotcoeffs(w,p)$/;"	f
 plotdispl	crack/plotdispl.m	/^function plotdispl(uvec, i, dx, dy, nx, ny)$/;"	f
@@ -149,6 +170,8 @@ plotpanitaS	wavelet/plotpanitaS.m	/^function plotpanitaS(z)$/;"	f
 plotpow	wavelet/plotpow.m	/^function plotpow(sig)$/;"	f
 plotsnr	wavelet/plotsnr.m	/^function plotsnr(z)$/;"	f
 plotthr	wavelet/plotthr.m	/^function plotthr(w,p,thrvec)$/;"	f
+poly	msh-py/test.py	/^poly = geom.add_polygon([$/;"	v
+precomputation	msh-octave/precomputation.m	/^function [Nbd_xi_1, Nbd_xi_2, Nbd_xi_norm, NbdVol] = precomputation(NbdArr, Pos, Vol) $/;"	f
 prepsig	wavelet/prepsig.m	/^function [ax, aximp] = prepsig(num)$/;"	f
 proj	crack/proj.m	/^function out = proj(initial,dx,dy,nx,ny,delta, Xdiff1, Xdiff2, Xdiffnorm)$/;"	f
 proj	crack2/proj.m	/^function out = proj(initial)$/;"	f
@@ -166,6 +189,9 @@ relerr	wavelet/rerr.m	/^function Rel = relerr(z, typelist, maxK, p, q)$/;"	f
 restF	wavelet/restF.m	/^function this = restF(f,subset)$/;"	f
 rndtest	crack2/rndtest.m	/^function rndtest(Nbd)$/;"	f
 savenewpos	crack/savenewpos.m	/^function savenewpos(Nbd, uvec, i, dx, dy, nx, ny, counter, f, filestr)$/;"	f
+savenewpos2	msh-octave/savenewpos2.m	/^function savenewpos2(uvec, Pos, i, counter, f, filestr, time, scaling)$/;"	f
+savenewpos2_multi	msh-octave/savenewpos2_multi.m	/^function savenewpos2_multi(total_particles, CurrPos, Quantity, counter, f, filestr, contact_radius, time)$/;"	f
+savenewpos2_multi_with_wall	msh-octave/savenewpos2_multi_with_wall.m	/^function savenewpos2_multi_with_wall(total_particles, CurrPos, wall_CurrPos, Quantity, counter, f, filestr, contact_radius, time)$/;"	f
 ser2ind	crack/ser2ind.m	/^function A = ser2ind(y,nx, ny)$/;"	f
 ser2ind	crack2/ser2ind.m	/^function A = ser2ind(y)$/;"	f
 ser2ind	crack_old/ser2ind.m	/^function A = ser2ind(y)$/;"	f
@@ -181,9 +207,13 @@ ser2pos1	crack2/ser2pos1.m	/^function x = ser2pos1(serial)$/;"	f
 ser2pos2	crack/ser2pos2.m	/^function y = ser2pos2(ser, dy, nx)$/;"	f
 ser2pos2	crack2/ser2pos2.m	/^function y = ser2pos2(serial)$/;"	f
 shiftMat	crack/shiftMat.m	/^function out = shiftMat(M, i, j, nx, ny)$/;"	f
+simulate	msh-octave/simulate.m	/^function [NbdArr_out, u0] = simulate(Pos, NbdArr, Vol, extforce, delta, xi_1, xi_2, xi_norm)$/;"	f
+simulateMultiple	msh-octave/simulateMultiple.m	/^function [NbdArr_out_multi, u0_multi] = simulateMultiple(total_particles, uold_multi, uolddot_multi, uolddotdot_multi, Pos_multi, NbdArr_multi, Vol_multi, nbd_Vol_multi, extforce_multi, normal_stiffness, contact_radius, rho, cnot, snot, xi_1_multi, xi_2_multi, xi_norm_multi, dt, timesteps, delta, modulo, break_bonds, with_wall, allow_friction, friction_coefficient, allow_contact, allow_damping, damping_ratio, wall_type, with_moving_wall, moving_wall_type, file_string);$/;"	f
+simulate_initial	msh-octave/simulate_initial.m	/^function [NbdArr_out, u0] = simulate_initial(uold, uolddot, uolddotdot, Pos, NbdArr, Vol, nbd_Vol, extforce, delta, xi_1, xi_2, xi_norm, timesteps, break_bonds, material, dt)$/;"	f
 susanF2	denoising/susanF2.m	/^function out = susanF2(nbdsize, variance, I)$/;"	f
 test	wavelet/test.m	/^function test(vec,X)$/;"	f
 test_a	wavelet/test_a.m	/^function out = test_a(this)$/;"	f
+test_int	msh-octave/test_int.m	/^function [NbdArr_out, u0] = test_int(uold, uolddot, uolddotdot, Pos, NbdArr, Vol, nbd_Vol, extforce, delta, xi_1, xi_2, xi_norm, timesteps, break_bonds, material, dt)$/;"	f
 testabs	crack2/testabs.m	/^function testabs(Nbd)$/;"	f
 testdist	crack2/testdist.m	/^function out = testdist(Nbd)$/;"	f
 testfwd	wavelet/testfwd.m	/^function ratiothr = testfwd(anindex, type, p, alpha, rho)$/;"	f
@@ -197,8 +227,10 @@ tight_subplot	wavelet/tight_subplot/tight_subplot.m	/^function [ha, pos] = tight
 tr	pde/tr.m	/^function tr()$/;"	f
 tridiag	pde/tridiag.m	/^function T = tridiag(a, b, c, n)$/;"	f
 up	wavelet/up.m	/^function Uz = up(z)$/;"	f
+update_timeint	msh-octave/update_timeint.m	/^function [u0, u0dot, u0dotdot, stretch] = update_timeint(uold, uolddot, uolddotdot, dt, NbdArr, Vol, xi_1, xi_2, xi_norm, extforce,  cnot, rho) $/;"	f
 wienforwd	wavelet/wienforwd.m	/^function [w, ratiounthres, thrvec]  = wienforwd(y, K, type, p, sigma, scaling, rho,method)$/;"	f
 windowfreq	wavelet/windowfreq.m	/^function z = windowfreq(w, leftcut, lefttaper, righttaper, rightcut)$/;"	f
+within_interior	msh-octave/within_interior.m	/^function [is_inside] = within_interior(A_min, A_max, B_min, B_max) $/;"	f
 wrec	wavelet/wrec.m	/^function w = wrec(z, sdim, util, vtil)$/;"	f
 wtrans	wavelet/wtrans.m	/^function w = wtrans(z, type, p)$/;"	f
 ynf	denoising/ynf.m	/^function out = ynf(nbdsize, variance, I)$/;"	f

@@ -59,7 +59,6 @@ for j=1:nx
 end
 
 
-
 uold = zeros(totalnodes,2);
 uolddot = zeros(totalnodes,2);
 uolddotdot = zeros(totalnodes,2);
@@ -146,6 +145,16 @@ for t = 1:1800
     
     totalintforce = [sum(Force1.*restrict, 2) sum(Force2.*restrict,2)];    %sum(A) ad totalintforce2 = sum(Force2, 2);
     
+    
+    %nbds = nonzeros(Nbd(1,:));
+    %vec = extforce;
+    %    tif1 = vec(:,1);
+    %    tif2 = vec(:,2);
+    %[tif1(nbds) tif2(nbds)]
+    %t
+
+    %pause
+
     u0dotdot = (1/rho) *( totalintforce * (dx*dy) + extforce) ;
     %u0dotdot = (1/rho) *( totalintforce * (dx*dy)) + extforce ;
     
@@ -169,7 +178,7 @@ for t = 1:1800
 %         ind = ind +1;
 %     end
 	if mod(t, 50) == 0
-		savenewpos(Nbd, u0, 2, dx, dy, nx, ny, imgcounter, f, 'test');
+		savenewpos(Nbd, u0, 3, dx, dy, nx, ny, imgcounter, f, 'test');
 		imgcounter = imgcounter + 1;
 	end
 end

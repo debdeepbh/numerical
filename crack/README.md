@@ -17,13 +17,19 @@ Crack propagation and branching in soda-lime glass with a pre-notch under extern
 # Usage
 
 * To create the reference neighbourhood array.
-`[ref, dx, dy, nx, ny, delta] = nbd_test();` Took 48s on my CPU.
+```
+[ref, dx, dy, nx, ny, delta] = nbd_test();
+``` 
+Took 48s on my CPU.
 
 * Draw the initial mesh for the slab with a pre-notch
 `drawmesh(ref, dx, dy, nx, ny);  `
 
 * Create the final neighbourhood array for the cracked slab, from the initial array
-`[final, uvec] = proj_test(ref, dx, dy, nx, ny, delta);   `  This is where all the computations happen.
+```
+[final, uvec] = proj_test(ref, dx, dy, nx, ny, delta);   
+```  
+This is where all the computations happen.
 
 * Draw the final array
 `drawmesh(final, dx, dy, nx, ny);  `
