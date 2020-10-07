@@ -29,6 +29,7 @@ else
 end
 colormap summer;
 colorbar;
-axis([xlimit ylimit])
+%axis([xlimit ylimit])
+axis equal
 
 saveas(f, filename);

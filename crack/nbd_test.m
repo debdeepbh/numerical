@@ -73,6 +73,14 @@ initial = Nbd;
 toc
         
         
-    
+save 'Nbd.mat' 'Nbd'
+ss = size(Nbd);
+longVec = (1:ss(1))';
+
+XCoord = ser2pos1(longVec, dx, nx); 
+YCoord = ser2pos2(longVec, dy, nx);
+PosCrack = [XCoord, YCoord];
+save 'PosCrack.mat' 'PosCrack'
+
 
 nx, ny
